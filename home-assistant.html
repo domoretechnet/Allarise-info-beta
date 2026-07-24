@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="app-icon.png">
+  <link rel="apple-touch-icon" href="app-icon.png">
+  <title>[BETA] Allarise — Home Assistant Setup</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f7;
+      --border: #d2d2d7;
+      --text: #1d1d1f;
+      --secondary: #6e6e73;
+      --accent: #0071e3;
+      --ha-color: #18bcf2;
+      --ha-bg: #eaf7fd;
+      --green: #1d8348;
+      --green-bg: #eafaf1;
+      --warn-bg: #fff8ec;
+      --warn-border: #f0a500;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000;
+        --surface: #1c1c1e;
+        --border: #38383a;
+        --text: #f5f5f7;
+        --secondary: #98989d;
+        --accent: #2997ff;
+        --ha-color: #18bcf2;
+        --ha-bg: #041e2a;
+        --green: #30d158;
+        --green-bg: #0d2614;
+        --warn-bg: #1f1600;
+        --warn-border: #c97f00;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
+      cursor: pointer;
+    }
+
+    /* ── Nav ── */
+    .site-nav {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 24px;
+      padding: 0 32px; height: 52px;
+    }
+    .site-nav .nav-home {
+      display: flex; align-items: center; gap: 10px; margin-right: auto;
+      text-decoration: none;
+    }
+    .site-nav .nav-home img { width: 28px; height: 28px; border-radius: 6px; }
+    .site-nav .nav-home .icon-light { display: block; }
+    .site-nav .nav-home .icon-dark  { display: none;  }
+    @media (prefers-color-scheme: dark) {
+      .site-nav .nav-home .icon-light { display: none;  }
+      .site-nav .nav-home .icon-dark  { display: block; }
+    }
+    .site-nav .nav-home span { font-size: 16px; font-weight: 700; color: var(--text); }
+    .site-nav a { font-size: 14px; color: var(--secondary); text-decoration: none; }
+    .site-nav a:hover { color: var(--accent); }
+    .site-nav .nav-active { color: var(--accent) !important; font-weight: 600; }
+
+    /* ── Page header ── */
+    .page-header {
+      padding: 64px 24px 48px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .page-header .ph-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .page-header h1 {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .page-header p {
+      font-size: 18px;
+      color: var(--secondary);
+      line-height: 1.6;
+      max-width: 600px;
+    }
+
+    /* ── TOC ── */
+    .toc {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px 48px;
+    }
+    .toc-inner {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 600px) {
+      .toc-inner { grid-template-columns: 1fr; }
+    }
+    .toc-group p {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--secondary);
+      margin-bottom: 12px;
+    }
+    .toc-group ol, .toc-group ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .toc-group ol li a, .toc-group ul li a {
+      font-size: 15px;
+      color: var(--accent);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toc-group ol li a:hover, .toc-group ul li a:hover { text-decoration: underline; }
+    .toc-group ol li .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── Steps ── */
+    .steps { max-width: 760px; margin: 0 auto; padding: 0 24px 80px; }
+    .step-block {
+      margin-bottom: 48px;
+    }
+    .step-block:last-child { margin-bottom: 0; }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .step-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .step-body {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .step-body p, .step-body li {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .step-body p + p { margin-top: 12px; }
+    .step-body ol, .step-body ul {
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .step-body strong { font-weight: 600; }
+    .step-body h4 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--secondary);
+      margin-top: 28px;
+      margin-bottom: 10px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .step-body h4:first-of-type { margin-top: 20px; padding-top: 0; border-top: none; }
+
+    /* ── Reference sections ── */
+    .ref-sections { max-width: 760px; margin: 0 auto; padding: 0 24px 80px; }
+    .ref-block { margin-bottom: 48px; }
+    .ref-block:last-child { margin-bottom: 0; }
+    .ref-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .ref-header .ref-icon {
+      font-size: 22px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .ref-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .ref-body {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .ref-body p { font-size: 15px; color: var(--text); line-height: 1.65; }
+    .ref-body p + p { margin-top: 12px; }
+    .ref-body h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-top: 24px;
+      margin-bottom: 10px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .ref-body h3:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+    .ref-body strong { font-weight: 600; }
+
+    /* ── Section label divider ── */
+    .section-label-divider {
+      max-width: 760px;
+      margin: 0 auto 40px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .section-label-divider .sld-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--secondary);
+      white-space: nowrap;
+    }
+    .section-label-divider hr {
+      flex: 1;
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Code blocks ── */
+    .code-wrap {
+      margin-top: 16px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .code-label {
+      background: var(--border);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .copy-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      padding: 0;
+      letter-spacing: 0.04em;
+    }
+    .copy-btn:hover { opacity: 0.7; }
+    pre {
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: "SF Mono", ui-monospace, Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 0;
+    }
+    @media (prefers-color-scheme: light) {
+      pre { background: #1b1f24; }
+    }
+
+    /* ── Data table ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 14px;
+    }
+    .data-table th {
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--secondary);
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--text);
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table code {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-family: "SF Mono", ui-monospace, Menlo, monospace;
+      font-size: 12px;
+    }
+
+    /* ── Callout boxes ── */
+    .callout {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; line-height: 1.4; }
+    .callout-tip {
+      background: var(--ha-bg);
+      border: 1px solid var(--ha-color);
+    }
+    .callout-note {
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .callout-warn {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+    }
+    .callout a { color: var(--accent); }
+
+    /* ── What you get section (above page header) ── */
+    .wyg-section {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 24px 40px;
+    }
+    .wyg-heading {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+    .wyg-subhead {
+      font-size: 16px;
+      color: var(--secondary);
+      line-height: 1.6;
+      max-width: 600px;
+      margin-bottom: 20px;
+    }
+
+    /* ── What you get grid ── */
+    .wyg-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .wyg-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 16px;
+    }
+    .wyg-card .wyg-icon { font-size: 24px; margin-bottom: 8px; display: block; }
+    .wyg-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .wyg-card p { font-size: 13px; color: var(--secondary); line-height: 1.5; }
+
+    /* ── Inline code ── */
+    code {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-family: "SF Mono", ui-monospace, Menlo, monospace;
+      font-size: 0.875em;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--secondary);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
+
+    /* ── Hamburger nav ── */
+    .nav-menu-btn {
+      display: none; background: none; border: none; cursor: pointer;
+      color: var(--text); font-size: 22px; padding: 4px 8px;
+      border-radius: 6px; line-height: 1; margin-left: auto;
+    }
+    .nav-dropdown {
+      display: none; position: fixed; top: 52px; left: 0; right: 0;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      z-index: 200; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .nav-dropdown a {
+      display: block; padding: 14px 24px; font-size: 16px;
+      color: var(--text); text-decoration: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-dropdown a:last-child { border-bottom: none; }
+    .nav-dropdown a.nav-active { color: var(--accent); font-weight: 600; }
+    .nav-dropdown.open { display: block; }
+
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 28px; }
+      .page-header p { font-size: 16px; }
+      .site-nav { padding: 0 16px; }
+      .step-body { padding: 20px; }
+      .ref-body { padding: 20px; }
+      .site-nav a:not(.nav-home) { display: none !important; }
+      .nav-menu-btn { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+<!-- BETA SITE BANNER — present only on beta.allarise.app, not on the production site. -->
+<div style="background:#b45309;color:#fff;padding:10px 16px;text-align:center;font:600 14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;position:relative;z-index:9999">
+  🧪 Beta site — documents the TestFlight build and the <code style="background:rgba(0,0,0,.22);padding:1px 5px;border-radius:4px">allarise-hacs-beta</code> integration.
+  <a href="https://allarise.app" style="color:#fff;text-decoration:underline">Go to the release site →</a>
+</div>
+
+<!-- Nav -->
+<nav class="site-nav">
+  <a href="index.html" class="nav-home">
+    <img src="app-icon.png" class="icon-light" alt="Allarise" />
+    <img src="app-icon-dark.png" class="icon-dark" alt="Allarise" />
+    <span>Allarise</span>
+  </a>
+  <a href="index.html">About</a>
+  <a href="home-assistant.html" class="nav-active">Home Assistant</a>
+  <a href="mqtt-builder.html">MQTT Builder</a>
+  <a href="faq.html">FAQ</a>
+  <button class="nav-menu-btn" id="nav-menu-btn" onclick="toggleNav()">☰</button>
+</nav>
+<div class="nav-dropdown" id="nav-dropdown">
+  <a href="index.html">About</a>
+  <a href="home-assistant.html" class="nav-active">Home Assistant</a>
+  <a href="mqtt-builder.html">MQTT Builder</a>
+  <a href="faq.html">FAQ</a>
+</div>
+
+<!-- What you get -->
+<div class="wyg-section">
+  <h2 class="wyg-heading">What you get</h2>
+  <p class="wyg-subhead">Once connected, the integration is designed to create a main dashboard device and one sub-device per alarm, with entities you can use in automations, dashboards, and scripts.</p>
+  <div class="wyg-grid">
+    <div class="wyg-card">
+      <span class="wyg-icon">📊</span>
+      <h3>Sensors</h3>
+      <p>Alarm state, name, fire time, snooze count, app version, sleep sound volume, and more.</p>
+    </div>
+    <div class="wyg-card">
+      <span class="wyg-icon">🔘</span>
+      <h3>Buttons</h3>
+      <p>Dismiss, snooze, skip, unskip, and kill snoozed — available on the dashboard device and each per-alarm device.</p>
+    </div>
+    <div class="wyg-card">
+      <span class="wyg-icon">🔁</span>
+      <h3>Switches</h3>
+      <p>Master arm toggle, per-alarm enable/disable, alert vibrate, and alert media loop.</p>
+    </div>
+    <div class="wyg-card">
+      <span class="wyg-icon">🔊</span>
+      <h3>Alert Media</h3>
+      <p>Send an alert to the phone from any HA automation using the notify service. Works like an alarm — shows an in-app alert card with a dismiss button — but is text-based and can include unauthenticated media URLs.</p>
+    </div>
+    <div class="wyg-card">
+      <span class="wyg-icon">🚨</span>
+      <h3>Notify</h3>
+      <p>Send an alert to the phone from supported HA automations using the notify service.</p>
+    </div>
+    <div class="wyg-card">
+      <span class="wyg-icon">⏰</span>
+      <h3>Per-Alarm Devices</h3>
+      <p>Each alarm can appear in Home Assistant with its own related entities and supported controls for time, days, sound, snooze, and more.</p>
+    </div>
+    <div class="wyg-card">
+      <span class="wyg-icon">🌙</span>
+      <h3>Sleep Sounds</h3>
+      <p>Start, stop, pause, or change white noise and ambient sounds on the phone from supported automations when app and iOS conditions allow.</p>
+    </div>
+    <div class="wyg-card">
+      <span class="wyg-icon">🔐</span>
+      <h3>Alarm Widget</h3>
+      <p>Your security alarm, your home, one tap. When you arm a zone in Allarise, Home Assistant knows about it instantly — triggering automations, locking doors, or whatever you've set up. And since zones sync across all your household's phones, everyone stays on the same page.</p>
+    </div>
+    <div class="wyg-card">
+      <span class="wyg-icon">⚡</span>
+      <h3>Commands</h3>
+      <p>Commands are named MQTT triggers you define in the app. When fired, Allarise publishes to their topic in Home Assistant so your automations can react. Assign them as swipe actions on alarm rows, swipe commands in the alarm widget, a tappable list, or buttons on the alarm screen itself via the notes widget.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Page header -->
+<div class="page-header">
+  <div class="ph-label">Home Assistant Integration</div>
+  <h1>Connect Allarise to Home Assistant.</h1>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-inner">
+    <div class="toc-group">
+      <p>Setup</p>
+      <ol>
+        <li><a href="#step-install"><span class="step-num">1</span> Install the HACS integration</a></li>
+        <li><a href="#step-mqtt"><span class="step-num">2</span> Set up your MQTT broker</a></li>
+        <li><a href="#step-connect"><span class="step-num">3</span> Connect the Allarise app</a></li>
+        <li><a href="#step-configure"><span class="step-num">4</span> Add the integration in Home Assistant</a></li>
+      </ol>
+    </div>
+    <div class="toc-group">
+      <p>Reference</p>
+      <ul>
+        <li><a href="#ref-entities">↗ Entities &amp; devices</a></li>
+        <li><a href="#ref-services">↗ Services</a></li>
+        <li><a href="#ref-automations">↗ Example automations</a></li>
+        <li><a href="#ref-topics">↗ MQTT topic structure</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Steps -->
+<div class="steps">
+
+  <!-- Step 1 -->
+  <div class="step-block" id="step-install">
+    <div class="step-header">
+      <div class="step-badge">1</div>
+      <h2>Install the HACS integration</h2>
+    </div>
+    <div class="step-body">
+      <p><strong>Via HACS (recommended)</strong></p>
+      <ol>
+        <li>In Home Assistant, go to <strong>HACS → Integrations → ⋮ → Custom repositories</strong></li>
+        <li>Add <code>https://github.com/domoretechnet/allarise-hacs-beta</code> and select <strong>Integration</strong> as the category</li>
+        <li>Find <strong>Allarise</strong> in the HACS store and click <strong>Download</strong></li>
+        <li>Restart Home Assistant</li>
+      </ol>
+
+      <div class="callout callout-note">
+        <span class="callout-icon">🧪</span>
+        <span><strong>Beta integration.</strong> This is the <code>allarise-hacs-beta</code> repository, which tracks the TestFlight build. If you already have the release integration installed from <code>allarise-hacs</code>, remove it first — HACS cannot install two integrations that share the <code>allarise</code> domain.</span>
+      </div>
+
+      <p style="margin-top:20px;"><strong>Manual install</strong></p>
+      <ol>
+        <li>Copy <code>custom_components/allarise/</code> into your HA <code>config/custom_components/</code> directory</li>
+        <li>Restart Home Assistant</li>
+      </ol>
+
+      <div class="callout callout-note">
+        <span class="callout-icon">ℹ️</span>
+        <span>HACS must be installed in your Home Assistant instance. If you haven't set it up yet, visit <a href="https://hacs.xyz" target="_blank">hacs.xyz</a> for installation instructions.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step-block" id="step-mqtt">
+    <div class="step-header">
+      <div class="step-badge">2</div>
+      <h2>Set up your MQTT broker</h2>
+    </div>
+    <div class="step-body">
+      <p>Create a dedicated MQTT user for the Allarise app and restrict it to only the topics it needs. This keeps the app isolated from the rest of your broker.</p>
+
+      <p style="margin-top:20px;"><strong>Step 2a — Create a dedicated user</strong></p>
+      <p>Open <strong>Settings → Add-ons → Mosquitto broker → Configuration</strong> and add a login under the <code>logins</code> key:</p>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>Mosquitto broker config</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>logins:
+  - username: allarise
+    password: "your_secure_password"
+customize:
+  active: true
+  folder: mosquitto</pre>
+      </div>
+
+      <p style="margin-top:4px; font-size:14px; color:var(--secondary);">Save and <strong style="color:var(--text)">restart the Mosquitto add-on</strong> after making this change.</p>
+
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step-block" id="step-connect">
+    <div class="step-header">
+      <div class="step-badge">3</div>
+      <h2>Connect the Allarise app</h2>
+    </div>
+    <div class="step-body">
+      <p>In the Allarise iOS app, go to <strong>Settings → Home Assistant Integration</strong> and turn it on, then tap <strong>MQTT Settings</strong>. The app separates broker configuration into two sections — one for when you're on your home network, and one for when you're away.</p>
+
+      <h4>MQTT Identity</h4>
+      <table class="data-table">
+        <tbody>
+          <tr><td>Topic Prefix</td><td><code>allarise</code> (default) — must match what you enter in the HA integration in Step 4</td></tr>
+          <tr><td>Device Name</td><td><code>iPhone</code> (default) — change this to identify multiple phones; must also match Step 4</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warn" style="margin-top: 16px; font-size: 15px;">
+        <span class="callout-icon">⚡</span>
+        <div>
+          <strong>Turn on Allow Inbound Commands.</strong> This is what makes the integration two-way. Without it, Allarise will publish state to Home Assistant but won't accept any commands back — no alarm creation, no alerts, no remote actions. Make sure this is enabled or you'll only get half the integration.<br><br>
+          This also unlocks sleep sound control. With inbound commands on, Home Assistant can start, stop, pause, or change the white noise and ambient sounds playing on your phone — directly from any automation.
+        </div>
+      </div>
+
+      <h4>Internal Broker — used on home WiFi</h4>
+      <p>Your Mosquitto broker running locally on Home Assistant. Plain connection, no TLS, traffic stays on your LAN.</p>
+      <table class="data-table">
+        <tbody>
+          <tr><td>Host</td><td>Your HA local IP (e.g. <code>192.168.1.100</code>) or hostname (e.g. <code>homeassistant.local</code>)</td></tr>
+          <tr><td>Port</td><td><code>1883</code></td></tr>
+        </tbody>
+      </table>
+
+      <h4>External Broker — used away from home</h4>
+      <p>Used when not on a home WiFi network. The app always enforces TLS for external connections. You'll need port <code>8883</code> forwarded on your router and pointing to your Home Assistant machine.</p>
+      <table class="data-table">
+        <tbody>
+          <tr><td>Host</td><td>Your external hostname (e.g. <code>mqtt.yourdomain.com</code>) — must have a valid TLS certificate</td></tr>
+          <tr><td>Port</td><td><code>8883</code></td></tr>
+          <tr><td>Always Use External</td><td>Optional — bypasses home network detection and always connects to the external broker</td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-note" style="margin-top:12px;">
+        <span class="callout-icon">ℹ️</span>
+        <span>If you only use Allarise at home, you can leave the External Broker fields blank entirely.</span>
+      </div>
+
+      <h4>Authentication</h4>
+      <p>The same username and password are used for both brokers.</p>
+      <table class="data-table">
+        <tbody>
+          <tr><td>Username</td><td>The MQTT username you created in Step 2a (e.g. <code>allarise</code>)</td></tr>
+          <tr><td>Password</td><td>The password you set in Step 2a</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Home WiFi Networks</h4>
+      <p>Add your home WiFi network name(s) so the app can decide when to use the internal broker instead of the external one. Broker selection is designed to switch automatically when you leave or return home, based on the network information available to iOS.</p>
+      <ol>
+        <li>Tap <strong>Add Network</strong></li>
+        <li>Type your network name exactly, or tap <strong>Use Current Network</strong> to fill it in automatically</li>
+        <li>Repeat for any additional home networks (e.g. separate 5 GHz and 2.4 GHz SSIDs)</li>
+      </ol>
+      <div class="callout callout-tip" style="margin-top:12px;">
+        <span class="callout-icon">📍</span>
+        <span>WiFi name detection requires Location permission on iOS. This is only used to read the network name — the app does not track your location.</span>
+      </div>
+
+      <h4>Test your connection</h4>
+      <p>Once all fields are filled in, tap <strong>Test Connection</strong> in the Authentication section. A green "Connected!" indicates the app was able to reach your broker at the time of the test.</p>
+
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step-block" id="step-configure">
+    <div class="step-header">
+      <div class="step-badge">4</div>
+      <h2>Add the integration in Home Assistant</h2>
+    </div>
+    <div class="step-body">
+      <ol>
+        <li>Go to <strong>Settings → Devices &amp; Services → Add Integration</strong></li>
+        <li>Search for <strong>Allarise</strong> and select it</li>
+        <li>Enter the <strong>Device Name</strong> and <strong>MQTT Topic Prefix</strong> — these must exactly match what is set in the Allarise app</li>
+      </ol>
+
+      <div class="callout callout-note">
+        <span class="callout-icon">ℹ️</span>
+        <span><strong>Defaults:</strong> Device Name = <code>iPhone</code> · Topic Prefix = <code>allarise</code>. You can add multiple devices by adding one integration entry per phone.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MQTT Builder CTA -->
+<div style="max-width: 760px; margin: 0 auto; padding: 32px 24px 48px;">
+  <a href="mqtt-builder.html" style="display: flex; align-items: center; gap: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; text-decoration: none; color: var(--text); transition: border-color 0.15s, box-shadow 0.15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='0 4px 20px rgba(0,113,227,0.1)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+    <span style="font-size: 36px; flex-shrink: 0;">🛠</span>
+    <div>
+      <div style="font-size: 17px; font-weight: 700; margin-bottom: 4px;">Ready to build payloads?</div>
+      <div style="font-size: 14px; color: var(--secondary); line-height: 1.5;">Use the MQTT Payload Builder to generate and test commands before wiring up your automations. Covers every supported topic and action.</div>
+      <div style="font-size: 13px; font-weight: 600; color: var(--accent); margin-top: 8px;">Open MQTT Builder →</div>
+    </div>
+  </a>
+</div>
+
+<!-- Reference section divider -->
+<div class="section-label-divider">
+  <span class="sld-label">Reference</span>
+  <hr>
+</div>
+
+<!-- Reference sections -->
+<div class="ref-sections">
+
+  <!-- Entities -->
+  <div class="ref-block" id="ref-entities">
+    <div class="ref-header">
+      <div class="ref-icon">📊</div>
+      <h2>Entities &amp; devices</h2>
+    </div>
+    <div class="ref-body">
+
+      <h3>Dashboard sensors</h3>
+      <p>These sensors appear on the main Allarise dashboard device in Home Assistant.</p>
+      <table class="data-table">
+        <thead><tr><th>Sensor</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Alarm State</td><td><code>idle</code> / <code>ringing</code> / <code>snoozed</code> / <code>dismissed</code></td></tr>
+          <tr><td>Alarm Name</td><td>Name of the currently ringing or next upcoming alarm</td></tr>
+          <tr><td>Alarm Mission</td><td>Mission type required to dismiss (<code>shake</code>, <code>math</code>, <code>ha</code>, <code>none</code>)</td></tr>
+          <tr><td>Alarm Fire Time</td><td>Scheduled fire time of the active or next alarm</td></tr>
+          <tr><td>Alarm Snooze Fire Time</td><td>When a snoozed alarm will re-fire</td></tr>
+          <tr><td>Alarm Sound</td><td>Sound ID playing for the active alarm</td></tr>
+          <tr><td>Alarm Volume</td><td>Volume % for the active alarm</td></tr>
+          <tr><td>Alarm Vibrate</td><td>Whether vibration is enabled</td></tr>
+          <tr><td>Alarm Fade In</td><td>Whether fade-in is active</td></tr>
+          <tr><td>Alarm Notes</td><td>Notes attached to the active alarm</td></tr>
+          <tr><td>Alarm ID</td><td>MQTT index of the active alarm</td></tr>
+          <tr><td>Alarm Snooze Count</td><td>Number of times the current alarm has been snoozed</td></tr>
+          <tr><td>Snoozes Remaining</td><td>Snoozes left before alarm is force-dismissed</td></tr>
+          <tr><td>Alarm Count</td><td>Number of active (enabled) alarms</td></tr>
+          <tr><td>App Version</td><td>Allarise app version string</td></tr>
+          <tr><td>Broker Connection</td><td>MQTT connection state reported by the app</td></tr>
+          <tr><td>Alert Volume</td><td>Volume used for HA-triggered alert alarms (%)</td></tr>
+          <tr><td>Alert Sound</td><td>Default sound for HA alert alarms</td></tr>
+          <tr><td>Alert Vibrate</td><td>Whether HA alert alarms vibrate</td></tr>
+          <tr><td>Alert Loop Media</td><td>Whether media audio loops during HA alerts</td></tr>
+          <tr><td>Alert Loop Delay</td><td>Seconds between media audio loops</td></tr>
+          <tr><td>Quick Alarm</td><td>Active quick alarm state</td></tr>
+          <tr><td>Quick Alarm Fire Time</td><td>When the quick alarm fires</td></tr>
+          <tr><td>Quick Alarm Label</td><td>Label of the quick alarm</td></tr>
+          <tr><td>Quick Alarm Count</td><td>Number of active quick alarms</td></tr>
+          <tr><td>Sleep Sound Volume</td><td>Current sleep sounds volume (%)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Binary sensor</h3>
+      <table class="data-table">
+        <thead><tr><th>Sensor</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>App Online</td><td><code>on</code> when the iOS app is connected to the broker</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Per-alarm sensors</h3>
+      <p>For each alarm you create in the app, a dedicated HA device is created containing:</p>
+      <p style="margin-top:8px; font-size:14px; color:var(--secondary);">
+        <code>Name</code> · <code>Enabled</code> · <code>State</code> · <code>Fire Time</code> · <code>Snooze Fire Time</code> · <code>Days</code> · <code>Mission</code> · <code>Sound</code> · <code>Snoozes</code> · <code>Volume</code> · <code>Vibrate</code> · <code>Fade In</code> · <code>Notes</code> · <code>Sort Order</code> · <code>Commands</code> · <code>Swipe Left/Right Commands</code>
+      </p>
+
+      <h3>Buttons</h3>
+      <p><strong>Dashboard buttons</strong> are intended to act on the currently active alarm:</p>
+      <table class="data-table">
+        <thead><tr><th>Button</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Dismiss Alarm</td><td>Dismiss the ringing or snoozed alarm</td></tr>
+          <tr><td>Snooze Alarm</td><td>Snooze the ringing alarm</td></tr>
+          <tr><td>Skip Alarm</td><td>Skip the next upcoming fire for the active alarm</td></tr>
+          <tr><td>Unskip Alarm</td><td>Remove the skip flag from the next alarm</td></tr>
+          <tr><td>Delete Next Alarm</td><td>Delete the next alarm in the queue</td></tr>
+          <tr><td>Kill Snoozed Alarm</td><td>Immediately end a snoozed alarm session</td></tr>
+          <tr><td>Sleep Sound Stop / Pause / Resume</td><td>Control sleep sounds playback</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px;"><strong>Per-alarm buttons</strong> appear on each alarm's device: <code>Dismiss</code> · <code>Snooze</code> · <code>Skip</code> · <code>Unskip</code> · <code>Kill Snoozed</code> · <code>Delete</code></p>
+
+      <h3>Switches</h3>
+      <table class="data-table">
+        <thead><tr><th>Switch</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Arm</td><td>Master arm/disarm toggle (HA is source of truth)</td></tr>
+          <tr><td>Alarm N — Enabled</td><td>Enable or disable a specific alarm</td></tr>
+          <tr><td>Alert Vibrate</td><td>Toggle vibration for HA alert alarms</td></tr>
+          <tr><td>Alert Loop Media</td><td>Toggle media looping for HA alert alarms</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Alert Media</h3>
+      <p>Exposes a media player entity that triggers a one-time in-app alert card on the phone — plays your chosen audio or TTS with a dismiss button. Supports <code>play_media</code>, <code>media_announce</code>, <code>volume_set</code>, and a <strong>Loop Media</strong> switch and <strong>Alert Volume</strong> number entity.</p>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>Play TTS via media player</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>service: media_player.play_media
+target:
+  entity_id: media_player.allarise_iphone
+data:
+  media_content_id: media-source://tts/cloud?message=Good+morning
+  media_content_type: music</pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>Set alert volume (0–100)</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>service: number.set_value
+target:
+  entity_id: number.allarise_iphone_alert_volume
+data:
+  value: 80</pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>Enable media looping for alert alarms</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>service: switch.turn_on
+target:
+  entity_id: switch.allarise_iphone_alert_loop_media</pre>
+      </div>
+
+      <h3>Notify</h3>
+      <p>Send an alert to the phone using the standard HA notify service:</p>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>Send a full-screen alert</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>service: notify.allarise_iphone
+data:
+  title: "Door Alert"
+  message: "Front door opened"
+  data:
+    sound: "Perimeter_Breach"
+    volume: 0.8
+    media_url: "http://your-ha.local:8123/local/doorbell.mp3"</pre>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Sleep Sound Controls -->
+  <div class="ref-block" id="ref-sleep-sounds">
+    <div class="ref-header">
+      <div class="ref-icon">🌙</div>
+      <h2>Sleep sound controls</h2>
+    </div>
+    <div class="ref-body">
+
+      <p>Sleep sounds (white noise, rain, fan, etc.) can be started, stopped, paused, resumed, and adjusted remotely from supported Home Assistant automations or scripts when app and iOS conditions allow. The current sound name and volume are published as sensors on the dashboard device and can also be surfaced in Home Assistant dashboards.</p>
+
+      <h3>Dashboard sensors</h3>
+      <table class="data-table">
+        <thead><tr><th>Sensor</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Sleep Sound</td><td>Name of the currently playing sound, or <code>none</code></td></tr>
+          <tr><td>Sleep Sound Volume</td><td>Current playback volume as a percentage</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Dashboard buttons</h3>
+      <p>Three buttons appear on the main dashboard device for quick control:</p>
+      <table class="data-table">
+        <thead><tr><th>Button</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Sleep Sound Stop</td><td>Fully stop playback and release the audio session</td></tr>
+          <tr><td>Sleep Sound Pause</td><td>Mute audio while keeping the session alive (lock screen controls remain visible)</td></tr>
+          <tr><td>Sleep Sound Resume</td><td>Unmute and resume from where it was paused</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Commands</h3>
+      <p>All sleep sound commands are sent via MQTT to the app's command topic. Available sounds: <code>Brown_Noise</code>, <code>white_noise</code>, <code>Fan</code>, <code>Light_Rain</code>, <code>Summer_Rain</code>, <code>Sea_Waves</code>, <code>Mountain_Stream</code>, <code>Rainforest_Birds</code>.</p>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>Start a sleep sound</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>topic: allarise/iphone/command/sleep_sound_start
+payload: |
+  {
+    "sound": "Brown_Noise",
+    "volume": 60,
+    "duration_minutes": 30,
+    "fade_out_minutes": 5
+  }</pre>
+      </div>
+      <p style="font-size:13px; color:var(--secondary); margin-top:8px; margin-bottom:16px;">
+        Payload keys (all optional except the command itself):<br>
+        <code>sound</code> — sound name (defaults to first available if omitted)<br>
+        <code>volume</code> — 0–100 sleep sound playback level (defaults to 50); unaffected by mute switch<br>
+        <code>system_volume</code> — 0–100 iOS media volume (optional); sets hardware volume independently of <code>volume</code><br>
+        <code>duration_minutes</code> — play for N minutes, max 720; omit for indefinite<br>
+        <code>until_next_alarm</code> — <code>true</code> to stop automatically when the next alarm fires<br>
+        <code>fade_out_minutes</code> / <code>fade_out_seconds</code> — fade-out duration before stopping
+      </p>
+      <p style="font-size:12px; color:var(--secondary); margin-top:-8px; margin-bottom:16px;">
+        <strong>volume vs system_volume:</strong> <code>volume</code> controls how loud the sleep sound plays within the app and is not affected by the ringer/mute switch. <code>system_volume</code> sets the device's hardware media volume (the same level shown in Control Center and adjusted by the volume buttons) — it affects all audio on the device, not just the sleep sound. Use both together if you want to, for example, start rain sounds at 60% app volume while also setting the phone to 40% system volume so other audio (like podcasts) doesn't blare at full volume.
+      </p>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>Change sound without stopping</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>topic: allarise/iphone/command/sleep_sound_change
+payload: {"sound": "Sea_Waves"}</pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>Adjust volume while playing</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>topic: allarise/iphone/command/sleep_sound_set_volume
+payload: {"volume": 40}</pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>Stop playback</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>topic: allarise/iphone/command/sleep_sound_stop
+payload: {}</pre>
+      </div>
+
+      <div class="callout callout-tip" style="margin-top:16px;">
+        <span class="callout-icon">💡</span>
+        <span>Use <code>until_next_alarm: true</code> in <code>sleep_sound_start</code> to have the app attempt to stop white noise when the next alarm fires, without requiring a separate automation.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Services -->
+  <div class="ref-block" id="ref-services">
+    <div class="ref-header">
+      <div class="ref-icon">⚙️</div>
+      <h2>Services</h2>
+    </div>
+    <div class="ref-body">
+
+      <h3>allarise.update_alarm</h3>
+      <p>Modify an alarm by index or name. All fields except <code>device_name</code> are optional — only the fields you include will be changed.</p>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>allarise.update_alarm</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>service: allarise.update_alarm
+data:
+  device_name: iPhone        # optional if only one device
+  name: "Work Alarm"         # target by name (or use index)
+  time: "07:30"
+  enabled: true
+  days: [1, 2, 3, 4, 5]     # 0=Sunday … 6=Saturday
+  sound: "Alarm_Clock"
+  volume: 0.8
+  snooze_duration: 9
+  max_snooze_count: 3
+  notes: "Team meeting at 9am"
+  morning_weather: true      # show Morning Weather card after dismissing</pre>
+      </div>
+
+      <h3>allarise.trigger_alert</h3>
+      <p>Request an alert alarm on the phone when app and iOS conditions permit.</p>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>allarise.trigger_alert</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>service: allarise.trigger_alert
+data:
+  device_name: iPhone
+  title: "Motion Detected"
+  message: "Front camera triggered"
+  sound: "Perimeter_Breach"
+  volume: 0.9
+  media_url: "http://ha.local:8123/local/alert.mp3"</pre>
+      </div>
+
+      <h3>allarise.dismiss</h3>
+      <p>Dismiss the currently ringing or snoozed alarm.</p>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>allarise.dismiss</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>service: allarise.dismiss
+data:
+  device_name: iPhone</pre>
+      </div>
+
+      <h3>allarise.snooze</h3>
+      <p>Snooze the currently ringing alarm.</p>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>allarise.snooze</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>service: allarise.snooze
+data:
+  device_name: iPhone</pre>
+      </div>
+
+      <h3>allarise.skip</h3>
+      <p>Skip the next fire of the next upcoming alarm.</p>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>allarise.skip</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>service: allarise.skip
+data:
+  device_name: iPhone</pre>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Example Automations -->
+  <div class="ref-block" id="ref-automations">
+    <div class="ref-header">
+      <div class="ref-icon">🤖</div>
+      <h2>Example automations</h2>
+    </div>
+    <div class="ref-body">
+
+      <h3>Re-enable a work alarm on Sunday evening</h3>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>automation.yaml</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>automation:
+  alias: "Re-enable work alarm on Sunday"
+  trigger:
+    - platform: time
+      at: "20:00:00"
+  condition:
+    - condition: time
+      weekday: [sun]
+  action:
+    - service: allarise.update_alarm
+      data:
+        name: "Work Alarm"
+        enabled: true</pre>
+      </div>
+
+      <h3>Alert phone when front door opens at night</h3>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>automation.yaml</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>automation:
+  alias: "Front door night alert"
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.front_door
+      to: "on"
+  condition:
+    - condition: time
+      after: "22:00:00"
+      before: "06:00:00"
+  action:
+    - service: allarise.trigger_alert
+      data:
+        title: "Front Door"
+        message: "Front door opened"
+        sound: "Perimeter_Breach"
+        volume: 1.0</pre>
+      </div>
+
+      <h3>Auto-snooze when leaving the bedroom</h3>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>automation.yaml</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>automation:
+  alias: "Auto snooze when leaving bedroom"
+  trigger:
+    - platform: state
+      entity_id: sensor.allarise_iphone_alarm_state
+      to: "ringing"
+  action:
+    - delay: "00:00:30"
+    - condition: state
+      entity_id: binary_sensor.bedroom_presence
+      state: "off"
+    - service: allarise.snooze
+      data:
+        device_name: iPhone</pre>
+      </div>
+
+      <h3>Turn on bedroom lights 5 minutes before alarm</h3>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>automation.yaml</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>automation:
+  trigger:
+    - trigger: time_pattern
+      minutes: /1
+  condition:
+    - condition: template
+      value_template: >
+        {% set alarm = states('sensor.YOUR_DEVICE_alarm_fire_time') | as_datetime | as_local %}
+        {% set diff = (alarm - now()).total_seconds() %}
+        {{ 240 &lt;= diff &lt;= 360 }}
+  action:
+    - action: light.turn_on
+      target:
+        entity_id: light.YOUR_LIGHT
+  mode: single</pre>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MQTT Topic Structure -->
+  <div class="ref-block" id="ref-topics">
+    <div class="ref-header">
+      <div class="ref-icon">📡</div>
+      <h2>MQTT topic structure</h2>
+    </div>
+    <div class="ref-body">
+      <p>All topics follow the pattern <code>{prefix}/{device}/…</code>. With default settings, <code>prefix</code> is <code>allarise</code> and <code>device</code> is <code>iphone</code>.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Direction</th><th>Topic pattern</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>App → HA</td><td><code>allarise/iphone/sensor/{key}</code></td><td>Dashboard sensor values</td></tr>
+          <tr><td>App → HA</td><td><code>allarise/iphone/alarm/{n}/{key}</code></td><td>Per-alarm sensor values</td></tr>
+          <tr><td>App → HA</td><td><code>allarise/iphone/availability</code></td><td>App online/offline</td></tr>
+          <tr><td>App → HA</td><td><code>allarise/iphone/arm/state</code></td><td>Arm state</td></tr>
+          <tr><td>HA → App</td><td><code>allarise/iphone/command/{cmd}</code></td><td>Dashboard commands</td></tr>
+          <tr><td>HA → App</td><td><code>allarise/iphone/alarm/{n}/command/{cmd}</code></td><td>Per-alarm commands</td></tr>
+          <tr><td>HA → App</td><td><code>allarise/iphone/arm/command</code></td><td>Arm command</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-tip" style="margin-top:16px;">
+        <span class="callout-icon">🛠</span>
+        <span>Use the <a href="mqtt-builder.html">MQTT Payload Builder</a> to interactively construct and copy payloads for any of these topics.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-links">
+    <a href="https://discord.gg/wUxJKAD4dP"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="18" height="18" style="vertical-align:-3px;margin-right:5px;fill:currentColor"><path d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"/></svg>Discord</a>
+    <a href="mailto:support@domoretech.net">✉️ support@domoretech.net</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+  </div>
+  <div>© 2026 Allarise</div>
+</footer>
+
+<script>
+  var _navOpen = false;
+  function toggleNav() {
+    var d = document.getElementById('nav-dropdown');
+    var b = document.getElementById('nav-menu-btn');
+    _navOpen = !_navOpen;
+    d.style.display = _navOpen ? 'block' : 'none';
+    b.textContent = _navOpen ? '✕' : '☰';
+  }
+  document.addEventListener('click', function(e) {
+    if (!_navOpen) return;
+    var d = document.getElementById('nav-dropdown');
+    var b = document.getElementById('nav-menu-btn');
+    if (!d.contains(e.target) && e.target !== b && !b.contains(e.target)) {
+      _navOpen = false;
+      d.style.display = 'none';
+      b.textContent = '☰';
+    }
+  });
+  document.getElementById('nav-dropdown').style.display = 'none';
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-wrap').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = orig, 1800);
+    });
+  }
+</script>
+
+</body>
+</html>

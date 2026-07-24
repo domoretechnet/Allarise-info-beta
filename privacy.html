@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="app-icon.png">
+  <link rel="apple-touch-icon" href="app-icon.png">
+  <title>[BETA] Allarise — Privacy Policy</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f7;
+      --border: #d2d2d7;
+      --text: #1d1d1f;
+      --secondary: #6e6e73;
+      --accent: #0071e3;
+      --green: #1d8348;
+      --green-bg: #eafaf1;
+      --red: #922b21;
+      --red-bg: #fdedec;
+      --yellow-bg: #fef9e7;
+      --yellow: #7d6608;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000;
+        --surface: #1c1c1e;
+        --border: #38383a;
+        --text: #f5f5f7;
+        --secondary: #98989d;
+        --accent: #2997ff;
+        --green: #30d158;
+        --green-bg: #0d2614;
+        --red: #ff453a;
+        --red-bg: #2d0e0c;
+        --yellow-bg: #2a2200;
+        --yellow: #ffd60a;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
+      cursor: pointer;
+    }
+    .wrapper {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    .hero {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .hero .app-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 18px;
+      overflow: hidden;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+    .hero .app-icon img {
+      width: 80px;
+      height: 80px;
+      display: block;
+    }
+    .hero .app-icon .icon-light { display: block; }
+    .hero .app-icon .icon-dark  { display: none;  }
+    @media (prefers-color-scheme: dark) {
+      .hero .app-icon .icon-light { display: none;  }
+      .hero .app-icon .icon-dark  { display: block; }
+    }
+    /* Site nav */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 0 32px;
+      height: 52px;
+    }
+    .site-nav a {
+      font-size: 14px;
+      color: var(--secondary);
+      text-decoration: none;
+    }
+    .site-nav a:hover { color: var(--accent); }
+    .site-nav .nav-home {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-right: auto;
+    }
+    .site-nav .nav-home img {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+    }
+    .site-nav .nav-home .icon-light { display: block; }
+    .site-nav .nav-home .icon-dark  { display: none; }
+    @media (prefers-color-scheme: dark) {
+      .site-nav .nav-home .icon-light { display: none; }
+      .site-nav .nav-home .icon-dark  { display: block; }
+    }
+    .site-nav .nav-home span {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .nav-active { color: var(--accent) !important; font-weight: 600; }
+    .hero h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .hero .subtitle {
+      font-size: 16px;
+      color: var(--secondary);
+    }
+    .updated {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--secondary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+
+    .callout {
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 32px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .callout.green  { background: var(--green-bg);  border: 1px solid var(--green);  color: var(--green);  }
+    .callout.yellow { background: var(--yellow-bg); border: 1px solid var(--yellow); color: var(--yellow); }
+    .callout .icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .callout .body { color: var(--text); font-size: 15px; }
+    .callout .body strong { color: inherit; }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 40px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 8px;
+      color: var(--accent);
+    }
+    p { margin-bottom: 12px; color: var(--text); font-size: 15px; }
+    ul, ol { margin: 0 0 12px 24px; }
+    li { margin-bottom: 6px; font-size: 15px; }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 14px;
+    }
+    .data-table th {
+      background: var(--surface);
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .data-table tr:nth-child(even) td { background: var(--surface); }
+
+    .badge {
+      display: inline-block;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge.local   { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green);  }
+    .badge.remote  { background: var(--red-bg);    color: var(--red);    border: 1px solid var(--red);    }
+    .badge.opt-in  { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow); }
+    .badge.apple   { background: var(--surface);   color: var(--secondary); border: 1px solid var(--border); }
+
+    .no-collect {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .no-collect .item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+    .no-collect .item .check { color: var(--green); font-size: 15px; font-weight: 700; }
+
+    .contact-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 32px;
+    }
+    .contact-box h3 { margin-top: 0; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+    /* ── Hamburger nav ── */
+    .nav-menu-btn {
+      display: none; background: none; border: none; cursor: pointer;
+      color: var(--text); font-size: 22px; padding: 4px 8px;
+      border-radius: 6px; line-height: 1; margin-left: auto;
+    }
+    .nav-dropdown {
+      display: none; position: fixed; top: 52px; left: 0; right: 0;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      z-index: 200; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .nav-dropdown a {
+      display: block; padding: 14px 24px; font-size: 16px;
+      color: var(--text); text-decoration: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-dropdown a:last-child { border-bottom: none; }
+    .nav-dropdown a.nav-active { color: var(--accent); font-weight: 600; }
+    .nav-dropdown.open { display: block; }
+
+    footer { border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--secondary); }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 26px; }
+      .data-table { font-size: 13px; }
+      .data-table th, .data-table td { padding: 8px 10px; }
+      .site-nav { padding: 0 16px; }
+      .site-nav a:not(.nav-home) { display: none !important; }
+      .nav-menu-btn { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+<!-- BETA SITE BANNER — present only on beta.allarise.app, not on the production site. -->
+<div style="background:#b45309;color:#fff;padding:10px 16px;text-align:center;font:600 14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;position:relative;z-index:9999">
+  🧪 Beta site — documents the TestFlight build and the <code style="background:rgba(0,0,0,.22);padding:1px 5px;border-radius:4px">allarise-hacs-beta</code> integration.
+  <a href="https://allarise.app" style="color:#fff;text-decoration:underline">Go to the release site →</a>
+</div>
+
+<nav class="site-nav">
+  <a href="index.html" class="nav-home">
+    <img src="app-icon.png" alt="Allarise" />
+    <span>Allarise</span>
+  </a>
+  <a href="index.html">About</a>
+  <a href="home-assistant.html">Home Assistant</a>
+  <a href="mqtt-builder.html">MQTT Builder</a>
+  <a href="faq.html">FAQ</a>
+  <button class="nav-menu-btn" id="nav-menu-btn" onclick="toggleNav()">☰</button>
+</nav>
+<div class="nav-dropdown" id="nav-dropdown">
+  <a href="index.html">About</a>
+  <a href="home-assistant.html">Home Assistant</a>
+  <a href="mqtt-builder.html">MQTT Builder</a>
+  <a href="faq.html">FAQ</a>
+</div>
+
+<div class="wrapper">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="app-icon">
+      <img src="app-icon.png" class="icon-light" alt="Allarise" />
+      <img src="app-icon-dark.png" class="icon-dark" alt="Allarise" />
+    </div>
+    <h1>Allarise</h1>
+    <p class="subtitle">Privacy Policy</p>
+    <span class="updated">Last updated: June 2026</span>
+  </div>
+
+  <!-- Summary callout -->
+  <div class="callout green">
+    <span class="icon">🔒</span>
+    <div class="body">
+      <strong>The short version:</strong> Allarise is a local-first app. Your data stays on your device.
+      We collect no analytics, no crash reports are sent to us, there are no ads, and we do not sell or share
+      your data with anyone. External communication is limited to Apple services used by app features
+      (such as WeatherKit and the App Store), — if <em>you</em> configure it — your own self-hosted Home Assistant / MQTT broker,
+      and — if you enable NWS weather alerts — the National Weather Service API (<code>api.weather.gov</code>), a US government service, which receives your approximate location to return local alert data.
+    </div>
+  </div>
+
+  <!-- 1. Who we are -->
+  <h2>1. Who We Are</h2>
+  <p>
+    Allarise ("the app") is developed and published by <strong>Bryan Scott Daniel, doing business as Allarise</strong>
+    ("we", "us", "our"). This policy describes how the app handles your information when you
+    use it on your iPhone or iPad.
+  </p>
+  <p>If you have questions, contact us at: <a href="mailto:privacy@domoretech.net">privacy@domoretech.net</a></p>
+
+  <!-- 2. Data we collect -->
+  <h2>2. Data We Collect &amp; Why</h2>
+
+  <h3>2.1 Location (optional)</h3>
+  <p>
+    If you enable the weather widget, the app requests <strong>When In Use</strong> location access to fetch
+    your local weather conditions. Your coordinates are sent directly to Apple's WeatherKit API — we never
+    see them. Location is not stored on disk and is never sent to our servers.
+  </p>
+  <p>
+    If you enable <strong>NWS (National Weather Service) weather alerts</strong>, your approximate location
+    (coordinates or city/region) is sent to the National Weather Service public API
+    (<code>api.weather.gov</code>) to retrieve weather alerts relevant to your area. The NWS is a US
+    government agency; no account is required, and we do not receive or store any data from this exchange.
+    This feature is opt-in and can be disabled at any time in Settings.
+  </p>
+  <p>
+    WiFi SSID detection (used to identify your home network for MQTT routing) also requires location
+    permission on iOS. The SSID is stored locally on your device only and is never transmitted to us.
+  </p>
+
+  <table class="data-table">
+    <tr>
+      <th>Data</th><th>Why</th><th>Storage</th><th>Shared with</th>
+    </tr>
+    <tr>
+      <td>GPS coordinates</td>
+      <td>Fetch local weather</td>
+      <td><span class="badge local">Memory only</span></td>
+      <td><span class="badge apple">Apple WeatherKit</span></td>
+    </tr>
+    <tr>
+      <td>City / region name</td>
+      <td>Display in weather widget</td>
+      <td><span class="badge local">Memory only</span></td>
+      <td><span class="badge apple">Apple MapKit (reverse geocode)</span></td>
+    </tr>
+    <tr>
+      <td>GPS coordinates / city</td>
+      <td>Fetch NWS weather alerts (if enabled)</td>
+      <td><span class="badge local">Memory only</span></td>
+      <td><span class="badge opt-in">NWS api.weather.gov (opt-in)</span></td>
+    </tr>
+    <tr>
+      <td>WiFi SSID</td>
+      <td>Route MQTT to internal/external broker</td>
+      <td><span class="badge local">Local device only</span></td>
+      <td>Nobody</td>
+    </tr>
+  </table>
+
+  <h3>2.2 Alarm &amp; App Settings</h3>
+  <p>
+    All your alarms, schedules, sounds, theme preferences, and app settings are stored
+    <strong>only on your device</strong> using Apple system storage APIs.
+    This data is not synced to iCloud and is never transmitted to our servers.
+    Sensitive credentials (MQTT username &amp; password) are stored in the iOS
+    <strong>Keychain</strong>, which is hardware-encrypted on modern devices.
+  </p>
+
+  <table class="data-table">
+    <tr>
+      <th>Data</th><th>Storage</th><th>Encrypted</th><th>Shared with</th>
+    </tr>
+    <tr>
+      <td>Alarm schedules &amp; labels</td>
+      <td><span class="badge local">Local device</span></td>
+      <td>No (UserDefaults)</td>
+      <td>Nobody</td>
+    </tr>
+    <tr>
+      <td>App preferences &amp; theme settings</td>
+      <td><span class="badge local">Local device</span></td>
+      <td>No (UserDefaults)</td>
+      <td>Nobody</td>
+    </tr>
+    <tr>
+      <td>MQTT username &amp; password</td>
+      <td><span class="badge local">iOS Keychain</span></td>
+      <td><strong>Yes (Keychain)</strong></td>
+      <td>Your MQTT broker only</td>
+    </tr>
+    <tr>
+      <td>MQTT broker address &amp; port</td>
+      <td><span class="badge local">Local device</span></td>
+      <td>No (UserDefaults)</td>
+      <td>Nobody</td>
+    </tr>
+  </table>
+
+  <h3>2.4 Home Assistant / MQTT Integration (optional)</h3>
+  <p>
+    If you configure MQTT, the app communicates directly with <strong>your own self-hosted broker</strong>
+    (typically running inside your Home Assistant instance). We have no visibility into this communication.
+    The data published includes alarm state changes (ringing, snoozed, dismissed), snooze counts, and
+    availability status — nothing personally identifiable beyond what you explicitly configure.
+  </p>
+  <p>
+    External connections (outside your home network) are enforced to use <strong>TLS encryption</strong>.
+    Internal (LAN) connections may optionally skip TLS depending on your configuration.
+  </p>
+
+  <div class="callout green">
+    <span class="icon">⚠️</span>
+    <div class="body">
+      Your MQTT broker is a <strong>third-party service you control</strong>. Please review the privacy
+      practices of your Home Assistant / MQTT provider. Allarise has no access to your broker's logs or data.
+    </div>
+  </div>
+
+  <h3>2.5 In-App Purchases</h3>
+  <p>
+    Purchase and subscription management is handled entirely by <strong>Apple's StoreKit</strong>.
+    We never see your payment details. We only receive a cryptographically verified token from Apple
+    confirming whether a valid purchase exists, so we can unlock Pro features. No purchase data is
+    stored on our servers.
+  </p>
+
+  <h3>2.6 Diagnostic Logs</h3>
+  <p>
+    The app writes diagnostic logs to a file on your device to help you troubleshoot issues.
+    Logs are retained for a maximum of 7 days and are capped at ~10 MB. They are <strong>never
+    automatically transmitted</strong> — you can optionally export them from Settings and share
+    them with us for support. Before export, the app automatically redacts alarm names, MQTT
+    command labels, and notification content.
+  </p>
+
+  <!-- 3. What we do NOT collect -->
+  <h2>3. What We Do NOT Collect</h2>
+  <div class="no-collect">
+    <div class="item"><span class="check">✓</span> No analytics or telemetry</div>
+    <div class="item"><span class="check">✓</span> No crash reports sent to us</div>
+    <div class="item"><span class="check">✓</span> No advertising identifiers</div>
+    <div class="item"><span class="check">✓</span> No behavioral profiling</div>
+    <div class="item"><span class="check">✓</span> No cross-app tracking</div>
+    <div class="item"><span class="check">✓</span> No email address required</div>
+    <div class="item"><span class="check">✓</span> No account or sign-in</div>
+    <div class="item"><span class="check">✓</span> No device fingerprinting</div>
+    <div class="item"><span class="check">✓</span> No third-party SDKs (ads, analytics)</div>
+    <div class="item"><span class="check">✓</span> No data sold to third parties</div>
+  </div>
+
+  <!-- 4. Third-party services -->
+  <h2>4. Third-Party Services We Use</h2>
+  <p>The app communicates with the following external services, all opt-in where noted:</p>
+
+  <table class="data-table">
+    <tr>
+      <th>Service</th><th>Provider</th><th>Data Sent</th><th>Privacy Policy</th>
+    </tr>
+    <tr>
+      <td>WeatherKit</td>
+      <td>Apple Inc.</td>
+      <td>GPS coordinates (when weather is enabled)</td>
+      <td><a href="https://www.apple.com/legal/privacy/" target="_blank">apple.com/legal/privacy</a></td>
+    </tr>
+    <tr>
+      <td>MapKit (reverse geocoding)</td>
+      <td>Apple Inc.</td>
+      <td>GPS coordinates (anonymised per Apple's policy)</td>
+      <td><a href="https://www.apple.com/legal/privacy/" target="_blank">apple.com/legal/privacy</a></td>
+    </tr>
+    <tr>
+      <td>App Store / StoreKit</td>
+      <td>Apple Inc.</td>
+      <td>Purchase verification token</td>
+      <td><a href="https://www.apple.com/legal/privacy/" target="_blank">apple.com/legal/privacy</a></td>
+    </tr>
+    <tr>
+      <td>MQTT Broker</td>
+      <td><em>Your self-hosted server</em></td>
+      <td>Alarm state events, snooze counts (user-configured)</td>
+      <td>N/A — you control this</td>
+    </tr>
+    <tr>
+      <td>NWS Alerts API <span class="badge opt-in">Opt-in</span></td>
+      <td>National Weather Service (US Gov)</td>
+      <td>Approximate location (coordinates or bounding box) to fetch weather alerts</td>
+      <td><a href="https://www.weather.gov/privacy" target="_blank">weather.gov/privacy</a></td>
+    </tr>
+  </table>
+
+  <p>There are no advertising networks, analytics SDKs, or crash reporting services integrated into the app.</p>
+
+  <!-- 5. Permissions -->
+  <h2>5. iOS Permissions</h2>
+
+  <table class="data-table">
+    <tr>
+      <th>Permission</th><th>When requested</th><th>Used for</th><th>Required?</th>
+    </tr>
+    <tr>
+      <td>Location (When In Use)</td>
+      <td>First time you enable weather, NWS alerts, or MQTT network detection</td>
+      <td>Weather display (WeatherKit); NWS weather alert fetching; WiFi SSID detection for MQTT routing</td>
+      <td><span class="badge opt-in">Optional</span></td>
+    </tr>
+    <tr>
+      <td>Notifications</td>
+      <td>On first launch or when scheduling an alarm</td>
+      <td>Alarm alerts, snooze reminders, background refresh warnings</td>
+      <td><span class="badge opt-in">Optional (core feature)</span></td>
+    </tr>
+    <tr>
+      <td>Background App Refresh</td>
+      <td>iOS setting (not a prompt)</td>
+      <td>Keeps MQTT connection alive; ensures alarms fire on time</td>
+      <td><span class="badge opt-in">Optional (recommended)</span></td>
+    </tr>
+    <tr>
+      <td>AlarmKit</td>
+      <td>When you create your first alarm</td>
+      <td>Scheduling system-level alarms that fire reliably</td>
+      <td><span class="badge opt-in">Optional (core feature)</span></td>
+    </tr>
+  </table>
+
+  <p>You can revoke any permission at any time in <strong>Settings → Privacy &amp; Security</strong> on your device.</p>
+
+  <!-- 6. Data retention -->
+  <h2>6. Data Retention &amp; Deletion</h2>
+  <p>
+    Because all data is stored locally on your device, you are in full control:
+  </p>
+  <ul>
+    <li><strong>Delete the app</strong> — removes all app data, settings, and alarms from your device.</li>
+    <li><strong>Diagnostic logs</strong> — auto-purge after 7 days. You can also clear them manually in Settings.</li>
+    <li><strong>Purchase records</strong> — managed by Apple's App Store; deleting the app does not affect your entitlements.</li>
+  </ul>
+  <p>We hold no data about you on our servers, so there is nothing for us to delete on your behalf.</p>
+
+  <!-- 7. Children -->
+  <h2>7. Children's Privacy</h2>
+  <p>
+    Allarise is not directed at children under the age of 13. We do not knowingly collect
+    personal information from children. The app does not require an account, age verification,
+    or any personal details to function.
+  </p>
+
+  <!-- 8. Changes -->
+  <h2>8. Changes to This Policy</h2>
+  <p>
+    If we make material changes to this privacy policy, we will update the "Last updated" date at
+    the top of this page and note the changes in the App Store release notes. Continued use of the
+    app after changes constitutes acceptance of the updated policy.
+  </p>
+
+  <!-- 9. Your rights -->
+  <h2>9. Your Rights</h2>
+  <p>
+    Depending on your jurisdiction, you may have rights including access to, correction of, or
+    deletion of personal data. Because Allarise stores all data locally on your device and
+    transmits none to our servers, the practical exercise of these rights is:
+  </p>
+  <ul>
+    <li><strong>Access / Export:</strong> All your data is on your device — export alarm data or logs directly from the app's Settings.</li>
+    <li><strong>Deletion:</strong> Delete the app to remove all data, or use Settings to clear specific items.</li>
+  </ul>
+  <p>If you have a privacy concern, please contact us at <a href="mailto:privacy@domoretech.net">privacy@domoretech.net</a>.</p>
+
+  <!-- Contact -->
+  <div class="contact-box">
+    <h3>Contact Us</h3>
+    <p style="margin-bottom:8px;">Questions about this policy or how your data is handled?</p>
+    <p>
+      <strong>Bryan Scott Daniel, doing business as Allarise</strong><br />
+      Email: <a href="mailto:privacy@domoretech.net">privacy@domoretech.net</a>
+    </p>
+  </div>
+
+
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="https://discord.gg/wUxJKAD4dP"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="18" height="18" style="vertical-align:-3px;margin-right:5px;fill:currentColor"><path d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"/></svg>Discord</a>
+    <a href="mailto:support@domoretech.net">✉️ support@domoretech.net</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+  </div>
+  <div>© 2026 Allarise</div>
+</footer>
+
+<script>
+  var _navOpen = false;
+  function toggleNav() {
+    var d = document.getElementById('nav-dropdown');
+    var b = document.getElementById('nav-menu-btn');
+    _navOpen = !_navOpen;
+    d.style.display = _navOpen ? 'block' : 'none';
+    b.textContent = _navOpen ? '✕' : '☰';
+  }
+  document.addEventListener('click', function(e) {
+    if (!_navOpen) return;
+    var d = document.getElementById('nav-dropdown');
+    var b = document.getElementById('nav-menu-btn');
+    if (!d.contains(e.target) && e.target !== b && !b.contains(e.target)) {
+      _navOpen = false;
+      d.style.display = 'none';
+      b.textContent = '☰';
+    }
+  });
+  document.getElementById('nav-dropdown').style.display = 'none';
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="app-icon.png">
+<link rel="apple-touch-icon" href="app-icon.png">
+<title>[BETA] Allarise MQTT Payload Builder</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f5f5f7;
+    --surface2: #e8e8ed;
+    --border: #d2d2d7;
+    --accent: #0071e3;
+    --accent2: #6e40c9;
+    --green: #1d8348;
+    --green-bg: #eafaf1;
+    --red: #c0392b;
+    --yellow: #9e6200;
+    --text: #1d1d1f;
+    --text2: #6e6e73;
+    --text3: #98989d;
+    --mono: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000000;
+      --surface: #1c1c1e;
+      --surface2: #2c2c2e;
+      --border: #38383a;
+      --accent: #2997ff;
+      --accent2: #9b6dff;
+      --green: #30d158;
+      --green-bg: #0d2614;
+      --red: #ff453a;
+      --yellow: #ffd60a;
+      --text: #f5f5f7;
+      --text2: #98989d;
+      --text3: #636366;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 1.6; cursor: pointer; }
+
+  /* ─── Layout ─── */
+  .app { display: flex; height: 100vh; }
+  .sidebar { width: 210px; min-width: 210px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px 0; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .content { flex: 1; overflow-y: auto; padding: 28px 32px; }
+
+  /* ─── Sidebar ─── */
+  .sidebar-title { padding: 0 20px 16px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); }
+  .nav-group { margin-bottom: 8px; }
+  .nav-group-label { padding: 4px 20px; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-top: 8px; }
+  .nav-item { display: block; width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+    padding: 8px 20px; color: var(--text); font-size: 14px; transition: all 0.15s; border-left: 3px solid transparent; }
+  .nav-item:hover { background: var(--surface2); }
+  .nav-item.active { color: var(--accent); background: rgba(0,113,227,0.08); border-left-color: var(--accent); font-weight: 500; }
+  .nav-item .badge { float: right; font-size: 10px; background: var(--accent2); color: white; padding: 1px 6px; border-radius: 10px; opacity: 0.8; }
+
+  /* ─── Page header ─── */
+  .page-header { margin-bottom: 24px; }
+  .page-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .page-header p { color: var(--text2); font-size: 15px; }
+
+  /* ─── Config bar ─── */
+  .config-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 20px; margin-bottom: 24px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .config-bar label { font-size: 13px; color: var(--text2); margin-bottom: 4px; display: block; }
+  .config-bar .field { flex: 1; min-width: 140px; }
+  .config-bar input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; color: var(--text); font-size: 14px; }
+  .config-bar input:focus { outline: none; border-color: var(--accent); }
+  .topic-preview { flex: 2; min-width: 200px; }
+  .topic-preview code { display: block; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px; font-family: var(--mono); font-size: 12px; color: var(--green); overflow-x: auto; white-space: nowrap; }
+
+  /* ─── Two-column layout ─── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ─── Card ─── */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  .card-title { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; }
+
+  /* ─── Form fields ─── */
+  .field-group { margin-bottom: 12px; }
+  .field-group label { display: block; font-size: 13px; color: var(--text2); margin-bottom: 5px; }
+  .field-group label span { color: var(--red); margin-left: 2px; }
+  .field-group input[type=text],
+  .field-group input[type=number],
+  .field-group select,
+  .field-group textarea {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; color: var(--text); font-size: 14px; font-family: inherit;
+  }
+  .field-group input:focus, .field-group select:focus, .field-group textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,0.12); }
+  .field-group textarea { resize: vertical; min-height: 72px; }
+  .field-group select { cursor: pointer; }
+  .field-hint { font-size: 12px; color: var(--text3); margin-top: 3px; }
+
+  /* Days picker */
+  .days-picker { display: flex; gap: 6px; flex-wrap: wrap; }
+  .day-btn { padding: 5px 12px; border-radius: 980px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text2); cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.15s; }
+  .day-btn.selected { background: rgba(0,113,227,0.12); border-color: var(--accent); color: var(--accent); }
+
+  /* Toggle row */
+  .toggle-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .toggle-row label { color: var(--text); font-size: 13px; cursor: pointer; }
+  input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+
+  /* ─── JSON preview ─── */
+  .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .preview-header .card-title { margin-bottom: 0; }
+  .copy-btn { background: var(--accent); color: white; border: none; border-radius: 980px; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 600; transition: opacity 0.15s; }
+  .copy-btn:hover { opacity: 0.85; }
+  .copy-btn.copied { background: var(--green); }
+  pre { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-family: var(--mono); font-size: 12px; color: var(--text); overflow-x: auto; white-space: pre-wrap; word-break: break-all; line-height: 1.7; }
+  .json-key { color: #7ec8e3; }
+  .json-str { color: #a8d5a2; }
+  .json-num { color: #f0c27f; }
+  .json-bool { color: #cc99ff; }
+  .json-null { color: var(--text3); }
+
+  /* ─── YAML block ─── */
+  .yaml-section { margin-top: 20px; }
+  .yaml-section h3 { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; font-weight: 600; }
+  .yaml-block { position: relative; }
+  .yaml-block pre { color: var(--text); }
+  .yaml-block .copy-btn { position: absolute; top: 10px; right: 10px; }
+
+  /* ─── Tabs (for update by name) ─── */
+  .tab-bar { display: flex; gap: 2px; margin-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .tab-btn { padding: 8px 16px; border: none; background: none; color: var(--text2); cursor: pointer; font-size: 14px; border-bottom: 2px solid transparent; transition: all 0.15s; }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* ─── Info box ─── */
+  .info-box { background: rgba(0,113,227,0.06); border: 1px solid rgba(0,113,227,0.2); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: 14px; color: var(--text2); }
+  .info-box strong { color: var(--accent); }
+  .warn-box { background: rgba(158,98,0,0.06); border: 1px solid rgba(158,98,0,0.2); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: 14px; color: var(--text2); }
+  .warn-box strong { color: var(--yellow); }
+  @media (prefers-color-scheme: dark) {
+    .info-box { background: rgba(41,151,255,0.08); border-color: rgba(41,151,255,0.25); }
+    .warn-box { background: rgba(255,214,10,0.08); border-color: rgba(255,214,10,0.25); }
+  }
+
+  /* ─── Page sections ─── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ─── Field rows ─── */
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  /* ── Top nav bar ── */
+  .site-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 32px; gap: 24px;
+    height: 52px;
+  }
+  .site-nav a { color: var(--text2); text-decoration: none; font-size: 14px; white-space: nowrap; flex-shrink: 0; }
+  .site-nav a:hover { color: var(--accent); }
+  .site-nav .nav-home { display: flex; align-items: center; gap: 8px; margin-right: auto; flex-shrink: 0; }
+  .site-nav .nav-home img { width: 28px; height: 28px; border-radius: 6px; }
+  .site-nav .nav-home .icon-light { display: block; }
+  .site-nav .nav-home .icon-dark  { display: none;  }
+  @media (prefers-color-scheme: dark) {
+    .site-nav .nav-home .icon-light { display: none;  }
+    .site-nav .nav-home .icon-dark  { display: block; }
+  }
+  .site-nav .nav-home span { font-size: 16px; font-weight: 700; color: var(--text); }
+  .site-nav .nav-active { color: var(--accent) !important; font-weight: 600; }
+  .app { height: calc(100vh - 52px); }
+
+  footer { border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--secondary); }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
+
+  /* ── Hamburger nav ── */
+  .nav-menu-btn {
+    display: none; background: none; border: none; cursor: pointer;
+    color: var(--text); font-size: 22px; padding: 4px 8px;
+    border-radius: 6px; line-height: 1; margin-left: auto;
+  }
+  .nav-dropdown {
+    display: none; position: fixed; top: 52px; left: 0; right: 0;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+    z-index: 200; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .nav-dropdown a {
+    display: block; padding: 14px 24px; font-size: 16px;
+    color: var(--text); text-decoration: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-dropdown a:last-child { border-bottom: none; }
+  .nav-dropdown a.nav-active { color: var(--accent); font-weight: 600; }
+  .nav-dropdown.open { display: block; }
+
+  /* ─── Mobile sidebar replacement ─── */
+  .mobile-nav { display: none; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .mobile-nav select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; color: var(--text); font-size: 15px; font-family: inherit; cursor: pointer; }
+  .mobile-nav select:focus { outline: none; border-color: var(--accent); }
+
+  @media (max-width: 768px) {
+    .app { flex-direction: column; height: auto; min-height: calc(100vh - 52px); }
+    .sidebar { display: none; }
+    .mobile-nav { display: block; }
+    .main { overflow: visible; }
+    .content { padding: 16px; overflow-y: visible; }
+    .row-2, .row-3 { grid-template-columns: 1fr !important; }
+    .site-nav { padding: 0 16px; gap: 16px; }
+    .config-bar { padding: 14px 16px; }
+    .two-col { grid-template-columns: 1fr; }
+    .site-nav a:not(.nav-home) { display: none !important; }
+    .nav-menu-btn { display: block !important; }
+  }
+</style>
+</head>
+<body>
+<!-- BETA SITE BANNER — present only on beta.allarise.app, not on the production site. -->
+<div style="background:#b45309;color:#fff;padding:10px 16px;text-align:center;font:600 14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;position:relative;z-index:9999">
+  🧪 Beta site — documents the TestFlight build and the <code style="background:rgba(0,0,0,.22);padding:1px 5px;border-radius:4px">allarise-hacs-beta</code> integration.
+  <a href="https://allarise.app" style="color:#fff;text-decoration:underline">Go to the release site →</a>
+</div>
+
+<nav class="site-nav">
+  <a href="index.html" class="nav-home">
+    <img src="app-icon.png" class="icon-light" alt="Allarise" />
+    <img src="app-icon-dark.png" class="icon-dark" alt="Allarise" />
+    <span>Allarise</span>
+  </a>
+  <a href="index.html">About</a>
+  <a href="home-assistant.html">Home Assistant</a>
+  <a href="mqtt-builder.html" class="nav-active">MQTT Builder</a>
+  <a href="faq.html">FAQ</a>
+  <button class="nav-menu-btn" id="nav-menu-btn" onclick="toggleNav()">☰</button>
+</nav>
+<div class="nav-dropdown" id="nav-dropdown">
+  <a href="index.html">About</a>
+  <a href="home-assistant.html">Home Assistant</a>
+  <a href="mqtt-builder.html" class="nav-active">MQTT Builder</a>
+  <a href="faq.html">FAQ</a>
+</div>
+
+<div class="app">
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-title">Allarise MQTT</div>
+
+  <div class="nav-group-label">Alarm Management</div>
+  <button class="nav-item active" onclick="showPage('create-alarm', this)">Create Alarm</button>
+  <button class="nav-item" onclick="showPage('update-alarm', this)">Update Alarm</button>
+  <button class="nav-item" onclick="showPage('delete-alarm', this)">Delete Alarm</button>
+
+  <div class="nav-group-label">Commands</div>
+  <button class="nav-item" onclick="showPage('create-command', this)">Create Command</button>
+  <button class="nav-item" onclick="showPage('delete-command', this)">Delete Command</button>
+
+  <div class="nav-group-label">Dashboard</div>
+  <button class="nav-item" onclick="showPage('alert', this)">Trigger Alert</button>
+  <button class="nav-item" onclick="showPage('dashboard', this)">Dashboard Actions</button>
+  <button class="nav-item" onclick="showPage('per-alarm', this)">Per-Alarm Actions</button>
+
+  <div class="nav-group-label">Ambient</div>
+  <button class="nav-item" onclick="showPage('sleep-sounds', this)">Sleep Sounds</button>
+</nav>
+
+<!-- Main -->
+<div class="main">
+
+<!-- Mobile nav (replaces sidebar on small screens) -->
+<div class="mobile-nav">
+  <select id="mobile-page-select" onchange="showPageFromSelect(this)">
+    <optgroup label="Alarm Management">
+      <option value="create-alarm">Create Alarm</option>
+      <option value="update-alarm">Update Alarm</option>
+      <option value="delete-alarm">Delete Alarm</option>
+    </optgroup>
+    <optgroup label="Commands">
+      <option value="create-command">Create Command</option>
+      <option value="delete-command">Delete Command</option>
+    </optgroup>
+    <optgroup label="Dashboard">
+      <option value="alert">Trigger Alert</option>
+      <option value="dashboard">Dashboard Actions</option>
+      <option value="per-alarm">Per-Alarm Actions</option>
+    </optgroup>
+    <optgroup label="Ambient">
+      <option value="sleep-sounds">Sleep Sounds</option>
+    </optgroup>
+  </select>
+</div>
+
+<div class="content">
+
+  <!-- Global config -->
+  <div class="config-bar">
+    <div class="field">
+      <label>Topic Prefix</label>
+      <input type="text" id="cfg-prefix" value="allarise" oninput="updateAll()">
+    </div>
+    <div class="field">
+      <label>Device Name</label>
+      <input type="text" id="cfg-device" value="iphone" oninput="updateAll()">
+    </div>
+    <div class="topic-preview">
+      <label>Current Topic</label>
+      <code id="cfg-topic-display">allarise/iphone/command/create_alarm</code>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       CREATE ALARM
+  ══════════════════════════════════════════════════ -->
+  <div id="page-create-alarm" class="page active">
+    <div class="page-header">
+      <h1>Create Alarm</h1>
+      <p>Publishes to <code style="color:var(--green)">allarise/{device}/command/create_alarm</code>. Only <code>time</code> is required — all other fields use the app defaults if omitted.</p>
+    </div>
+
+    <div class="two-col">
+      <!-- Form -->
+      <div>
+        <div class="card">
+          <div class="card-title">Required</div>
+          <div class="field-group">
+            <label>Time <span>*</span>
+              <span style="font-weight:normal;margin-left:8px;font-size:0.85em">
+                <label style="cursor:pointer"><input type="radio" name="ca-time-fmt" value="24" checked onchange="syncTimeFormat('ca')"> 24h</label>
+                <label style="cursor:pointer;margin-left:6px"><input type="radio" name="ca-time-fmt" value="12" onchange="syncTimeFormat('ca')"> 12h</label>
+              </span>
+            </label>
+            <input type="text" id="ca-time" placeholder="07:30" oninput="updateCreateAlarm()">
+            <div id="ca-time-12h" style="display:none;gap:6px;align-items:center;flex-wrap:nowrap">
+              <input type="number" id="ca-hour" placeholder="7" min="1" max="12" style="width:64px" oninput="updateCreateAlarm()">
+              <span style="font-size:1.1em;font-weight:bold">:</span>
+              <input type="number" id="ca-minute" placeholder="30" min="0" max="59" style="width:64px" oninput="updateCreateAlarm()">
+              <select id="ca-ampm" onchange="updateCreateAlarm()" style="width:72px">
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+              </select>
+            </div>
+            <div class="field-hint">Time of day for the alarm</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div class="card-title">Basic</div>
+          <div class="field-group">
+            <label>Alarm Name</label>
+            <input type="text" id="ca-label" placeholder="Morning Alarm" oninput="updateCreateAlarm()">
+          </div>
+          <div class="toggle-row">
+            <input type="checkbox" id="ca-enabled" checked onchange="updateCreateAlarm()">
+            <label for="ca-enabled">Enabled</label>
+          </div>
+          <div class="field-group">
+            <label>Recurring Days</label>
+            <div class="days-picker" id="ca-days">
+              <button class="day-btn" data-day="1" onclick="toggleDay(this,'ca')">Sun</button>
+              <button class="day-btn" data-day="2" onclick="toggleDay(this,'ca')">Mon</button>
+              <button class="day-btn" data-day="3" onclick="toggleDay(this,'ca')">Tue</button>
+              <button class="day-btn" data-day="4" onclick="toggleDay(this,'ca')">Wed</button>
+              <button class="day-btn" data-day="5" onclick="toggleDay(this,'ca')">Thu</button>
+              <button class="day-btn" data-day="6" onclick="toggleDay(this,'ca')">Fri</button>
+              <button class="day-btn" data-day="7" onclick="toggleDay(this,'ca')">Sat</button>
+            </div>
+            <div class="field-hint">None selected = one-time alarm</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div class="card-title">Audio</div>
+          <div class="row-2">
+            <div class="field-group">
+              <label>Sound ID</label>
+              <select id="ca-sound" onchange="updateCreateAlarm()">
+                <option value="">— app default —</option>
+                <option value="Alarm_Clock">Alarm Clock</option>
+                <option value="Digital_Alarm_Clock">Digital Alarm Clock</option>
+                <option value="Off_Hook_Tone">Off Hook Tone</option>
+                <option value="Perimeter_Breach">Perimeter Breach</option>
+                <option value="Solarpsychedelic">Solarpsychedelic</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Volume (0–100)</label>
+              <input type="number" id="ca-volume" placeholder="— default —" min="0" max="100" oninput="updateCreateAlarm()">
+            </div>
+          </div>
+          <div class="row-2">
+            <div class="toggle-row">
+              <input type="checkbox" id="ca-vibrate" onchange="updateCreateAlarm()">
+              <label for="ca-vibrate">Vibrate</label>
+            </div>
+            <div class="field-group">
+              <label>Fade-in Duration (min, 1–15)</label>
+              <input type="number" id="ca-fade-in" placeholder="0 = off" min="0" max="15" oninput="updateCreateAlarm()">
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div class="card-title">Snooze</div>
+          <div class="row-2">
+            <div class="field-group">
+              <label>Duration (min)</label>
+              <input type="number" id="ca-snooze-duration" placeholder="— default —" min="1" max="60" oninput="updateCreateAlarm()">
+            </div>
+            <div class="field-group">
+              <label>Max Count</label>
+              <input type="number" id="ca-max-snooze" placeholder="— default —" min="0" oninput="updateCreateAlarm()">
+            </div>
+          </div>
+          <div class="row-2">
+            <div class="field-group">
+              <label>Snooze Gesture</label>
+              <select id="ca-snooze-mode" onchange="syncHoldDisplay('ca','snooze');updateCreateAlarm()">
+                <option value="">— default —</option>
+                <option value="tap">Tap</option>
+                <option value="hold">Hold</option>
+                <option value="home_assistant">Home Assistant</option>
+                <option value="disabled">Disabled</option>
+              </select>
+            </div>
+            <div class="field-group" id="ca-snooze-hold-group" style="display:none">
+              <label>Hold Duration (seconds)</label>
+              <input type="number" id="ca-snooze-hold-duration" placeholder="— default —" min="0.5" max="10" step="0.5" oninput="updateCreateAlarm()">
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div class="card-title">Skip</div>
+          <div class="row-2">
+            <div class="field-group">
+              <label>Skip Gesture</label>
+              <select id="ca-skip-mode" onchange="syncHoldDisplay('ca','skip');updateCreateAlarm()">
+                <option value="">— default —</option>
+                <option value="tap">Tap</option>
+                <option value="hold">Hold</option>
+                <option value="disabled">Disabled</option>
+              </select>
+            </div>
+            <div class="field-group" id="ca-skip-hold-group" style="display:none">
+              <label>Hold Duration (seconds)</label>
+              <input type="number" id="ca-skip-hold-duration" placeholder="— default —" min="0.5" max="10" step="0.5" oninput="updateCreateAlarm()">
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div class="card-title">Mission</div>
+          <div class="field-group">
+            <label>Mission Type</label>
+            <select id="ca-mission" onchange="syncMissionDisplay('ca');updateCreateAlarm()">
+              <option value="">— none —</option>
+              <option value="none">Tap</option>
+              <option value="shake">Shake</option>
+              <option value="math">Math</option>
+              <option value="balance_ball">Balance Ball</option>
+              <option value="block_drop">Bricks</option>
+              <option value="meteor">Meteor Defense</option>
+              <option value="home_assistant">Home Assistant</option>
+              <option value="alert">Alert</option>
+            </select>
+          </div>
+          <!-- Shake sub-options -->
+          <div id="ca-mc-shake" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Difficulty</label>
+                <select id="ca-shake-mode" onchange="updateCreateAlarm()">
+                  <option value="">— default —</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Shake Count</label>
+                <input type="number" id="ca-shake-count" placeholder="— default —" min="1" max="200" oninput="updateCreateAlarm()">
+              </div>
+            </div>
+            <div class="row-2">
+              <div class="field-group">
+                <label>Duration (seconds)</label>
+                <input type="number" id="ca-shake-duration" placeholder="— default —" min="1" max="60" oninput="updateCreateAlarm()">
+              </div>
+              <div class="field-group">
+                <label>Intensity (1–4)</label>
+                <input type="number" id="ca-shake-intensity" placeholder="— default —" min="1" max="4" oninput="updateCreateAlarm()">
+              </div>
+            </div>
+          </div>
+          <!-- Math sub-options -->
+          <div id="ca-mc-math" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Difficulty</label>
+                <select id="ca-math-difficulty" onchange="updateCreateAlarm()">
+                  <option value="">— default —</option>
+                  <option value="super_easy">Super Easy</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Problem Count</label>
+                <input type="number" id="ca-math-count" placeholder="— default —" min="1" max="20" oninput="updateCreateAlarm()">
+              </div>
+            </div>
+          </div>
+          <!-- Balance Ball sub-options -->
+          <div id="ca-mc-balance" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Difficulty</label>
+                <select id="ca-balance-difficulty" onchange="updateCreateAlarm()">
+                  <option value="">— default —</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Hold Duration (s)</label>
+                <input type="number" id="ca-balance-hold" placeholder="— default —" min="3" max="120" oninput="updateCreateAlarm()">
+              </div>
+            </div>
+          </div>
+          <!-- Bricks sub-options -->
+          <div id="ca-mc-blockdrop" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Difficulty</label>
+                <select id="ca-blockdrop-difficulty" onchange="updateCreateAlarm()">
+                  <option value="">— default —</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Lines to Clear</label>
+                <input type="number" id="ca-blockdrop-lines" placeholder="— default —" min="1" max="12" oninput="updateCreateAlarm()">
+              </div>
+            </div>
+          </div>
+          <!-- Meteor Defense sub-options -->
+          <div id="ca-mc-meteor" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Difficulty</label>
+                <select id="ca-meteor-difficulty" onchange="updateCreateAlarm()">
+                  <option value="">— default —</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Meteors to Destroy</label>
+                <input type="number" id="ca-meteor-targets" placeholder="— default —" min="3" max="40" oninput="updateCreateAlarm()">
+              </div>
+            </div>
+          </div>
+          <!-- Tap sub-options -->
+          <div id="ca-mc-tap" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Dismiss Mode</label>
+                <select id="ca-tap-mode" onchange="updateCreateAlarm()">
+                  <option value="">— default —</option>
+                  <option value="tap">Tap</option>
+                  <option value="hold">Hold</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Tap Count</label>
+                <input type="number" id="ca-tap-count" placeholder="— default —" min="1" max="50" oninput="updateCreateAlarm()">
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Hold Duration (s)</label>
+              <input type="number" id="ca-tap-hold" placeholder="— default —" min="1" max="10" oninput="updateCreateAlarm()">
+            </div>
+            <div class="field-hint">More than one tap, or any hold, makes this a real mission — the alarm opens the app instead of stopping from the lock screen.</div>
+          </div>
+                    <!-- HA sub-options -->
+          <div id="ca-mc-ha" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Snooze Mode</label>
+                <select id="ca-ha-snooze-mode" onchange="updateCreateAlarm()">
+                  <option value="">— default —</option>
+                  <option value="dismiss">Dismiss (no snooze)</option>
+                  <option value="snooze">Snooze allowed</option>
+                </select>
+                <div class="field-hint">What happens when HA confirms the mission</div>
+              </div>
+              <div class="field-group">
+                <label>Fallback Mission</label>
+                <select id="ca-ha-fallback" onchange="updateCreateAlarm()">
+                  <option value="">— none —</option>
+                  <option value="shake">Shake</option>
+                  <option value="math">Math</option>
+                </select>
+                <div class="field-hint">If no HA response, fall back to this mission</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div class="card-title">Alarm Screen</div>
+          <div class="field-group">
+            <label>Notes</label>
+            <textarea id="ca-notes" placeholder="Text shown on the alarm screen…" oninput="updateCreateAlarm()"></textarea>
+          </div>
+          <div class="field-group">
+            <label>Alarm Screen Commands (comma-separated names, max 4)</label>
+            <input type="text" id="ca-commands" placeholder="Lock Front Door, Turn Off Lights" oninput="updateCreateAlarm()">
+            <div class="field-hint">Command names must already exist in the app</div>
+          </div>
+          <div class="row-2">
+            <div class="field-group">
+              <label>Swipe Left Command</label>
+              <input type="text" id="ca-swipe-left" placeholder="command name" oninput="updateCreateAlarm()">
+            </div>
+            <div class="field-group">
+              <label>Swipe Right Command</label>
+              <input type="text" id="ca-swipe-right" placeholder="command name" oninput="updateCreateAlarm()">
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Additional Missions (slots 2–5)</label>
+            <input type="text" id="ca-extra-missions" placeholder="math, shake" oninput="updateCreateAlarm()">
+            <div class="field-hint">Comma-separated. When set, the payload uses <code>missions</code> — the full ordered sequence — instead of <code>mission</code>.</div>
+          </div>
+          <div class="toggle-row">
+            <input type="checkbox" id="ca-morning-weather" onchange="updateCreateAlarm()">
+            <label for="ca-morning-weather">Morning Weather (show weather card after dismissing)</label>
+          </div>
+          <div class="toggle-row">
+            <input type="checkbox" id="ca-ephemeral" onchange="updateCreateAlarm()">
+            <label for="ca-ephemeral">Ephemeral (auto-delete after firing)</label>
+          </div>
+          <div class="field-group">
+            <label>MQTT ID (optional tracking key)</label>
+            <input type="text" id="ca-mqtt-id" placeholder="my-automation-alarm" oninput="updateCreateAlarm()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div>
+        <div class="card" style="position:sticky;top:0">
+          <div class="preview-header">
+            <div class="card-title">JSON Payload</div>
+            <button class="copy-btn" onclick="copyPayload('ca-preview', this)">Copy</button>
+          </div>
+          <pre id="ca-preview">{}</pre>
+
+          <div class="yaml-section">
+            <h3>HA Automation Action</h3>
+            <div class="yaml-block">
+              <pre id="ca-yaml"></pre>
+              <button class="copy-btn" onclick="copyPayload('ca-yaml', this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       UPDATE ALARM
+  ══════════════════════════════════════════════════ -->
+  <div id="page-update-alarm" class="page">
+    <div class="page-header">
+      <h1>Update Alarm</h1>
+      <p>Partial update — only fields you provide are changed. Publishes to <code style="color:var(--green)">allarise/{device}/command/update_alarm</code>.</p>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="showTab('ua-by-index', this)">By Index</button>
+      <button class="tab-btn" onclick="showTab('ua-by-name', this)">By Alarm Name</button>
+    </div>
+
+    <!-- By index -->
+    <div id="ua-by-index" class="tab-pane active">
+      <div class="two-col">
+        <div>
+          <div class="card">
+            <div class="card-title">Target</div>
+            <div class="field-group">
+              <label>Alarm Index <span>*</span></label>
+              <input type="number" id="ua-index" placeholder="e.g. 1" min="1" oninput="updateUpdateAlarm()">
+              <div class="field-hint">Found in sensor: allarise_{device}_alarm_{N}_name</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <div class="card-title">Fields to Update (leave blank to skip)</div>
+            <div class="field-group">
+              <label>Alarm Name</label>
+              <input type="text" id="ua-label" oninput="updateUpdateAlarm()">
+            </div>
+            <div class="field-group">
+              <label>Time
+                <span style="font-weight:normal;margin-left:8px;font-size:0.85em">
+                  <label style="cursor:pointer"><input type="radio" name="ua-time-fmt" value="24" checked onchange="syncTimeFormat('ua')"> 24h</label>
+                  <label style="cursor:pointer;margin-left:6px"><input type="radio" name="ua-time-fmt" value="12" onchange="syncTimeFormat('ua')"> 12h</label>
+                </span>
+              </label>
+              <input type="text" id="ua-time" placeholder="07:30" oninput="updateUpdateAlarm()">
+              <div id="ua-time-12h" style="display:none;gap:6px;align-items:center;flex-wrap:nowrap">
+                <input type="number" id="ua-hour" placeholder="7" min="1" max="12" style="width:64px" oninput="updateUpdateAlarm()">
+                <span style="font-size:1.1em;font-weight:bold">:</span>
+                <input type="number" id="ua-minute" placeholder="30" min="0" max="59" style="width:64px" oninput="updateUpdateAlarm()">
+                <select id="ua-ampm" onchange="updateUpdateAlarm()" style="width:72px">
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Enabled</label>
+              <select id="ua-enabled" onchange="updateUpdateAlarm()">
+                <option value="">— no change —</option>
+                <option value="true">true</option>
+                <option value="false">false</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Recurring Days</label>
+              <div class="days-picker" id="ua-days">
+                <button class="day-btn" data-day="1" onclick="toggleDay(this,'ua')">Sun</button>
+                <button class="day-btn" data-day="2" onclick="toggleDay(this,'ua')">Mon</button>
+                <button class="day-btn" data-day="3" onclick="toggleDay(this,'ua')">Tue</button>
+                <button class="day-btn" data-day="4" onclick="toggleDay(this,'ua')">Wed</button>
+                <button class="day-btn" data-day="5" onclick="toggleDay(this,'ua')">Thu</button>
+                <button class="day-btn" data-day="6" onclick="toggleDay(this,'ua')">Fri</button>
+                <button class="day-btn" data-day="7" onclick="toggleDay(this,'ua')">Sat</button>
+              </div>
+              <div class="field-hint">Select days to set them; clear all = leave days unchanged</div>
+            </div>
+            <div class="row-2">
+              <div class="field-group">
+                <label>Sound ID</label>
+                <select id="ua-sound" onchange="updateUpdateAlarm()">
+                  <option value="">— no change —</option>
+                  <option value="Alarm_Clock">Alarm Clock</option>
+                  <option value="Digital_Alarm_Clock">Digital Alarm Clock</option>
+                  <option value="Off_Hook_Tone">Off Hook Tone</option>
+                  <option value="Perimeter_Breach">Perimeter Breach</option>
+                  <option value="Solarpsychedelic">Solarpsychedelic</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Volume (0–100)</label>
+                <input type="number" id="ua-volume" placeholder="— no change —" min="0" max="100" oninput="updateUpdateAlarm()">
+              </div>
+            </div>
+            <div class="row-2">
+              <div class="field-group">
+                <label>Vibrate</label>
+                <select id="ua-vibrate" onchange="updateUpdateAlarm()">
+                  <option value="">— no change —</option>
+                  <option value="true">true</option>
+                  <option value="false">false</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Fade-in Duration (0=off)</label>
+                <input type="number" id="ua-fade-in" placeholder="— no change —" min="0" max="15" oninput="updateUpdateAlarm()">
+              </div>
+            </div>
+            <div class="row-2">
+              <div class="field-group">
+                <label>Snooze Duration</label>
+                <input type="number" id="ua-snooze-duration" placeholder="— no change —" oninput="updateUpdateAlarm()">
+              </div>
+              <div class="field-group">
+                <label>Max Snooze</label>
+                <input type="number" id="ua-max-snooze" placeholder="— no change —" oninput="updateUpdateAlarm()">
+              </div>
+            </div>
+            <div class="row-2">
+              <div class="field-group">
+                <label>Snooze Gesture</label>
+                <select id="ua-snooze-mode" onchange="syncHoldDisplay('ua','snooze');updateUpdateAlarm()">
+                  <option value="">— no change —</option>
+                  <option value="tap">Tap</option>
+                  <option value="hold">Hold</option>
+                  <option value="home_assistant">Home Assistant</option>
+                  <option value="disabled">Disabled</option>
+                </select>
+              </div>
+              <div class="field-group" id="ua-snooze-hold-group" style="display:none">
+                <label>Hold Duration (seconds)</label>
+                <input type="number" id="ua-snooze-hold-duration" placeholder="— no change —" min="0.5" max="10" step="0.5" oninput="updateUpdateAlarm()">
+              </div>
+            </div>
+            <div class="row-2" style="margin-top:8px">
+              <div class="field-group">
+                <label>Skip Gesture</label>
+                <select id="ua-skip-mode" onchange="syncHoldDisplay('ua','skip');updateUpdateAlarm()">
+                  <option value="">— no change —</option>
+                  <option value="tap">Tap</option>
+                  <option value="hold">Hold</option>
+                  <option value="disabled">Disabled</option>
+                </select>
+              </div>
+              <div class="field-group" id="ua-skip-hold-group" style="display:none">
+                <label>Hold Duration (seconds)</label>
+                <input type="number" id="ua-skip-hold-duration" placeholder="— no change —" min="0.5" max="10" step="0.5" oninput="updateUpdateAlarm()">
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <div class="card-title">Mission</div>
+            <div class="field-group">
+              <label>Mission Type</label>
+              <select id="ua-mission" onchange="syncMissionDisplay('ua');updateUpdateAlarm()">
+                <option value="">— no change —</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance Ball</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor Defense</option>
+                <option value="home_assistant">Home Assistant</option>
+                <option value="alert">Alert</option>
+                <option value="none">Tap (remove mission)</option>
+              </select>
+            </div>
+            <!-- Shake sub-options -->
+            <div id="ua-mc-shake" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Difficulty</label>
+                  <select id="ua-shake-mode" onchange="updateUpdateAlarm()">
+                    <option value="">— no change —</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Shake Count</label>
+                  <input type="number" id="ua-shake-count" placeholder="— no change —" min="1" max="200" oninput="updateUpdateAlarm()">
+                </div>
+              </div>
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Duration (seconds)</label>
+                  <input type="number" id="ua-shake-duration" placeholder="— no change —" min="1" max="60" oninput="updateUpdateAlarm()">
+                </div>
+                <div class="field-group">
+                  <label>Intensity (1–4)</label>
+                  <input type="number" id="ua-shake-intensity" placeholder="— no change —" min="1" max="4" oninput="updateUpdateAlarm()">
+                </div>
+              </div>
+            </div>
+            <!-- Math sub-options -->
+            <div id="ua-mc-math" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Difficulty</label>
+                  <select id="ua-math-difficulty" onchange="updateUpdateAlarm()">
+                    <option value="">— no change —</option>
+                    <option value="super_easy">Super Easy</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Problem Count</label>
+                  <input type="number" id="ua-math-count" placeholder="— no change —" min="1" max="20" oninput="updateUpdateAlarm()">
+                </div>
+              </div>
+            </div>
+          <!-- Balance Ball sub-options -->
+          <div id="ua-mc-balance" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Difficulty</label>
+                <select id="ua-balance-difficulty" onchange="updateUpdateAlarm()">
+                  <option value="">— default —</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Hold Duration (s)</label>
+                <input type="number" id="ua-balance-hold" placeholder="— default —" min="3" max="120" oninput="updateUpdateAlarm()">
+              </div>
+            </div>
+          </div>
+          <!-- Bricks sub-options -->
+          <div id="ua-mc-blockdrop" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Difficulty</label>
+                <select id="ua-blockdrop-difficulty" onchange="updateUpdateAlarm()">
+                  <option value="">— default —</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Lines to Clear</label>
+                <input type="number" id="ua-blockdrop-lines" placeholder="— default —" min="1" max="12" oninput="updateUpdateAlarm()">
+              </div>
+            </div>
+          </div>
+          <!-- Meteor Defense sub-options -->
+          <div id="ua-mc-meteor" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Difficulty</label>
+                <select id="ua-meteor-difficulty" onchange="updateUpdateAlarm()">
+                  <option value="">— default —</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Meteors to Destroy</label>
+                <input type="number" id="ua-meteor-targets" placeholder="— default —" min="3" max="40" oninput="updateUpdateAlarm()">
+              </div>
+            </div>
+          </div>
+          <!-- Tap sub-options -->
+          <div id="ua-mc-tap" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Dismiss Mode</label>
+                <select id="ua-tap-mode" onchange="updateUpdateAlarm()">
+                  <option value="">— default —</option>
+                  <option value="tap">Tap</option>
+                  <option value="hold">Hold</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Tap Count</label>
+                <input type="number" id="ua-tap-count" placeholder="— default —" min="1" max="50" oninput="updateUpdateAlarm()">
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Hold Duration (s)</label>
+              <input type="number" id="ua-tap-hold" placeholder="— default —" min="1" max="10" oninput="updateUpdateAlarm()">
+            </div>
+            <div class="field-hint">More than one tap, or any hold, makes this a real mission — the alarm opens the app instead of stopping from the lock screen.</div>
+          </div>
+                        <!-- HA sub-options -->
+            <div id="ua-mc-ha" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Snooze Mode</label>
+                  <select id="ua-ha-snooze-mode" onchange="updateUpdateAlarm()">
+                    <option value="">— no change —</option>
+                    <option value="dismiss">Dismiss (no snooze)</option>
+                    <option value="snooze">Snooze allowed</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Fallback Mission</label>
+                  <select id="ua-ha-fallback" onchange="updateUpdateAlarm()">
+                    <option value="">— no change —</option>
+                    <option value="none">None</option>
+                    <option value="shake">Shake</option>
+                    <option value="math">Math</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <div class="card-title">Alarm Screen</div>
+            <div class="field-group">
+              <label>Notes (replaces all existing notes)</label>
+              <textarea id="ua-notes" oninput="updateUpdateAlarm()"></textarea>
+            </div>
+            <div class="field-group">
+              <label>Append Notes</label>
+              <textarea id="ua-append-notes" placeholder="Appends with 'HA:' prefix, keeps existing notes" oninput="updateUpdateAlarm()"></textarea>
+            </div>
+            <div class="field-group">
+              <label>Alarm Screen Commands (comma-separated names)</label>
+              <input type="text" id="ua-commands" placeholder="Command 1, Command 2" oninput="updateUpdateAlarm()">
+            </div>
+            <div class="row-2">
+              <div class="field-group">
+                <label>Swipe Left Command</label>
+                <input type="text" id="ua-swipe-left" oninput="updateUpdateAlarm()">
+              </div>
+              <div class="field-group">
+                <label>Swipe Right Command</label>
+                <input type="text" id="ua-swipe-right" oninput="updateUpdateAlarm()">
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Additional Missions (slots 2–5)</label>
+              <input type="text" id="ua-extra-missions" placeholder="math, shake" oninput="updateUpdateAlarm()">
+              <div class="field-hint">Comma-separated. When set, the payload uses <code>missions</code> — the full ordered sequence — instead of <code>mission</code>.</div>
+            </div>
+            <div class="toggle-row">
+              <select id="ua-morning-weather" onchange="updateUpdateAlarm()">
+                <option value="">— no change —</option>
+                <option value="true">On</option>
+                <option value="false">Off</option>
+              </select>
+              <label for="ua-morning-weather">Morning Weather</label>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="position:sticky;top:0">
+            <div class="preview-header">
+              <div class="card-title">JSON Payload</div>
+              <button class="copy-btn" onclick="copyPayload('ua-preview', this)">Copy</button>
+            </div>
+            <pre id="ua-preview">{}</pre>
+            <div class="yaml-section">
+              <h3>HA Automation Action</h3>
+              <div class="yaml-block">
+                <pre id="ua-yaml"></pre>
+                <button class="copy-btn" onclick="copyPayload('ua-yaml', this)">Copy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- By name -->
+    <div id="ua-by-name" class="tab-pane">
+      <div class="info-box">
+        <strong>Native name targeting:</strong> The app resolves the alarm name directly —
+        no HA template required. Just send <code>"name": "Your Alarm"</code> and the app
+        finds the matching alarm (case-insensitive). All the same fields as By Index are available.
+      </div>
+
+      <div class="two-col">
+        <div>
+          <div class="card">
+            <div class="card-title">Target Alarm</div>
+            <div class="field-group">
+              <label>Alarm Name <span>*</span></label>
+              <input type="text" id="ubn-name" placeholder="Morning Alarm" oninput="updateByName()">
+              <div class="field-hint">Case-insensitive. Resolved directly by the app — no template required.</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <div class="card-title">Fields to Update (leave blank to skip)</div>
+            <div class="field-group">
+              <label>Time
+                <span style="font-weight:normal;margin-left:8px;font-size:0.85em">
+                  <label style="cursor:pointer"><input type="radio" name="ubn-time-fmt" value="24" checked onchange="syncTimeFormat('ubn')"> 24h</label>
+                  <label style="cursor:pointer;margin-left:6px"><input type="radio" name="ubn-time-fmt" value="12" onchange="syncTimeFormat('ubn')"> 12h</label>
+                </span>
+              </label>
+              <input type="text" id="ubn-time" placeholder="07:30" oninput="updateByName()">
+              <div id="ubn-time-12h" style="display:none;gap:6px;align-items:center;flex-wrap:nowrap">
+                <input type="number" id="ubn-hour" placeholder="7" min="1" max="12" style="width:64px" oninput="updateByName()">
+                <span style="font-size:1.1em;font-weight:bold">:</span>
+                <input type="number" id="ubn-minute" placeholder="30" min="0" max="59" style="width:64px" oninput="updateByName()">
+                <select id="ubn-ampm" onchange="updateByName()" style="width:72px">
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Enabled</label>
+              <select id="ubn-enabled" onchange="updateByName()">
+                <option value="">— no change —</option>
+                <option value="true">true</option>
+                <option value="false">false</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Recurring Days</label>
+              <div class="days-picker" id="ubn-days">
+                <button class="day-btn" data-day="1" onclick="toggleDay(this,'ubn')">Sun</button>
+                <button class="day-btn" data-day="2" onclick="toggleDay(this,'ubn')">Mon</button>
+                <button class="day-btn" data-day="3" onclick="toggleDay(this,'ubn')">Tue</button>
+                <button class="day-btn" data-day="4" onclick="toggleDay(this,'ubn')">Wed</button>
+                <button class="day-btn" data-day="5" onclick="toggleDay(this,'ubn')">Thu</button>
+                <button class="day-btn" data-day="6" onclick="toggleDay(this,'ubn')">Fri</button>
+                <button class="day-btn" data-day="7" onclick="toggleDay(this,'ubn')">Sat</button>
+              </div>
+              <div class="field-hint">Select days to set them; clear all = leave days unchanged</div>
+            </div>
+            <div class="row-2">
+              <div class="field-group">
+                <label>Sound ID</label>
+                <select id="ubn-sound" onchange="updateByName()">
+                  <option value="">— no change —</option>
+                  <option value="Alarm_Clock">Alarm Clock</option>
+                  <option value="Digital_Alarm_Clock">Digital Alarm Clock</option>
+                  <option value="Off_Hook_Tone">Off Hook Tone</option>
+                  <option value="Perimeter_Breach">Perimeter Breach</option>
+                  <option value="Solarpsychedelic">Solarpsychedelic</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Volume (0–100)</label>
+                <input type="number" id="ubn-volume" placeholder="— no change —" min="0" max="100" oninput="updateByName()">
+              </div>
+            </div>
+            <div class="row-2">
+              <div class="field-group">
+                <label>Vibrate</label>
+                <select id="ubn-vibrate" onchange="updateByName()">
+                  <option value="">— no change —</option>
+                  <option value="true">true</option>
+                  <option value="false">false</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Fade-in Duration (0=off)</label>
+                <input type="number" id="ubn-fade-in" placeholder="— no change —" min="0" max="15" oninput="updateByName()">
+              </div>
+            </div>
+            <div class="row-2">
+              <div class="field-group">
+                <label>Snooze Duration</label>
+                <input type="number" id="ubn-snooze-duration" placeholder="— no change —" oninput="updateByName()">
+              </div>
+              <div class="field-group">
+                <label>Max Snooze</label>
+                <input type="number" id="ubn-max-snooze" placeholder="— no change —" oninput="updateByName()">
+              </div>
+            </div>
+            <div class="row-2">
+              <div class="field-group">
+                <label>Snooze Gesture</label>
+                <select id="ubn-snooze-mode" onchange="syncHoldDisplay('ubn','snooze');updateByName()">
+                  <option value="">— no change —</option>
+                  <option value="tap">Tap</option>
+                  <option value="hold">Hold</option>
+                  <option value="home_assistant">Home Assistant</option>
+                  <option value="disabled">Disabled</option>
+                </select>
+              </div>
+              <div class="field-group" id="ubn-snooze-hold-group" style="display:none">
+                <label>Hold Duration (seconds)</label>
+                <input type="number" id="ubn-snooze-hold-duration" placeholder="— no change —" min="0.5" max="10" step="0.5" oninput="updateByName()">
+              </div>
+            </div>
+            <div class="row-2" style="margin-top:8px">
+              <div class="field-group">
+                <label>Skip Gesture</label>
+                <select id="ubn-skip-mode" onchange="syncHoldDisplay('ubn','skip');updateByName()">
+                  <option value="">— no change —</option>
+                  <option value="tap">Tap</option>
+                  <option value="hold">Hold</option>
+                  <option value="disabled">Disabled</option>
+                </select>
+              </div>
+              <div class="field-group" id="ubn-skip-hold-group" style="display:none">
+                <label>Hold Duration (seconds)</label>
+                <input type="number" id="ubn-skip-hold-duration" placeholder="— no change —" min="0.5" max="10" step="0.5" oninput="updateByName()">
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <div class="card-title">Mission</div>
+            <div class="field-group">
+              <label>Mission Type</label>
+              <select id="ubn-mission" onchange="syncMissionDisplay('ubn');updateByName()">
+                <option value="">— no change —</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance Ball</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor Defense</option>
+                <option value="home_assistant">Home Assistant</option>
+                <option value="alert">Alert</option>
+                <option value="none">Tap (remove mission)</option>
+              </select>
+            </div>
+            <!-- Shake sub-options -->
+            <div id="ubn-mc-shake" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Difficulty</label>
+                  <select id="ubn-shake-mode" onchange="updateByName()">
+                    <option value="">— no change —</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Shake Count</label>
+                  <input type="number" id="ubn-shake-count" placeholder="— no change —" min="1" max="200" oninput="updateByName()">
+                </div>
+              </div>
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Duration (seconds)</label>
+                  <input type="number" id="ubn-shake-duration" placeholder="— no change —" min="1" max="60" oninput="updateByName()">
+                </div>
+                <div class="field-group">
+                  <label>Intensity (1–4)</label>
+                  <input type="number" id="ubn-shake-intensity" placeholder="— no change —" min="1" max="4" oninput="updateByName()">
+                </div>
+              </div>
+            </div>
+            <!-- Math sub-options -->
+            <div id="ubn-mc-math" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Difficulty</label>
+                  <select id="ubn-math-difficulty" onchange="updateByName()">
+                    <option value="">— no change —</option>
+                    <option value="super_easy">Super Easy</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Problem Count</label>
+                  <input type="number" id="ubn-math-count" placeholder="— no change —" min="1" max="20" oninput="updateByName()">
+                </div>
+              </div>
+            </div>
+          <!-- Balance Ball sub-options -->
+          <div id="ubn-mc-balance" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Difficulty</label>
+                <select id="ubn-balance-difficulty" onchange="updateByName()">
+                  <option value="">— default —</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Hold Duration (s)</label>
+                <input type="number" id="ubn-balance-hold" placeholder="— default —" min="3" max="120" oninput="updateByName()">
+              </div>
+            </div>
+          </div>
+          <!-- Bricks sub-options -->
+          <div id="ubn-mc-blockdrop" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Difficulty</label>
+                <select id="ubn-blockdrop-difficulty" onchange="updateByName()">
+                  <option value="">— default —</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Lines to Clear</label>
+                <input type="number" id="ubn-blockdrop-lines" placeholder="— default —" min="1" max="12" oninput="updateByName()">
+              </div>
+            </div>
+          </div>
+          <!-- Meteor Defense sub-options -->
+          <div id="ubn-mc-meteor" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Difficulty</label>
+                <select id="ubn-meteor-difficulty" onchange="updateByName()">
+                  <option value="">— default —</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Meteors to Destroy</label>
+                <input type="number" id="ubn-meteor-targets" placeholder="— default —" min="3" max="40" oninput="updateByName()">
+              </div>
+            </div>
+          </div>
+          <!-- Tap sub-options -->
+          <div id="ubn-mc-tap" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+            <div class="row-2">
+              <div class="field-group">
+                <label>Dismiss Mode</label>
+                <select id="ubn-tap-mode" onchange="updateByName()">
+                  <option value="">— default —</option>
+                  <option value="tap">Tap</option>
+                  <option value="hold">Hold</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Tap Count</label>
+                <input type="number" id="ubn-tap-count" placeholder="— default —" min="1" max="50" oninput="updateByName()">
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Hold Duration (s)</label>
+              <input type="number" id="ubn-tap-hold" placeholder="— default —" min="1" max="10" oninput="updateByName()">
+            </div>
+            <div class="field-hint">More than one tap, or any hold, makes this a real mission — the alarm opens the app instead of stopping from the lock screen.</div>
+          </div>
+                        <!-- HA sub-options -->
+            <div id="ubn-mc-ha" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Snooze Mode</label>
+                  <select id="ubn-ha-snooze-mode" onchange="updateByName()">
+                    <option value="">— no change —</option>
+                    <option value="dismiss">Dismiss (no snooze)</option>
+                    <option value="snooze">Snooze allowed</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Fallback Mission</label>
+                  <select id="ubn-ha-fallback" onchange="updateByName()">
+                    <option value="">— no change —</option>
+                    <option value="none">None</option>
+                    <option value="shake">Shake</option>
+                    <option value="math">Math</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <div class="card-title">Alarm Screen</div>
+            <div class="field-group">
+              <label>Notes (replaces all existing notes)</label>
+              <textarea id="ubn-notes" oninput="updateByName()"></textarea>
+            </div>
+            <div class="field-group">
+              <label>Append Notes</label>
+              <textarea id="ubn-append-notes" placeholder="Appends with 'HA:' prefix, keeps existing notes" oninput="updateByName()"></textarea>
+            </div>
+            <div class="field-group">
+              <label>Alarm Screen Commands (comma-separated names)</label>
+              <input type="text" id="ubn-commands" placeholder="Command 1, Command 2" oninput="updateByName()">
+            </div>
+            <div class="row-2">
+              <div class="field-group">
+                <label>Swipe Left Command</label>
+                <input type="text" id="ubn-swipe-left" oninput="updateByName()">
+              </div>
+              <div class="field-group">
+                <label>Swipe Right Command</label>
+                <input type="text" id="ubn-swipe-right" oninput="updateByName()">
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Additional Missions (slots 2–5)</label>
+              <input type="text" id="ubn-extra-missions" placeholder="math, shake" oninput="updateByName()">
+              <div class="field-hint">Comma-separated. When set, the payload uses <code>missions</code> — the full ordered sequence — instead of <code>mission</code>.</div>
+            </div>
+            <div class="toggle-row">
+              <select id="ubn-morning-weather" onchange="updateByName()">
+                <option value="">— no change —</option>
+                <option value="true">On</option>
+                <option value="false">Off</option>
+              </select>
+              <label for="ubn-morning-weather">Morning Weather</label>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="position:sticky;top:0">
+            <div class="preview-header">
+              <div class="card-title">JSON Payload</div>
+              <button class="copy-btn" onclick="copyPayload('ubn-preview', this)">Copy</button>
+            </div>
+            <pre id="ubn-preview">{}</pre>
+            <div class="yaml-section">
+              <h3>HA Automation Action</h3>
+              <div class="yaml-block">
+                <pre id="ubn-yaml"></pre>
+                <button class="copy-btn" onclick="copyPayload('ubn-yaml', this)">Copy</button>
+              </div>
+            </div>
+            <div class="info-box" style="margin-top:12px">
+              <strong>Tip:</strong> No templates or HACS integration required. The app resolves the alarm name natively.
+              Paste this YAML directly into a script or automation action block.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       DELETE ALARM
+  ══════════════════════════════════════════════════ -->
+  <div id="page-delete-alarm" class="page">
+    <div class="page-header">
+      <h1>Delete Alarm</h1>
+      <p>Permanently removes an alarm by index <em>or</em> display name. Publishes to <code style="color:var(--green)">allarise/{device}/command/delete_alarm</code>.</p>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title">Target — provide index OR label</div>
+          <div class="field-group">
+            <label>Alarm Index</label>
+            <input type="number" id="da-index" placeholder="e.g. 3" min="1" oninput="updateDeleteAlarm()">
+            <div class="field-hint">From <code>sensor.allarise_{device}_alarm_{N}_name</code> or the Alarm ID sensor</div>
+          </div>
+          <div style="text-align:center;color:var(--text3);font-size:12px;margin:4px 0">— or —</div>
+          <div class="field-group">
+            <label>Display Name (case-insensitive)</label>
+            <input type="text" id="da-label" placeholder="Morning Alarm" oninput="updateDeleteAlarm()">
+            <div class="field-hint">Matches the alarm's name (case-insensitive). Index takes priority if both are set.</div>
+          </div>
+        </div>
+        <div class="warn-box" style="margin-top:12px">
+          <strong>Destructive:</strong> There is no confirmation. The alarm is removed from SwiftData immediately.
+          Use the per-alarm Delete button entity in HA instead if you want a button that's always scoped to the right alarm.
+        </div>
+      </div>
+      <div>
+        <div class="card" style="position:sticky;top:0">
+          <div class="preview-header">
+            <div class="card-title">JSON Payload</div>
+            <button class="copy-btn" onclick="copyPayload('da-preview', this)">Copy</button>
+          </div>
+          <pre id="da-preview">{}</pre>
+          <div class="yaml-section">
+            <h3>HA Automation Action</h3>
+            <div class="yaml-block">
+              <pre id="da-yaml"></pre>
+              <button class="copy-btn" onclick="copyPayload('da-yaml', this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       CREATE COMMAND
+  ══════════════════════════════════════════════════ -->
+  <div id="page-create-command" class="page">
+    <div class="page-header">
+      <h1>Create / Update Command</h1>
+      <p>Creates a new MQTT command button visible in the app. If a command with the same name already exists it is updated in-place. Publishes to <code style="color:var(--green)">allarise/{device}/command/create_command</code>.</p>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title">Required</div>
+          <div class="field-group">
+            <label>Name <span>*</span></label>
+            <input type="text" id="cc-name" placeholder="Lock Front Door" oninput="updateCreateCommand()">
+            <div class="field-hint">Also used to reference this command in alarm_screen_commands</div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <div class="card-title">Appearance</div>
+          <div class="row-2">
+            <div class="field-group">
+              <label>Icon (SF Symbol)</label>
+              <input type="text" id="cc-icon" placeholder="lock.fill" list="sf-symbols-list" oninput="updateCreateCommand()">
+              <datalist id="sf-symbols-list">
+                <option value="lock.fill"><option value="lock.open.fill">
+                <option value="door.left.hand.open"><option value="door.left.hand.closed">
+                <option value="lightbulb.fill"><option value="lightbulb.slash.fill">
+                <option value="bell.fill"><option value="bell.slash.fill">
+                <option value="speaker.fill"><option value="speaker.slash.fill">
+                <option value="house.fill"><option value="house.lock.fill">
+                <option value="car.fill"><option value="garage.fill">
+                <option value="camera.fill"><option value="video.fill">
+                <option value="fan.fill"><option value="thermometer.medium">
+                <option value="snowflake"><option value="wind">
+                <option value="power"><option value="tv.fill">
+                <option value="shield.fill"><option value="exclamationmark.triangle.fill">
+                <option value="checkmark.circle.fill"><option value="xmark.circle.fill">
+                <option value="star.fill"><option value="heart.fill">
+                <option value="bolt.fill"><option value="moon.fill">
+                <option value="sun.max.fill"><option value="cloud.fill">
+              </datalist>
+            </div>
+            <div class="field-group">
+              <label>Color Name</label>
+              <select id="cc-color" onchange="updateCreateCommand()">
+                <option value="">— default —</option>
+                <option value="red">Red</option>
+                <option value="orange">Orange</option>
+                <option value="yellow">Yellow</option>
+                <option value="green">Green</option>
+                <option value="blue">Blue</option>
+                <option value="purple">Purple</option>
+                <option value="pink">Pink</option>
+                <option value="teal">Teal</option>
+                <option value="indigo">Indigo</option>
+                <option value="gray">Gray</option>
+              </select>
+            </div>
+          </div>
+          <div class="row-3">
+            <div class="field-group">
+              <label>R (0.0–1.0)</label>
+              <input type="number" id="cc-color-r" placeholder="— " min="0" max="1" step="0.01" oninput="updateCreateCommand()">
+            </div>
+            <div class="field-group">
+              <label>G (0.0–1.0)</label>
+              <input type="number" id="cc-color-g" placeholder="— " min="0" max="1" step="0.01" oninput="updateCreateCommand()">
+            </div>
+            <div class="field-group">
+              <label>B (0.0–1.0)</label>
+              <input type="number" id="cc-color-b" placeholder="— " min="0" max="1" step="0.01" oninput="updateCreateCommand()">
+            </div>
+          </div>
+          <div class="field-hint" style="margin-top:-6px;margin-bottom:8px">Custom RGB overrides the color name if both are set</div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <div class="card-title">Behavior</div>
+          <div class="field-group">
+            <label>Arm Action</label>
+            <select id="cc-arm-action" onchange="updateCreateCommand()">
+              <option value="">none</option>
+              <option value="arm">arm</option>
+              <option value="disarm">disarm</option>
+              <option value="toggle">toggle</option>
+            </select>
+            <div class="field-hint">When this command fires from the alarm screen, optionally change the armed state at the same time — <strong>arm</strong> arms the device, <strong>disarm</strong> disarms it, <strong>toggle</strong> flips whatever it currently is. Useful for commands like "Lock Front Door" that should also arm the alarm.</div>
+          </div>
+          <div class="toggle-row">
+            <input type="checkbox" id="cc-show-in-list" onchange="updateCreateCommand()">
+            <label for="cc-show-in-list">Show in app command list</label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="position:sticky;top:0">
+          <div class="preview-header">
+            <div class="card-title">JSON Payload</div>
+            <button class="copy-btn" onclick="copyPayload('cc-preview', this)">Copy</button>
+          </div>
+          <pre id="cc-preview">{}</pre>
+          <div class="yaml-section">
+            <h3>HA Automation Action</h3>
+            <div class="yaml-block">
+              <pre id="cc-yaml"></pre>
+              <button class="copy-btn" onclick="copyPayload('cc-yaml', this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       DELETE COMMAND
+  ══════════════════════════════════════════════════ -->
+  <div id="page-delete-command" class="page">
+    <div class="page-header">
+      <h1>Delete Command</h1>
+      <p>Removes an MQTT command by name. Publishes to <code style="color:var(--green)">allarise/{device}/command/delete_command</code>.</p>
+    </div>
+    <div class="warn-box">
+      <strong>What this does:</strong> Deleting a command removes it from the app's command list permanently. Any alarms that reference it by name (alarm screen buttons, swipe gestures) will lose that association. The corresponding HACS button entity for this command will also disappear — any HA automations triggering that entity will break. Use with care; there is no undo.
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="field-group">
+            <label>Command Name <span>*</span></label>
+            <input type="text" id="dc-name" placeholder="Lock Front Door" oninput="updateDeleteCommand()">
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="position:sticky;top:0">
+          <div class="preview-header">
+            <div class="card-title">JSON Payload</div>
+            <button class="copy-btn" onclick="copyPayload('dc-preview', this)">Copy</button>
+          </div>
+          <pre id="dc-preview">{}</pre>
+          <div class="yaml-section">
+            <h3>HA Automation Action</h3>
+            <div class="yaml-block">
+              <pre id="dc-yaml"></pre>
+              <button class="copy-btn" onclick="copyPayload('dc-yaml', this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       ALERT
+  ══════════════════════════════════════════════════ -->
+  <div id="page-alert" class="page">
+    <div class="page-header">
+      <h1>Trigger Alert</h1>
+      <p>Fires a full-screen alert on the device. Use the <code>allarise.trigger_alert</code> HA service OR raw MQTT below. Publishes to <code style="color:var(--green)">allarise/{device}/command/alert</code>.</p>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title">Required</div>
+          <div class="field-group">
+            <label>Message <span>*</span></label>
+            <textarea id="al-message" oninput="updateAlert()"></textarea>
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <div class="card-title">Optional</div>
+          <div class="field-group">
+            <label>Title</label>
+            <input type="text" id="al-title" placeholder="Security Alert" oninput="updateAlert()">
+          </div>
+          <div class="row-2">
+            <div class="field-group">
+              <label>Sound ID</label>
+              <select id="al-sound" onchange="updateAlert()">
+                <option value="">— default alert sound —</option>
+                <option value="Alarm_Clock">Alarm Clock</option>
+                <option value="Digital_Alarm_Clock">Digital Alarm Clock</option>
+                <option value="Off_Hook_Tone">Off Hook Tone</option>
+                <option value="Perimeter_Breach">Perimeter Breach</option>
+                <option value="Solarpsychedelic">Solarpsychedelic</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Volume (0–100)</label>
+              <input type="number" id="al-volume" placeholder="— default —" min="0" max="100" oninput="updateAlert()">
+            </div>
+          </div>
+          <div class="info-box" style="margin-top:4px">
+            <strong>Authenticated media?</strong> Use the <code>allarise.notify</code> HA service or a TTS action instead — those run inside Home Assistant and can fetch authenticated URLs before sending. Raw MQTT payloads cannot include HA auth tokens.
+          </div>
+          <div class="field-group">
+            <label>Video URL</label>
+            <input type="text" id="al-video-url" oninput="updateAlert()">
+          </div>
+          <div class="field-group">
+            <label>Link URL (tap to open)</label>
+            <input type="text" id="al-link-url" oninput="updateAlert()">
+          </div>
+          <div class="field-group">
+            <label>Fade-in</label>
+            <select id="al-fade-in" onchange="updateAlert()">
+              <option value="">— off —</option>
+              <option value="true">On (30s default)</option>
+              <option value="60">60 seconds</option>
+              <option value="120">2 minutes</option>
+              <option value="300">5 minutes</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="position:sticky;top:0">
+          <div class="preview-header">
+            <div class="card-title">JSON Payload</div>
+            <button class="copy-btn" onclick="copyPayload('al-preview', this)">Copy</button>
+          </div>
+          <pre id="al-preview">{}</pre>
+          <div class="yaml-section">
+            <h3>HA Automation Action</h3>
+            <div class="yaml-block">
+              <pre id="al-yaml"></pre>
+              <button class="copy-btn" onclick="copyPayload('al-yaml', this)">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       DASHBOARD ACTIONS
+  ══════════════════════════════════════════════════ -->
+  <div id="page-dashboard" class="page">
+    <div class="page-header">
+      <h1>Dashboard Actions</h1>
+      <p>No-payload commands published to <code style="color:var(--green)">allarise/{device}/command/{cmd}</code>. These target the actively ringing alarm or next upcoming alarm globally.</p>
+    </div>
+
+    <div class="info-box">
+      <strong>Tip:</strong> These actions are also available as button entities in the Allarise HACS integration
+      (Dismiss Alarm, Snooze Alarm, Skip Alarm, etc.) which expose real-time availability. Use raw MQTT
+      for automations where the button entity availability isn't guaranteed.
+    </div>
+
+    <div id="dash-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       PER-ALARM ACTIONS
+  ══════════════════════════════════════════════════ -->
+  <div id="page-per-alarm" class="page">
+    <div class="page-header">
+      <h1>Per-Alarm Actions</h1>
+      <p>Commands scoped to a specific alarm by index. Publishes to <code style="color:var(--green)">allarise/{device}/alarm/{index}/command/{cmd}</code>. These mirror the per-alarm button entities exposed by the HACS integration.</p>
+    </div>
+
+    <div class="info-box">
+      <strong>Tip:</strong> Each alarm in the HACS integration has its own set of button entities — Dismiss, Snooze, Skip, Unskip, Kill Snoozed, and Delete — already wired to the same topics. Use raw MQTT here when you need to target a specific alarm index directly in an automation without relying on button entity availability.
+    </div>
+
+    <div class="config-bar" style="margin-bottom:20px">
+      <div class="field" style="max-width:160px">
+        <label>Alarm Index</label>
+        <input type="number" id="pa-index" value="1" min="1" oninput="buildPerAlarmCards()">
+      </div>
+      <div style="color:var(--text2);font-size:13px;align-self:flex-end;padding-bottom:2px">
+        Find the index from <code>sensor.allarise_{device}_alarm_{N}_name</code> or the Alarm ID sensor.
+      </div>
+    </div>
+
+    <div id="per-alarm-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ Sleep Sounds -->
+  <div id="page-sleep-sounds" class="page">
+    <div class="page-header">
+      <h1>Sleep Sounds</h1>
+      <p>Control ambient sleep audio on the Allarise device over MQTT.</p>
+    </div>
+
+    <div class="tab-bar" style="display:flex;gap:4px;margin-bottom:20px">
+      <button class="tab-btn active" onclick="showTab('ss-tab-start',this)">Start</button>
+      <button class="tab-btn" onclick="showTab('ss-tab-control',this)">Control</button>
+      <button class="tab-btn" onclick="showTab('ss-tab-change',this)">Change Sound</button>
+    </div>
+
+    <!-- ── Start ── -->
+    <div id="ss-tab-start" class="tab-pane active">
+      <div class="two-col">
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">Sound &amp; Volume</div>
+
+            <div class="field-group">
+              <label>Sound</label>
+              <select id="ss-sound" onchange="updateSleepSoundStart()">
+                <option value="">— use app default —</option>
+                <option value="Brown_Noise">Brown Noise</option>
+                <option value="Fan">Fan</option>
+                <option value="Light_Rain">Light Rain</option>
+                <option value="Mountain_Stream">Mountain Stream</option>
+                <option value="Rainforest_Birds">Rainforest Birds</option>
+                <option value="Sea_Waves">Sea Waves</option>
+                <option value="Summer_Rain">Summer Rain</option>
+                <option value="white_noise">White Noise</option>
+              </select>
+              <div class="field-hint">Omit to keep the app's last-used sound.</div>
+            </div>
+
+            <div class="field-group">
+              <label>Volume (0–100)</label>
+              <input type="number" id="ss-volume" min="0" max="100" placeholder="50" oninput="updateSleepSoundStart()">
+              <div class="field-hint">Accepts 0–100 integers or 0.0–1.0 floats.</div>
+            </div>
+
+            <div class="field-group">
+              <label>System Volume (0–100) <span style="font-weight:400;color:var(--text2);font-size:11px">optional</span></label>
+              <input type="number" id="ss-system-volume" min="0" max="100" placeholder="leave blank to keep current" oninput="updateSleepSoundStart()">
+              <div class="field-hint">Sets the device's hardware media volume (volume buttons / Control Center). Independent of the sleep sound volume above.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Fade-Out</div>
+            <div class="field-group">
+              <label>Fade-Out Duration (minutes)</label>
+              <input type="number" id="ss-fade-out-min" min="0" max="60" placeholder="0 = no fade" oninput="updateSleepSoundStart()">
+            </div>
+            <div class="field-group">
+              <label>Fade-Out Duration (seconds)</label>
+              <input type="number" id="ss-fade-out-sec" min="0" max="3600" placeholder="overrides minutes if set" oninput="updateSleepSoundStart()">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">Duration Mode</div>
+            <div class="field-group">
+              <label>Mode</label>
+              <select id="ss-mode" onchange="updateSleepSoundStart()">
+                <option value="indefinite">Indefinite (until manually stopped)</option>
+                <option value="duration">Fixed Duration (minutes)</option>
+                <option value="until_next_alarm">Until Next Alarm</option>
+              </select>
+              <div class="field-hint">
+                <strong>Until Next Alarm</strong> — plays until the next scheduled enabled alarm fires (replaces "until morning alarm").
+              </div>
+            </div>
+            <div class="field-group" id="ss-duration-group" style="display:none">
+              <label>Duration (minutes, 1–720)</label>
+              <input type="number" id="ss-duration-min" min="1" max="720" placeholder="60" oninput="updateSleepSoundStart()">
+              <div class="field-hint">Max 720 minutes (12 hours).</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Topic</div>
+            <code id="ss-start-topic" style="display:block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:var(--mono);font-size:12px;color:var(--green);overflow-x:auto;white-space:nowrap;margin-bottom:14px"></code>
+
+            <div class="card-title">JSON Payload</div>
+            <div style="position:relative">
+              <pre id="ss-start-preview" style="font-size:12.5px;min-height:80px"></pre>
+              <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('ss-start-preview',this)">Copy</button>
+            </div>
+
+            <div class="card-title" style="margin-top:14px">HA Automation YAML</div>
+            <div style="position:relative">
+              <pre id="ss-start-yaml" style="font-size:11.5px"></pre>
+              <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('ss-start-yaml',this)">Copy YAML</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Control (stop / pause / resume / set volume) ── -->
+    <div id="ss-tab-control" class="tab-pane">
+      <div id="ss-control-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-bottom:20px"></div>
+
+      <!-- Set Volume -->
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <span style="font-size:18px">🔊</span>
+          <strong>Set Volume</strong>
+          <code style="margin-left:auto;font-size:11px;color:var(--green)">sleep_sound_set_volume</code>
+        </div>
+        <div class="field-group">
+          <label>Volume (0–100)</label>
+          <input type="number" id="ss-sv-volume" min="0" max="100" placeholder="50" oninput="updateSleepSoundSetVolume()">
+        </div>
+        <div class="card-title" style="margin-top:12px">HA Automation YAML</div>
+        <div style="position:relative">
+          <pre id="ss-sv-yaml" style="font-size:11.5px"></pre>
+          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('ss-sv-yaml',this)">Copy YAML</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Change Sound ── -->
+    <div id="ss-tab-change" class="tab-pane">
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Cross-Fade to New Sound</div>
+          <div class="info-box" style="margin-bottom:14px">
+            Changes the playing sound without stopping playback. An equal-power crossfade is applied for a seamless transition.
+          </div>
+          <div class="field-group">
+            <label>Sound <span>*</span></label>
+            <select id="ss-ch-sound" onchange="updateSleepSoundChange()">
+              <option value="">— select sound —</option>
+              <option value="Brown_Noise">Brown Noise</option>
+              <option value="Fan">Fan</option>
+              <option value="Light_Rain">Light Rain</option>
+              <option value="Mountain_Stream">Mountain Stream</option>
+              <option value="Rainforest_Birds">Rainforest Birds</option>
+              <option value="Sea_Waves">Sea Waves</option>
+              <option value="Summer_Rain">Summer Rain</option>
+              <option value="white_noise">White Noise</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Topic</div>
+          <code id="ss-ch-topic" style="display:block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:var(--mono);font-size:12px;color:var(--green);overflow-x:auto;white-space:nowrap;margin-bottom:14px"></code>
+
+          <div class="card-title">JSON Payload</div>
+          <div style="position:relative">
+            <pre id="ss-ch-preview" style="font-size:12.5px;min-height:48px"></pre>
+            <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('ss-ch-preview',this)">Copy</button>
+          </div>
+
+          <div class="card-title" style="margin-top:14px">HA Automation YAML</div>
+          <div style="position:relative">
+            <pre id="ss-ch-yaml" style="font-size:11.5px"></pre>
+            <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('ss-ch-yaml',this)">Copy YAML</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /page-sleep-sounds -->
+
+
+</div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<footer>
+  <div class="footer-links">
+    <a href="https://discord.gg/wUxJKAD4dP"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="18" height="18" style="vertical-align:-3px;margin-right:5px;fill:currentColor"><path d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"/></svg>Discord</a>
+    <a href="mailto:support@domoretech.net">✉️ support@domoretech.net</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+  </div>
+  <div>© 2026 Allarise</div>
+</footer>
+
+<script>
+// ─── Hamburger nav ───────────────────────────────────────
+var _navOpen = false;
+function toggleNav() {
+  var d = document.getElementById('nav-dropdown');
+  var b = document.getElementById('nav-menu-btn');
+  _navOpen = !_navOpen;
+  d.style.display = _navOpen ? 'block' : 'none';
+  b.textContent = _navOpen ? '✕' : '☰';
+}
+document.addEventListener('click', function(e) {
+  if (!_navOpen) return;
+  var d = document.getElementById('nav-dropdown');
+  var b = document.getElementById('nav-menu-btn');
+  if (!d.contains(e.target) && e.target !== b && !b.contains(e.target)) {
+    _navOpen = false;
+    d.style.display = 'none';
+    b.textContent = '☰';
+  }
+});
+document.getElementById('nav-dropdown').style.display = 'none';
+
+// ─── Global helpers ──────────────────────────────────────
+function getPrefix() { return document.getElementById('cfg-prefix').value.trim() || 'allarise'; }
+function getDevice() { return document.getElementById('cfg-device').value.trim() || 'iphone'; }
+
+function topic(cmd) { return `${getPrefix()}/${getDevice()}/command/${cmd}`; }
+
+function updateAll() {
+  const t = topic('…');
+  document.getElementById('cfg-topic-display').textContent = t;
+  updateCreateAlarm(); updateUpdateAlarm(); updateDeleteAlarm();
+  updateCreateCommand(); updateDeleteCommand(); updateAlert();
+  updateByName(); buildDashboardCards();
+  updateSleepSoundStart(); updateSleepSoundSetVolume(); updateSleepSoundChange();
+  buildSleepControlCards(); buildPerAlarmCards();
+  updateSystemVolume();
+}
+
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  document.getElementById('cfg-topic-display').textContent = topic(pageToCmd(id));
+  const sel = document.getElementById('mobile-page-select');
+  if (sel) sel.value = id;
+}
+
+function showPageFromSelect(sel) {
+  const id = sel.value;
+  const btn = document.querySelector(`.nav-item[onclick*="'${id}'"]`);
+  showPage(id, btn);
+}
+
+function pageToCmd(id) {
+  const map = { 'create-alarm':'create_alarm','update-alarm':'update_alarm','delete-alarm':'delete_alarm',
+    'create-command':'create_command','delete-command':'delete_command','alert':'alert','dashboard':'…',
+    'per-alarm':'alarm/{index}/command/…','sleep-sounds':'sleep_sound_start' };
+  return map[id] || id;
+}
+
+function showTab(id, btn) {
+  const pane = btn.closest('.tab-bar').parentElement;
+  pane.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  pane.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toggleDay(btn, prefix) {
+  btn.classList.toggle('selected');
+  if (prefix === 'ca') updateCreateAlarm();
+  else if (prefix === 'ua') updateUpdateAlarm();
+}
+
+function getSelectedDays(containerId) {
+  return Array.from(document.querySelectorAll(`#${containerId} .day-btn.selected`))
+    .map(b => parseInt(b.dataset.day));
+}
+
+function v(id) { return document.getElementById(id).value.trim(); }
+function vInt(id) { const s = v(id); return s === '' ? null : parseInt(s); }
+function vFloat(id) { const s = v(id); return s === '' ? null : parseFloat(s); }
+function vBool(id) { const s = v(id); if (s === 'true') return true; if (s === 'false') return false; return null; }
+function vCheck(id) { return document.getElementById(id).checked; }
+
+function csvToArray(str) {
+  if (!str.trim()) return null;
+  return str.split(',').map(s => s.trim()).filter(Boolean);
+}
+
+// ─── JSON syntax highlight ───────────────────────────────
+function highlight(json) {
+  return json
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(?=\s*:))/g, '<span class="json-key">$1</span>')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*")(?!\s*:)/g, '<span class="json-str">$1</span>')
+    .replace(/\b(-?\d+\.?\d*([eE][+-]?\d+)?)\b/g, '<span class="json-num">$1</span>')
+    .replace(/\b(true|false)\b/g, '<span class="json-bool">$1</span>')
+    .replace(/\bnull\b/g, '<span class="json-null">null</span>');
+}
+
+function setPreview(previewId, yamlId, cmd, payload) {
+  const json = JSON.stringify(payload, null, 2);
+  document.getElementById(previewId).innerHTML = highlight(json);
+  const t = topic(cmd);
+  const yamlStr = buildYAML(t, json);
+  document.getElementById(yamlId).textContent = yamlStr;
+}
+
+function buildYAML(topicStr, jsonStr) {
+  const escaped = jsonStr.replace(/\\/g, '\\\\');
+  return `- action: mqtt.publish\n  data:\n    topic: "${topicStr}"\n    payload: >\n      ${escaped.split('\n').join('\n      ')}`;
+}
+
+// ─── Copy ────────────────────────────────────────────────
+function copyPayload(elId, btn) {
+  const text = document.getElementById(elId).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+// ─── Snooze/Skip hold duration visibility ────────────────
+function syncHoldDisplay(prefix, type) {
+  const mode = v(prefix + '-' + type + '-mode');
+  const group = document.getElementById(prefix + '-' + type + '-hold-group');
+  if (group) group.style.display = mode === 'hold' ? '' : 'none';
+}
+
+// ─── Mission config helpers ───────────────────────────────
+// Panel id suffix → the mission type that reveals it.
+const MISSION_PANELS = {
+  shake: 'shake',
+  math: 'math',
+  balance: 'balance_ball',
+  blockdrop: 'block_drop',
+  meteor: 'meteor',
+  tap: 'none',
+  ha: 'home_assistant',
+};
+
+function syncMissionDisplay(prefix) {
+  const mission = v(prefix + '-mission');
+  Object.entries(MISSION_PANELS).forEach(([suffix, type]) => {
+    const el = document.getElementById(prefix + '-mc-' + suffix);
+    if (el) el.style.display = (mission === type) ? '' : 'none';
+  });
+}
+
+// Returns the payload fragment carrying this alarm's mission settings.
+//
+// The app reads per-mission settings from a NESTED `mission_config` object, so
+// they must be wrapped — an earlier version of this page merged them into the
+// payload root, where the app never looked at them and every setting chosen here
+// was silently ignored.
+function buildMissionConfig(prefix) {
+  const mission = v(prefix + '-mission');
+  const cfg = {};
+  if (mission === 'shake') {
+    const mode = v(prefix + '-shake-mode'); if (mode) cfg.shake_mode = mode;
+    const cnt  = vInt(prefix + '-shake-count'); if (cnt !== null) cfg.shake_count = cnt;
+    const dur  = vInt(prefix + '-shake-duration'); if (dur !== null) cfg.shake_duration = dur;
+    const int_ = vInt(prefix + '-shake-intensity'); if (int_ !== null) cfg.shake_intensity = int_;
+  } else if (mission === 'math') {
+    const diff = v(prefix + '-math-difficulty'); if (diff) cfg.math_difficulty = diff;
+    const cnt  = vInt(prefix + '-math-count'); if (cnt !== null) cfg.math_count = cnt;
+  } else if (mission === 'balance_ball') {
+    const diff = v(prefix + '-balance-difficulty'); if (diff) cfg.balance_difficulty = diff;
+    const hold = vInt(prefix + '-balance-hold'); if (hold !== null) cfg.balance_hold_duration = hold;
+  } else if (mission === 'block_drop') {
+    const diff = v(prefix + '-blockdrop-difficulty'); if (diff) cfg.block_drop_difficulty = diff;
+    const lines = vInt(prefix + '-blockdrop-lines'); if (lines !== null) cfg.block_drop_lines = lines;
+  } else if (mission === 'meteor') {
+    const diff = v(prefix + '-meteor-difficulty'); if (diff) cfg.meteor_difficulty = diff;
+    const tgts = vInt(prefix + '-meteor-targets'); if (tgts !== null) cfg.meteor_targets = tgts;
+  } else if (mission === 'home_assistant') {
+    const sm = v(prefix + '-ha-snooze-mode'); if (sm) cfg.ha_snooze_mode = sm;
+    const fb = v(prefix + '-ha-fallback'); if (fb) cfg.fallback_mission = fb;
+  } else if (mission === 'none') {
+    // Tap dismiss: anything beyond a single tap makes it a real mission.
+    const mode = v(prefix + '-tap-mode'); if (mode) cfg.tap_dismiss_mode = mode;
+    const cnt  = vInt(prefix + '-tap-count'); if (cnt !== null) cfg.tap_count = cnt;
+    const hold = vInt(prefix + '-tap-hold'); if (hold !== null) cfg.tap_hold_duration = hold;
+  }
+  return Object.keys(cfg).length ? { mission_config: cfg } : {};
+}
+
+// Extra missions for slots 2..5, entered as a comma-separated list of type
+// names. When present, the payload uses `missions` (the whole ordered sequence)
+// instead of `mission`.
+//
+// `mission` on its own sets slot 1 AND CLEARS slots 2..5 — that is what "set the
+// alarm's mission" means, and it is what the …/mission state topic reports back.
+// To keep a multi-mission alarm intact, send the full sequence.
+function applyMissions(p, prefix) {
+  const first = v(prefix + '-mission');
+  const extras = csvToArray(v(prefix + '-extra-missions'));
+  const cfg = buildMissionConfig(prefix);
+  if (extras && extras.length) {
+    const head = cfg.mission_config
+      ? { mission: first || 'none', mission_config: cfg.mission_config }
+      : (first || 'none');
+    p.missions = [head].concat(extras).slice(0, 5);
+    return;
+  }
+  if (first) p.mission = first;
+  Object.assign(p, cfg);
+}
+
+// ─── Time Format Helpers ─────────────────────────────────
+function syncTimeFormat(prefix) {
+  const fmt = document.querySelector(`input[name="${prefix}-time-fmt"]:checked`)?.value;
+  const is12 = fmt === '12';
+  document.getElementById(prefix + '-time').style.display = is12 ? 'none' : '';
+  const div12 = document.getElementById(prefix + '-time-12h');
+  if (div12) div12.style.display = is12 ? 'flex' : 'none';
+  if (prefix === 'ca') updateCreateAlarm(); else if (prefix === 'ua') updateUpdateAlarm(); else updateByName();
+}
+
+function getTimeValue(prefix) {
+  const fmt = document.querySelector(`input[name="${prefix}-time-fmt"]:checked`)?.value;
+  if (fmt === '12') {
+    const hourEl = document.getElementById(prefix + '-hour');
+    const minEl  = document.getElementById(prefix + '-minute');
+    const ampmEl = document.getElementById(prefix + '-ampm');
+    const hour = parseInt(hourEl?.value);
+    const minute = parseInt(minEl?.value);
+    const ampm = ampmEl?.value || 'AM';
+    if (!hour || isNaN(minute)) return '';
+    let h24 = hour % 12;
+    if (ampm === 'PM') h24 += 12;
+    return String(h24).padStart(2,'0') + ':' + String(minute).padStart(2,'0');
+  }
+  return v(prefix + '-time');
+}
+
+// ─── Create Alarm ────────────────────────────────────────
+function updateCreateAlarm() {
+  const p = {};
+  const t = getTimeValue('ca'); if (t) p.time = t;
+  const lbl = v('ca-label'); if (lbl) p.name = lbl;
+  if (!vCheck('ca-enabled')) p.enabled = false;
+  const days = getSelectedDays('ca-days'); if (days.length) p.days = days;
+  const snd = v('ca-sound'); if (snd) p.sound = snd;
+  const vol = vInt('ca-volume'); if (vol !== null) p.volume = vol;
+  if (vCheck('ca-vibrate')) p.vibrate = true;
+  const fi = vInt('ca-fade-in'); if (fi !== null) p.fade_in_duration = fi;
+  const sd = vInt('ca-snooze-duration'); if (sd !== null) p.snooze_duration = sd;
+  const ms = vInt('ca-max-snooze'); if (ms !== null) p.max_snooze_count = ms;
+  const sm = v('ca-snooze-mode'); if (sm) p.snooze_mode = sm;
+  if (sm === 'hold') { const shd = vFloat('ca-snooze-hold-duration'); if (shd !== null) p.snooze_hold_duration = shd; }
+  const skipM = v('ca-skip-mode'); if (skipM) p.skip_mode = skipM;
+  if (skipM === 'hold') { const skhd = vFloat('ca-skip-hold-duration'); if (skhd !== null) p.skip_hold_duration = skhd; }
+  applyMissions(p, 'ca');
+  const notes = v('ca-notes'); if (notes) p.notes = notes;
+  const cmds = csvToArray(v('ca-commands')); if (cmds) p.alarm_screen_commands = cmds;
+  const sl = v('ca-swipe-left'); if (sl) p.swipe_left_command = sl;
+  const sr = v('ca-swipe-right'); if (sr) p.swipe_right_command = sr;
+  if (vCheck('ca-morning-weather')) p.morning_weather = true;
+  if (vCheck('ca-ephemeral')) p.ephemeral = true;
+  const mid = v('ca-mqtt-id'); if (mid) p.mqtt_id = mid;
+  setPreview('ca-preview', 'ca-yaml', 'create_alarm', p);
+}
+
+// ─── Update Alarm ────────────────────────────────────────
+function updateUpdateAlarm() {
+  const p = {};
+  const idx = vInt('ua-index'); if (idx !== null) p.index = idx;
+  const lbl = v('ua-label'); if (lbl) p.name = lbl;
+  const t = getTimeValue('ua'); if (t) p.time = t;
+  const en = vBool('ua-enabled'); if (en !== null) p.enabled = en;
+  const days = getSelectedDays('ua-days'); if (days.length) p.days = days;
+  const snd = v('ua-sound'); if (snd) p.sound = snd;
+  const vol = vInt('ua-volume'); if (vol !== null) p.volume = vol;
+  const vib = vBool('ua-vibrate'); if (vib !== null) p.vibrate = vib;
+  const fi = vInt('ua-fade-in'); if (fi !== null) p.fade_in_duration = fi;
+  const sd = vInt('ua-snooze-duration'); if (sd !== null) p.snooze_duration = sd;
+  const ms = vInt('ua-max-snooze'); if (ms !== null) p.max_snooze_count = ms;
+  const sm = v('ua-snooze-mode'); if (sm) p.snooze_mode = sm;
+  if (sm === 'hold') { const shd = vFloat('ua-snooze-hold-duration'); if (shd !== null) p.snooze_hold_duration = shd; }
+  const skipM = v('ua-skip-mode'); if (skipM) p.skip_mode = skipM;
+  if (skipM === 'hold') { const skhd = vFloat('ua-skip-hold-duration'); if (skhd !== null) p.skip_hold_duration = skhd; }
+  applyMissions(p, 'ua');
+  const notes = v('ua-notes'); if (notes) p.notes = notes;
+  const an = v('ua-append-notes'); if (an) p.append_notes = an;
+  const cmds = csvToArray(v('ua-commands')); if (cmds) p.alarm_screen_commands = cmds;
+  const sl = v('ua-swipe-left'); if (sl) p.swipe_left_command = sl;
+  const sr = v('ua-swipe-right'); if (sr) p.swipe_right_command = sr;
+  const uaMW = v('ua-morning-weather'); if (uaMW !== '') p.morning_weather = uaMW === 'true';
+  setPreview('ua-preview', 'ua-yaml', 'update_alarm', p);
+}
+
+// ─── Update By Name ──────────────────────────────────────
+function updateByName() {
+  const p = {};
+  // Target: name is the search key (case-insensitive)
+  const alarmName = v('ubn-name') || 'My Alarm';
+  p.name = alarmName;
+  const t = getTimeValue('ubn'); if (t) p.time = t;
+  const en = vBool('ubn-enabled'); if (en !== null) p.enabled = en;
+  const days = getSelectedDays('ubn-days'); if (days.length) p.days = days;
+  const snd = v('ubn-sound'); if (snd) p.sound = snd;
+  const vol = vInt('ubn-volume'); if (vol !== null) p.volume = vol;
+  const vib = vBool('ubn-vibrate'); if (vib !== null) p.vibrate = vib;
+  const fi = vInt('ubn-fade-in'); if (fi !== null) p.fade_in_duration = fi;
+  const sd = vInt('ubn-snooze-duration'); if (sd !== null) p.snooze_duration = sd;
+  const ms = vInt('ubn-max-snooze'); if (ms !== null) p.max_snooze_count = ms;
+  const sm = v('ubn-snooze-mode'); if (sm) p.snooze_mode = sm;
+  if (sm === 'hold') { const shd = vFloat('ubn-snooze-hold-duration'); if (shd !== null) p.snooze_hold_duration = shd; }
+  const skipM = v('ubn-skip-mode'); if (skipM) p.skip_mode = skipM;
+  if (skipM === 'hold') { const skhd = vFloat('ubn-skip-hold-duration'); if (skhd !== null) p.skip_hold_duration = skhd; }
+  applyMissions(p, 'ubn');
+  const notes = v('ubn-notes'); if (notes) p.notes = notes;
+  const an = v('ubn-append-notes'); if (an) p.append_notes = an;
+  const cmds = csvToArray(v('ubn-commands')); if (cmds) p.alarm_screen_commands = cmds;
+  const sl = v('ubn-swipe-left'); if (sl) p.swipe_left_command = sl;
+  const sr = v('ubn-swipe-right'); if (sr) p.swipe_right_command = sr;
+  const ubnMW = v('ubn-morning-weather'); if (ubnMW !== '') p.morning_weather = ubnMW === 'true';
+  setPreview('ubn-preview', 'ubn-yaml', 'update_alarm', p);
+}
+
+// ─── Delete Alarm ────────────────────────────────────────
+function updateDeleteAlarm() {
+  const p = {};
+  const idx = vInt('da-index');
+  const lbl = v('da-label');
+  if (idx !== null) p.index = idx;
+  else if (lbl) p.name = lbl;
+  setPreview('da-preview', 'da-yaml', 'delete_alarm', p);
+}
+
+// ─── Create Command ──────────────────────────────────────
+function updateCreateCommand() {
+  const p = {};
+  const name = v('cc-name'); if (name) p.name = name;
+  const icon = v('cc-icon'); if (icon) p.icon = icon;
+  const color = v('cc-color'); if (color) p.color = color;
+  const r = vFloat('cc-color-r'); if (r !== null) p.color_r = r;
+  const g = vFloat('cc-color-g'); if (g !== null) p.color_g = g;
+  const b = vFloat('cc-color-b'); if (b !== null) p.color_b = b;
+  const arm = v('cc-arm-action'); if (arm) p.arm_action = arm;
+  if (vCheck('cc-show-in-list')) p.show_in_list = true;
+  setPreview('cc-preview', 'cc-yaml', 'create_command', p);
+}
+
+// ─── Delete Command ──────────────────────────────────────
+function updateDeleteCommand() {
+  const p = {};
+  const name = v('dc-name'); if (name) p.name = name;
+  setPreview('dc-preview', 'dc-yaml', 'delete_command', p);
+}
+
+// ─── Alert ───────────────────────────────────────────────
+function updateAlert() {
+  const p = {};
+  const msg = v('al-message'); if (msg) p.message = msg;
+  const title = v('al-title'); if (title) p.title = title;
+  const snd = v('al-sound'); if (snd) p.sound = snd;
+  const vol = vInt('al-volume'); if (vol !== null) p.volume = vol;
+  const vu = v('al-video-url'); if (vu) p.video_url = vu;
+  const lu = v('al-link-url'); if (lu) p.link_url = lu;
+  const fi = v('al-fade-in');
+  if (fi === 'true') p.fade_in = true;
+  else if (fi) p.fade_in = parseInt(fi);
+  setPreview('al-preview', 'al-yaml', 'alert', p);
+}
+
+// ─── Dashboard cards ─────────────────────────────────────
+const DASH_CMDS = [
+  { cmd:'dismiss', label:'Dismiss Alarm', desc:'Dismisses the currently ringing alarm. Works for both scheduled alarms and alert-mission alarms.', icon:'✕' },
+  { cmd:'snooze',  label:'Snooze Alarm',  desc:'Snoozes the currently ringing alarm for the alarm\'s configured snooze duration.', icon:'💤' },
+  { cmd:'skip',    label:'Skip Next Alarm', desc:'Skips the next upcoming enabled alarm. For recurring alarms, skips one occurrence. For one-time alarms, disables it.', icon:'⏭' },
+  { cmd:'unskip',  label:'Unskip Alarm',  desc:'Clears the skip on the soonest skipped alarm.', icon:'↩' },
+  { cmd:'kill_snoozed', label:'Kill Snoozed', desc:'Cancels a snoozed alarm mid-snooze, preventing it from ringing again.', icon:'🔕' },
+  { cmd:'delete_next_alarm', label:'Delete Next Alarm', desc:'Permanently deletes the next upcoming alarm in the queue.', icon:'🗑' },
+];
+
+function buildDashboardCards() {
+  const container = document.getElementById('dash-cards');
+  container.innerHTML = '';
+  DASH_CMDS.forEach(item => {
+    const t = topic(item.cmd);
+    const yaml = `- action: mqtt.publish\n  data:\n    topic: "${t}"\n    payload: ""`;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:18px">${item.icon}</span>
+        <strong style="font-size:14px">${item.label}</strong>
+      </div>
+      <p style="color:var(--text2);font-size:13px;margin-bottom:12px">${item.desc}</p>
+      <code style="display:block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:11.5px;color:var(--green);margin-bottom:10px;overflow:auto;white-space:nowrap">${t}</code>
+      <div style="position:relative">
+        <pre style="font-size:11.5px" id="dash-yaml-${item.cmd}">${yaml}</pre>
+        <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dash-yaml-${item.cmd}', this)">Copy</button>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+// ─── Per-Alarm Actions ───────────────────────────────────
+const PER_ALARM_CMDS = [
+  { cmd:'dismiss',    label:'Dismiss',    desc:'Dismisses this alarm if it is currently ringing.', icon:'✕' },
+  { cmd:'snooze',     label:'Snooze',     desc:'Snoozes this alarm for its configured snooze duration.', icon:'💤' },
+  { cmd:'skip',       label:'Skip',       desc:'Skips the next occurrence of this alarm. For recurring alarms, only the next fire is skipped.', icon:'⏭' },
+  { cmd:'unskip',     label:'Unskip',     desc:'Clears the skip on this alarm, restoring the next occurrence.', icon:'↩' },
+  { cmd:'kill_snoozed', label:'Kill Snoozed', desc:'Cancels this alarm mid-snooze, preventing it from ringing again this cycle.', icon:'🔕' },
+  { cmd:'delete',     label:'Delete',     desc:'Permanently deletes this alarm. Equivalent to the per-alarm Delete button in HACS.', icon:'🗑' },
+];
+
+function buildPerAlarmCards() {
+  const container = document.getElementById('per-alarm-cards');
+  if (!container) return;
+  const idx = parseInt(document.getElementById('pa-index')?.value || '1') || 1;
+  const prefix = getPrefix();
+  const device = getDevice();
+  container.innerHTML = '';
+  PER_ALARM_CMDS.forEach(item => {
+    const t = `${prefix}/${device}/alarm/${idx}/command/${item.cmd}`;
+    const payload = item.cmd === 'delete' ? JSON.stringify({ index: idx }) : '""';
+    const yaml = item.cmd === 'delete'
+      ? `- action: mqtt.publish\n  data:\n    topic: "${t}"\n    payload: '${payload}'`
+      : `- action: mqtt.publish\n  data:\n    topic: "${t}"\n    payload: ""`;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:18px">${item.icon}</span>
+        <strong style="font-size:14px">${item.label}</strong>
+        <code style="margin-left:auto;font-size:11px;color:var(--green)">${item.cmd}</code>
+      </div>
+      <p style="color:var(--text2);font-size:13px;margin-bottom:12px">${item.desc}</p>
+      <code style="display:block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:11.5px;color:var(--green);margin-bottom:10px;overflow:auto;white-space:nowrap">${t}</code>
+      <div style="position:relative">
+        <pre style="font-size:11.5px" id="pa-yaml-${item.cmd}-${idx}">${yaml}</pre>
+        <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('pa-yaml-${item.cmd}-${idx}', this)">Copy</button>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+// ─── Sleep Sounds ─────────────────────────────────────────
+function updateSleepSoundStart() {
+  // Show/hide duration field
+  const mode = v('ss-mode');
+  document.getElementById('ss-duration-group').style.display = mode === 'duration' ? '' : 'none';
+
+  const p = {};
+  const snd = v('ss-sound'); if (snd) p.sound = snd;
+  const vol = vInt('ss-volume'); if (vol !== null) p.volume = vol;
+  const sysVol = vInt('ss-system-volume'); if (sysVol !== null) p.system_volume = sysVol;
+
+  if (mode === 'duration') {
+    const dm = vInt('ss-duration-min');
+    if (dm !== null) p.duration_minutes = Math.min(dm, 720);
+  } else if (mode === 'until_next_alarm') {
+    p.until_next_alarm = true;
+  }
+  // indefinite: no extra key needed
+
+  const fos = vInt('ss-fade-out-sec');
+  const fom = vInt('ss-fade-out-min');
+  if (fos !== null) p.fade_out_seconds = fos;
+  else if (fom !== null && fom > 0) p.fade_out_minutes = fom;
+
+  const t = topic('sleep_sound_start');
+  document.getElementById('ss-start-topic').textContent = t;
+  const json = JSON.stringify(p, null, 2);
+  document.getElementById('ss-start-preview').innerHTML = highlight(json);
+  document.getElementById('ss-start-yaml').textContent = buildYAML(t, json);
+}
+
+function updateSleepSoundSetVolume() {
+  const p = {};
+  const vol = vInt('ss-sv-volume'); if (vol !== null) p.volume = vol;
+  const t = topic('sleep_sound_set_volume');
+  const json = JSON.stringify(p, null, 2);
+  document.getElementById('ss-sv-yaml').textContent = buildYAML(t, json);
+}
+
+
+function updateSleepSoundChange() {
+  const p = {};
+  const snd = v('ss-ch-sound'); if (snd) p.sound = snd;
+  const t = topic('sleep_sound_change');
+  const json = JSON.stringify(p, null, 2);
+  document.getElementById('ss-ch-topic').textContent = t;
+  document.getElementById('ss-ch-preview').innerHTML = highlight(json);
+  document.getElementById('ss-ch-yaml').textContent = buildYAML(t, json);
+}
+
+const SS_CONTROL_CMDS = [
+  { cmd:'sleep_sound_stop',   label:'Stop',   desc:'Stops playback and releases the audio engine immediately.',  icon:'⏹' },
+  { cmd:'sleep_sound_pause',  label:'Pause',  desc:'Pauses playback while keeping the engine warm. Resume to continue from the same position.', icon:'⏸' },
+  { cmd:'sleep_sound_resume', label:'Resume', desc:'Resumes a paused sleep sound. No-op if already playing or stopped.', icon:'▶' },
+];
+
+function buildSleepControlCards() {
+  const container = document.getElementById('ss-control-cards');
+  if (!container) return;
+  container.innerHTML = '';
+  SS_CONTROL_CMDS.forEach(item => {
+    const t = topic(item.cmd);
+    const yaml = `- action: mqtt.publish\n  data:\n    topic: "${t}"\n    payload: ""`;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:18px">${item.icon}</span>
+        <strong style="font-size:14px">${item.label}</strong>
+        <code style="margin-left:auto;font-size:11px;color:var(--green)">${item.cmd}</code>
+      </div>
+      <p style="color:var(--text2);font-size:13px;margin-bottom:12px">${item.desc}</p>
+      <code style="display:block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:11.5px;color:var(--green);margin-bottom:10px;overflow:auto;white-space:nowrap">${t}</code>
+      <div style="position:relative">
+        <pre style="font-size:11.5px" id="ss-ctrl-yaml-${item.cmd}">${yaml}</pre>
+        <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('ss-ctrl-yaml-${item.cmd}', this)">Copy</button>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+// ─── Init ────────────────────────────────────────────────
+updateAll();
+</script>
+</body>
+</html>

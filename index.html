@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="app-icon.png">
+  <link rel="apple-touch-icon" href="app-icon.png">
+  <title>[BETA] Allarise — The Smart Alarm for iPhone</title>
+  <meta name="description" content="Wake up smarter. Allarise syncs with Home Assistant so your lights, routines, and automations respond when your alarm goes off. Shake or solve math to dismiss." />
+  <meta property="og:title" content="Allarise — The Smart Alarm for iPhone" />
+  <meta property="og:description" content="Wake up smarter. Allarise syncs with Home Assistant so your lights, routines, and automations respond when your alarm goes off. Shake or solve math to dismiss." />
+  <meta property="og:url" content="https://beta.allarise.app" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f7;
+      --border: #d2d2d7;
+      --text: #1d1d1f;
+      --secondary: #6e6e73;
+      --accent: #0071e3;
+      --accent-dark: #2997ff;
+      --green: #1d8348;
+      --green-bg: #eafaf1;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000;
+        --surface: #1c1c1e;
+        --border: #38383a;
+        --text: #f5f5f7;
+        --secondary: #98989d;
+        --accent: #2997ff;
+        --green: #30d158;
+        --green-bg: #0d2614;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
+      cursor: pointer;
+      overflow-x: hidden;
+    }
+
+    /* ── Nav ── */
+    .site-nav {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 24px;
+      padding: 0 32px; height: 52px;
+    }
+    .site-nav .nav-home {
+      display: flex; align-items: center; gap: 10px; margin-right: auto;
+      text-decoration: none;
+    }
+    .site-nav .nav-home img { width: 28px; height: 28px; border-radius: 6px; }
+    .site-nav .nav-home .icon-light { display: block; }
+    .site-nav .nav-home .icon-dark  { display: none;  }
+    @media (prefers-color-scheme: dark) {
+      .site-nav .nav-home .icon-light { display: none;  }
+      .site-nav .nav-home .icon-dark  { display: block; }
+    }
+    .site-nav .nav-home span { font-size: 16px; font-weight: 700; color: var(--text); }
+    .site-nav a { font-size: 14px; color: var(--secondary); text-decoration: none; }
+    .site-nav a:hover { color: var(--accent); }
+    .site-nav .nav-active { color: var(--accent) !important; font-weight: 600; }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 64px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .hero .icon-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 28px;
+    }
+    .hero .icon-wrap img {
+      width: 120px;
+      height: 120px;
+      border-radius: 27px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+    .hero .icon-wrap .icon-light { display: block; }
+    .hero .icon-wrap .icon-dark  { display: none;  }
+    @media (prefers-color-scheme: dark) {
+      .hero .icon-wrap .icon-light { display: none;  }
+      .hero .icon-wrap .icon-dark  { display: block; }
+    }
+    .hero h1 {
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .hero .tagline {
+      font-size: 19px;
+      color: var(--secondary);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+    .hero .cta-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 980px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn svg { flex-shrink: 0; }
+
+    /* ── Sections ── */
+    .section { padding: 64px 24px; }
+    .section-inner { max-width: 900px; margin: 0 auto; }
+    .section-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .section h2 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+    }
+    .section .lead {
+      font-size: 17px;
+      color: var(--secondary);
+      max-width: 560px;
+      margin-bottom: 40px;
+    }
+    .alt-bg { background: var(--surface); }
+
+    /* ── Panel navigator ── */
+    .panel-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .panel-nav-label {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+    .nav-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .nav-dot:hover { background: var(--secondary); }
+    .nav-dot.active {
+      background: var(--accent);
+      transform: scale(1.3);
+      cursor: default;
+    }
+
+    /* ── Scroll-snap panels ── */
+    .panels-viewport {
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      /* slight negative margin to let cards breathe to page edge */
+    }
+    .panels-viewport::-webkit-scrollbar { display: none; }
+    .panels-track {
+      display: flex;
+      width: 100%;
+    }
+    .tab-panel {
+      min-width: 100%;
+      scroll-snap-align: start;
+      padding-bottom: 4px; /* prevent card shadow clip */
+    }
+    .tab-footer { margin-top: 28px; }
+
+    /* ── Feature grid ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .alt-bg .feature-card { background: var(--bg); }
+    .feature-card .f-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .feature-card p {
+      font-size: 14px;
+      color: var(--secondary);
+      line-height: 1.55;
+    }
+
+    /* ── Pages grid ── */
+    .pages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .page-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .page-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 20px rgba(0,113,227,0.1);
+    }
+    .page-card .pc-icon { font-size: 32px; }
+    .page-card h3 { font-size: 18px; font-weight: 700; }
+    .page-card p { font-size: 14px; color: var(--secondary); line-height: 1.55; flex: 1; }
+    .page-card .pc-link {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ── Pro / Free badges ── */
+    .pro-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .free-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* ── Privacy badge ── */
+    .privacy-strip {
+      background: var(--green-bg);
+      border: 1px solid var(--green);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-top: 40px;
+    }
+    .privacy-strip .ps-icon { font-size: 22px; flex-shrink: 0; }
+    .privacy-strip .ps-body { font-size: 14px; color: var(--text); }
+    .privacy-strip .ps-body strong { color: var(--green); }
+    .privacy-strip a { color: var(--accent); }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--secondary);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
+
+    html { overflow-x: hidden; }
+
+    /* ── Screenshots ── */
+    .screenshots-section {
+      padding: 64px 0 48px;
+      overflow: hidden;
+    }
+    .screenshots-section .section-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .screenshots-section h2 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .screenshots-section .lead {
+      font-size: 17px;
+      color: var(--secondary);
+      margin-bottom: 40px;
+    }
+    /* Single row of 4 screenshots, horizontally scrollable */
+    .ss-scroll-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      padding: 0 24px 16px;
+    }
+    .ss-scroll-row::-webkit-scrollbar { display: none; }
+    .ss-scroll-row img {
+      flex-shrink: 0;
+      height: 480px;
+      width: auto;
+      border-radius: 24px;
+      scroll-snap-align: start;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+    }
+    /* Paired screenshots: 5 in front of 6, side-by-side */
+    .ss-pair-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-top: 48px;
+      position: relative;
+    }
+    .ss-pair-wrap .ss-back {
+      height: 420px;
+      width: auto;
+      border-radius: 24px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+      position: relative;
+      z-index: 1;
+    }
+    .ss-pair-wrap .ss-front {
+      height: 420px;
+      width: auto;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ── Hamburger nav ── */
+    .nav-menu-btn {
+      display: none; background: none; border: none; cursor: pointer;
+      color: var(--text); font-size: 22px; padding: 4px 8px;
+      border-radius: 6px; line-height: 1; margin-left: auto;
+    }
+    .nav-dropdown {
+      display: none; position: fixed; top: 52px; left: 0; right: 0;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      z-index: 200; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .nav-dropdown a {
+      display: block; padding: 14px 24px; font-size: 16px;
+      color: var(--text); text-decoration: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-dropdown a:last-child { border-bottom: none; }
+    .nav-dropdown a.nav-active { color: var(--accent); font-weight: 600; }
+    .nav-dropdown.open { display: block; }
+
+    @media (max-device-width: 600px) {
+      .hero h1 { font-size: 32px; }
+      .hero .tagline { font-size: 16px; }
+      .site-nav { padding: 0 16px; }
+      .site-nav a:not(.nav-home) { display: none !important; }
+      .nav-menu-btn { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+<!-- BETA SITE BANNER — present only on beta.allarise.app, not on the production site. -->
+<div style="background:#b45309;color:#fff;padding:10px 16px;text-align:center;font:600 14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;position:relative;z-index:9999">
+  🧪 Beta site — documents the TestFlight build and the <code style="background:rgba(0,0,0,.22);padding:1px 5px;border-radius:4px">allarise-hacs-beta</code> integration.
+  <a href="https://allarise.app" style="color:#fff;text-decoration:underline">Go to the release site →</a>
+</div>
+
+<!-- Nav -->
+<nav class="site-nav">
+  <a href="index.html" class="nav-home">
+    <img src="app-icon.png" class="icon-light" alt="Allarise" />
+    <img src="app-icon-dark.png" class="icon-dark" alt="Allarise" />
+    <span>Allarise</span>
+  </a>
+  <a href="index.html" class="nav-active">About</a>
+  <a href="home-assistant.html">Home Assistant</a>
+  <a href="mqtt-builder.html">MQTT Builder</a>
+  <a href="faq.html">FAQ</a>
+  <button class="nav-menu-btn" id="nav-menu-btn" onclick="toggleNav()">☰</button>
+</nav>
+<div class="nav-dropdown" id="nav-dropdown">
+  <a href="index.html" class="nav-active">About</a>
+  <a href="home-assistant.html">Home Assistant</a>
+  <a href="mqtt-builder.html">MQTT Builder</a>
+  <a href="faq.html">FAQ</a>
+</div>
+<script>
+  var _navOpen = false;
+  function toggleNav() {
+    var d = document.getElementById('nav-dropdown');
+    var b = document.getElementById('nav-menu-btn');
+    _navOpen = !_navOpen;
+    d.style.display = _navOpen ? 'block' : 'none';
+    b.textContent = _navOpen ? '✕' : '☰';
+  }
+  document.addEventListener('click', function(e) {
+    if (!_navOpen) return;
+    var d = document.getElementById('nav-dropdown');
+    var b = document.getElementById('nav-menu-btn');
+    if (!d.contains(e.target) && e.target !== b && !b.contains(e.target)) {
+      _navOpen = false;
+      d.style.display = 'none';
+      b.textContent = '☰';
+    }
+  });
+  // Force-hide dropdown on load (overrides any cached state)
+  document.getElementById('nav-dropdown').style.display = 'none';
+</script>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="icon-wrap">
+    <img src="app-icon.png" class="icon-light" alt="Allarise" />
+    <img src="app-icon-dark.png" class="icon-dark" alt="Allarise" />
+  </div>
+  <h1>Wake up smarter.</h1>
+  <p class="tagline">
+    Your alarms shouldn't just wake you up — they should wake up your whole house.
+  </p>
+  <p class="tagline" style="margin-top: -16px;">
+    Allarise syncs with Home Assistant so your lights, routines, and automations can respond when your alarm goes off. Wake up to a house that's already moving, and stay accountable with built-in missions like math and shake.
+  </p>
+  <p class="tagline" style="margin-top: -16px;">
+    With full two-way MQTT, your alarms trigger automations, and your automations control your alarms. If you run Home Assistant, Allarise is the alarm your setup has been missing.
+  </p>
+  <div class="cta-group">
+    <a href="https://testflight.apple.com/join/DYTMR1v2" class="btn btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.925-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
+      Join the TestFlight Beta
+    </a>
+  </div>
+</section>
+
+<!-- Screenshots -->
+<section class="screenshots-section">
+  <div class="ss-scroll-row">
+    <img src="screenshots/preview-2.png" alt="Liquid Glass alarm list" />
+    <img src="screenshots/preview-3.png" alt="Solve to dismiss math mission" />
+    <img src="screenshots/preview-1.png" alt="Shake to dismiss alarm" />
+    <img src="screenshots/preview-4.png" alt="Alarms that mean business" />
+    <div style="display:flex;gap:12px;flex-shrink:0;height:480px;">
+      <img src="screenshots/preview-5.png" alt="Do More with home automations" style="height:100%;width:auto;flex-shrink:0;border-radius:24px;box-shadow:0 12px 40px rgba(0,0,0,0.18);" />
+      <img src="screenshots/preview-6.png" alt="Deep Home Assistant Integration" style="height:100%;width:auto;flex-shrink:0;border-radius:24px;box-shadow:0 12px 40px rgba(0,0,0,0.18);" />
+    </div>
+  </div>
+</section>
+
+<!-- App Features -->
+<section class="section alt-bg">
+  <div class="section-inner">
+    <div class="section-label">Features</div>
+    <h2 style="font-size:32px;font-weight:700;letter-spacing:-0.5px;margin-bottom:40px;">Everything you need to wake up.</h2>
+    <div class="features">
+      <div class="feature-card">
+        <span class="f-icon">⏰</span>
+        <h3>Alarm Engine <span class="pro-badge">Pro</span></h3>
+        <p>Alarms that mean business. Allarise plays at the volume you set, independent of your ringer and mute switch.</p>
+        <p style="font-size:12px; color:var(--secondary); margin-top:8px;">Free includes 2 alarms. Pro unlocks unlimited.</p>
+      </div>
+      <a href="home-assistant.html" class="feature-card" style="text-decoration:none; color:inherit;">
+        <span class="f-icon">🏠</span>
+        <h3>Home Assistant Integration</h3>
+        <p>Full two-way MQTT integration with Home Assistant. Your alarms publish state as sensors, buttons trigger automations, and HA can send commands right back — create alarms, control sleep sounds, arm zones, and much more.</p>
+      </a>
+      <div class="feature-card">
+        <span class="f-icon">🌙</span>
+        <h3>Sleep Sounds</h3>
+        <p>Fall asleep to rain, ocean waves, white noise, and more. Lock screen controls, sleep timers, and controllable remotely from Home Assistant.</p>
+      </div>
+      <div class="feature-card">
+        <span class="f-icon">🧩</span>
+        <h3>Wake-Up Missions</h3>
+        <p>Dismiss your alarm by solving a math problem, shaking your phone, or triggering a Home Assistant action. Built for people who actually need to wake up.</p>
+      </div>
+      <div class="feature-card">
+        <span class="f-icon">🎨</span>
+        <h3>Wallpaper Packs <span class="pro-badge">Pro</span></h3>
+        <p>Curated wallpaper packs that transform your home and alarm screens. Each pack includes light and dark variants designed to look great out of the box.</p>
+      </div>
+      <div class="feature-card">
+        <span class="f-icon">🌤</span>
+        <h3>Morning Weather</h3>
+        <p>See today's forecast the moment you wake up, powered by Apple WeatherKit. Weather can be enabled on up to two alarms.</p>
+      </div>
+      <div class="feature-card">
+        <span class="f-icon">🔒</span>
+        <h3>Privacy First</h3>
+        <p>No analytics, no ads, no account required. All data stays on your device. MQTT credentials are stored in the iOS Keychain. If you enable NWS weather alerts, your approximate location is sent to the National Weather Service (api.weather.gov) to fetch alerts for your area — no account required and no data is stored by us.</p>
+      </div>
+    </div>
+    <div class="tab-footer">
+      <a href="home-assistant.html" class="btn btn-secondary" style="display:inline-flex;">Home Assistant features →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Pages / Tools -->
+<section class="section">
+  <div class="section-inner">
+    <h2>Everything in one place.</h2>
+
+    <div class="pages-grid">
+      <a href="home-assistant.html" class="page-card">
+        <div class="pc-icon">🏠</div>
+        <h3>Home Assistant</h3>
+        <p>See everything Allarise exposes to Home Assistant — sensors, buttons, switches, media player, per-alarm devices, sleep sounds, alarm zones, and more. Plus a step-by-step setup guide to get connected via MQTT and HACS.</p>
+        <span class="pc-link">View guide →</span>
+      </a>
+      <a href="mqtt-builder.html" class="page-card">
+        <div class="pc-icon">🛠</div>
+        <h3>MQTT Payload Builder</h3>
+        <p>Interactive tool for building and testing MQTT payloads for the Allarise Home Assistant integration.</p>
+        <span class="pc-link">Open builder →</span>
+      </a>
+    </div>
+
+    <div class="privacy-strip">
+      <span class="ps-icon">✅</span>
+      <div class="ps-body">
+        <strong>No data collected.</strong> Allarise is built local-first. Your alarms and settings never leave your device. The app only communicates with Apple's native services such as WeatherKit and the App Store, with your own self-hosted Home Assistant MQTT broker if you enable integration, and — if you enable NWS weather alerts — with the National Weather Service API (api.weather.gov) to fetch alerts for your location.<br><br>
+        If you choose to contact support, you may optionally share a debug log directly from the app. Logs are generated locally, are not encrypted, and can be fully reviewed by you before sending.
+        <a href="privacy.html">Read the full privacy policy →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-links">
+    <a href="https://discord.gg/wUxJKAD4dP"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="18" height="18" style="vertical-align:-3px;margin-right:5px;fill:currentColor"><path d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"/></svg>Discord</a>
+    <a href="mailto:support@domoretech.net">✉️ support@domoretech.net</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+  </div>
+  <div>© 2026 Allarise</div>
+</footer>
+
+
+</body>
+</html>
