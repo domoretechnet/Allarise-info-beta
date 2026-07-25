@@ -1,0 +1,165 @@
+/*
+ * Allarise design tokens.
+ *
+ * Extracted verbatim from the inline <style> blocks of the beta.allarise.app
+ * pages. Where pages disagreed, the value used by the most pages wins and the
+ * conflict is noted on the token.
+ *
+ * Legacy aliases (--secondary, --text2, --text3, --ha-color, --ha-bg) are kept
+ * so the existing HTML pages can adopt this stylesheet without a rewrite.
+ */
+
+:root {
+  /* ── Surfaces ── */
+  --bg: #ffffff;
+  --surface: #f5f5f7;
+  --surface-2: #e8e8ed;
+
+  /* ── Line ── */
+  --border: #d2d2d7;
+
+  /* ── Text ── */
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-tertiary: #98989d;
+
+  /* ── Brand ── */
+  --accent: #0071e3;
+  --accent-2: #6e40c9;
+
+  /* ── Status ──
+     --red/--yellow differ between pages: mqtt-builder uses #c0392b / #9e6200,
+     privacy + whatsnew use #922b21 / #7d6608. The privacy pair wins: it is used
+     by two pages and is the only pair shipping matching -bg tints. */
+  --green: #1d8348;
+  --green-bg: #eafaf1;
+  --red: #922b21;
+  --red-bg: #fdedec;
+  --yellow: #7d6608;
+  --yellow-bg: #fef9e7;
+
+  /* ── Informational (Home Assistant brand cyan) ── */
+  --info: #18bcf2;
+  --info-bg: #eaf7fd;
+
+  /* ── Warning (amber callout on the Home Assistant page) ── */
+  --warn: #f0a500;
+  --warn-bg: #fff8ec;
+
+  /* ── Type ── */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* mqtt-builder.html also listed 'JetBrains Mono' and 'Fira Code' first, but
+     the site never loaded either webfont — every visitor already falls through
+     to SF Mono / Menlo. The stack below is what the site actually renders. */
+  --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
+
+  /* ── Radius ── */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 980px;
+
+  /* ── Elevation ── */
+  --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.18);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
+
+  /* ── Layout ── */
+  --content-narrow: 640px;
+  --content-prose: 760px;
+  --content-wide: 900px;
+  --nav-height: 52px;
+
+  /* ── Legacy aliases (pre-design-system class names) ── */
+  --secondary: var(--text-secondary);
+  --text2: var(--text-secondary);
+  --text3: var(--text-tertiary);
+  --surface2: var(--surface-2);
+  --accent2: var(--accent-2);
+  --ha-color: var(--info);
+  --ha-bg: var(--info-bg);
+  --warn-border: var(--warn);
+  --mono: var(--font-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --surface: #1c1c1e;
+    --surface-2: #2c2c2e;
+
+    --border: #38383a;
+
+    --text: #f5f5f7;
+    --text-secondary: #98989d;
+    --text-tertiary: #636366;
+
+    --accent: #2997ff;
+    --accent-2: #9b6dff;
+
+    --green: #30d158;
+    --green-bg: #0d2614;
+    --red: #ff453a;
+    --red-bg: #2d0e0c;
+    --yellow: #ffd60a;
+    --yellow-bg: #2a2200;
+
+    --info: #18bcf2;
+    --info-bg: #041e2a;
+
+    --warn: #c97f00;
+    --warn-bg: #1f1600;
+
+    --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Explicit theme override — wins over the media query in both directions, so a
+   host can force a theme regardless of OS preference. */
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f5f5f7;
+  --surface-2: #e8e8ed;
+  --border: #d2d2d7;
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-tertiary: #98989d;
+  --accent: #0071e3;
+  --accent-2: #6e40c9;
+  --green: #1d8348;
+  --green-bg: #eafaf1;
+  --red: #922b21;
+  --red-bg: #fdedec;
+  --yellow: #7d6608;
+  --yellow-bg: #fef9e7;
+  --info: #18bcf2;
+  --info-bg: #eaf7fd;
+  --warn: #f0a500;
+  --warn-bg: #fff8ec;
+}
+
+:root[data-theme="dark"] {
+  --bg: #000000;
+  --surface: #1c1c1e;
+  --surface-2: #2c2c2e;
+  --border: #38383a;
+  --text: #f5f5f7;
+  --text-secondary: #98989d;
+  --text-tertiary: #636366;
+  --accent: #2997ff;
+  --accent-2: #9b6dff;
+  --green: #30d158;
+  --green-bg: #0d2614;
+  --red: #ff453a;
+  --red-bg: #2d0e0c;
+  --yellow: #ffd60a;
+  --yellow-bg: #2a2200;
+  --info: #18bcf2;
+  --info-bg: #041e2a;
+  --warn: #c97f00;
+  --warn-bg: #1f1600;
+}

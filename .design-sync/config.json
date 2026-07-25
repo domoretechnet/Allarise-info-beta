@@ -1,0 +1,10 @@
+{
+  "projectId": "2ccad989-5d20-4ad7-adf7-605d27418145",
+  "shape": "package",
+  "pkg": "@allarise/design-system",
+  "globalName": "Allarise",
+  "buildCmd": "npm run build",
+  "srcDir": "src",
+  "tsconfig": "tsconfig.json",
+  "cssEntry": "dist/allarise.css"
+}
