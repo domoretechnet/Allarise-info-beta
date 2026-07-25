@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="app-icon.png">
+  <link rel="apple-touch-icon" href="app-icon.png">
+  <title>[BETA] Allarise — What's New</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f7;
+      --border: #d2d2d7;
+      --text: #1d1d1f;
+      --secondary: #6e6e73;
+      --accent: #0071e3;
+      --green: #1d8348;
+      --green-bg: #eafaf1;
+      --yellow-bg: #fef9e7;
+      --yellow: #7d6608;
+      --red: #922b21;
+      --red-bg: #fdedec;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000;
+        --surface: #1c1c1e;
+        --border: #38383a;
+        --text: #f5f5f7;
+        --secondary: #98989d;
+        --accent: #2997ff;
+        --green: #30d158;
+        --green-bg: #0d2614;
+        --yellow-bg: #2a2200;
+        --yellow: #ffd60a;
+        --red: #ff453a;
+        --red-bg: #2d0e0c;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
+      cursor: pointer;
+    }
+    .wrapper {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+    .hero {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .hero .app-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 18px;
+      overflow: hidden;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+    .hero .app-icon img {
+      width: 80px;
+      height: 80px;
+      display: block;
+    }
+    .hero .app-icon .icon-light { display: block; }
+    .hero .app-icon .icon-dark  { display: none; }
+    @media (prefers-color-scheme: dark) {
+      .hero .app-icon .icon-light { display: none; }
+      .hero .app-icon .icon-dark  { display: block; }
+    }
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 0 32px;
+      height: 52px;
+    }
+    .site-nav a {
+      font-size: 14px;
+      color: var(--secondary);
+      text-decoration: none;
+    }
+    .site-nav a:hover { color: var(--accent); }
+    .site-nav .nav-home {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-right: auto;
+    }
+    .site-nav .nav-home img {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+    }
+    .site-nav .nav-home .icon-light { display: block; }
+    .site-nav .nav-home .icon-dark  { display: none; }
+    @media (prefers-color-scheme: dark) {
+      .site-nav .nav-home .icon-light { display: none; }
+      .site-nav .nav-home .icon-dark  { display: block; }
+    }
+    .site-nav .nav-home span {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .nav-active { color: var(--accent) !important; font-weight: 600; }
+    .hero h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .hero .subtitle {
+      font-size: 16px;
+      color: var(--secondary);
+    }
+    .updated {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--secondary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+    .callout {
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .callout.green { background: var(--green-bg); border: 1px solid var(--green); color: var(--green); }
+    .callout.yellow { background: var(--yellow-bg); border: 1px solid var(--yellow); color: var(--yellow); }
+    .callout.red { background: var(--red-bg); border: 1px solid var(--red); color: var(--red); }
+    .callout .icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .callout .body { color: var(--text); font-size: 15px; }
+    .callout .body strong { color: inherit; }
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 40px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 8px;
+      color: var(--accent);
+    }
+    p { margin-bottom: 12px; color: var(--text); font-size: 15px; }
+    ul, ol { margin: 0 0 12px 24px; }
+    li { margin-bottom: 6px; font-size: 15px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+    .contact-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 32px;
+    }
+    .contact-box h3 { margin-top: 0; }
+    footer { border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--secondary); }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
+    .nav-menu-btn {
+      display: none; background: none; border: none; cursor: pointer;
+      color: var(--text); font-size: 22px; padding: 4px 8px;
+      border-radius: 6px; line-height: 1; margin-left: auto;
+    }
+    .nav-dropdown {
+      display: none; position: fixed; top: 52px; left: 0; right: 0;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      z-index: 200; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .nav-dropdown a {
+      display: block; padding: 14px 24px; font-size: 16px;
+      color: var(--text); text-decoration: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-dropdown a:last-child { border-bottom: none; }
+    .nav-dropdown a.nav-active { color: var(--accent); font-weight: 600; }
+    .nav-dropdown.open { display: block; }
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 26px; }
+      .site-nav { padding: 0 16px; }
+      .site-nav a:not(.nav-home) { display: none !important; }
+      .nav-menu-btn { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+<!-- BETA SITE BANNER — present only on beta.allarise.app, not on the production site. -->
+<div style="background:#b45309;color:#fff;padding:10px 16px;text-align:center;font:600 14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;position:relative;z-index:9999">
+  🧪 Beta site — documents the TestFlight build and the <code style="background:rgba(0,0,0,.22);padding:1px 5px;border-radius:4px">allarise-hacs-beta</code> integration.
+  <a href="https://allarise.app" style="color:#fff;text-decoration:underline">Go to the release site →</a>
+</div>
+
+<nav class="site-nav">
+  <a href="index.html" class="nav-home">
+    <img src="app-icon.png" class="icon-light" alt="Allarise" />
+    <img src="app-icon-dark.png" class="icon-dark" alt="Allarise" />
+    <span>Allarise</span>
+  </a>
+  <a href="index.html">About</a>
+  <a href="home-assistant.html">Home Assistant</a>
+  <a href="mqtt-builder.html">MQTT Builder</a>
+  <a href="faq.html">FAQ</a>
+  <button class="nav-menu-btn" id="nav-menu-btn" onclick="toggleNav()">☰</button>
+</nav>
+<div class="nav-dropdown" id="nav-dropdown">
+  <a href="index.html">About</a>
+  <a href="home-assistant.html">Home Assistant</a>
+  <a href="mqtt-builder.html">MQTT Builder</a>
+  <a href="faq.html">FAQ</a>
+</div>
+
+<div class="wrapper">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="app-icon">
+      <img src="app-icon.png" class="icon-light" alt="Allarise" />
+      <img src="app-icon-dark.png" class="icon-dark" alt="Allarise" />
+    </div>
+    <h1>Allarise</h1>
+    <p class="subtitle">What&rsquo;s New</p>
+    <span class="updated">Beta channel</span>
+  </div>
+
+  <div class="callout green">
+    <span class="icon">🧪</span>
+    <div class="body">
+      These are the notes for the <strong>TestFlight beta</strong>. Features here may
+      change before they reach the App Store, and some may not ship at all.
+    </div>
+  </div>
+
+  <h2>Version 5.2</h2>
+
+  <h3>Multi-mission alarms</h3>
+  <p>
+    An alarm can now run up to <strong>five missions in a row</strong> before it will
+    dismiss. Mix them freely &mdash; maths then a shake, or three rounds of the same
+    thing. Set them up under Missions when editing an alarm.
+  </p>
+
+  <h3>Two new missions</h3>
+  <ul>
+    <li><strong>Block Drop</strong> &mdash; clear falling blocks to shut the alarm up.</li>
+    <li><strong>Meteor Defense</strong> &mdash; shoot down what is coming at you.</li>
+  </ul>
+  <p>Both have easy, medium and hard difficulty settings.</p>
+
+  <h3>Radio</h3>
+  <p>
+    Internet radio stations can now be used as an <strong>alarm sound</strong> and as a
+    <strong>sleep sound</strong>. Add stations in Settings, then pick one anywhere a
+    sound is chosen. If a station cannot be reached when the alarm fires, Allarise falls
+    back to your normal alarm tone rather than staying silent.
+  </p>
+
+  <h3>Optional usage data and product updates</h3>
+  <p>
+    Two new settings, both <strong>off unless you turn them on</strong>, under
+    Settings &rarr; Allarise Pro:
+  </p>
+  <ul>
+    <li><strong>Usage Data &amp; Crash Reports</strong> &mdash; anonymous. Helps find
+      crashes that cannot be reproduced and shows which features actually get used.
+      Nothing you typed is ever included.</li>
+    <li><strong>Product Updates</strong> &mdash; occasional notifications about new
+      features. Tapping one opens this page.</li>
+  </ul>
+  <p>
+    Full detail on both is in the <a href="privacy.html">Privacy Policy</a> (sections 2.3
+    and 2.7). Declining either costs you nothing else in the app.
+  </p>
+
+  <h3>Removed</h3>
+  <p>
+    <strong>NWS Weather Alerts</strong> has been removed. The relevant sections of the
+    <a href="terms.html">Terms of Use</a> and <a href="privacy.html">Privacy Policy</a>
+    have been updated to match.
+  </p>
+
+  <hr />
+
+  <div class="callout yellow">
+    <span class="icon">💬</span>
+    <div class="body">
+      Found something broken? The beta is where that is most useful &mdash;
+      <a href="https://discord.gg/wUxJKAD4dP">Discord</a> or
+      <a href="mailto:support@domoretech.net">support@domoretech.net</a>.
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="https://discord.gg/wUxJKAD4dP"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="18" height="18" style="vertical-align:-3px;margin-right:5px;fill:currentColor"><path d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"/></svg>Discord</a>
+    <a href="mailto:support@domoretech.net">✉️ support@domoretech.net</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+  </div>
+  <div>© 2026 Allarise</div>
+</footer>
+
+<script>
+  var _navOpen = false;
+  function toggleNav() {
+    var d = document.getElementById('nav-dropdown');
+    var b = document.getElementById('nav-menu-btn');
+    _navOpen = !_navOpen;
+    d.style.display = _navOpen ? 'block' : 'none';
+    b.textContent = _navOpen ? '✕' : '☰';
+  }
+  document.addEventListener('click', function(e) {
+    if (!_navOpen) return;
+    var d = document.getElementById('nav-dropdown');
+    var b = document.getElementById('nav-menu-btn');
+    if (!d.contains(e.target) && e.target !== b && !b.contains(e.target)) {
+      _navOpen = false;
+      d.style.display = 'none';
+      b.textContent = '☰';
+    }
+  });
+  document.getElementById('nav-dropdown').style.display = 'none';
+</script>
+
+</body>
+</html>

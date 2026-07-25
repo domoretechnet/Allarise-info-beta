@@ -302,27 +302,42 @@
     </div>
     <h1>Allarise</h1>
     <p class="subtitle">Privacy Policy</p>
-    <span class="updated">Last updated: June 2026</span>
+    <span class="updated">Last updated: July 2026 &middot; Policy version 6</span>
   </div>
 
   <!-- Summary callout -->
   <div class="callout green">
     <span class="icon">🔒</span>
     <div class="body">
-      <strong>The short version:</strong> Allarise is a local-first app. Your data stays on your device.
-      We collect no analytics, no crash reports are sent to us, there are no ads, and we do not sell or share
-      your data with anyone. External communication is limited to Apple services used by app features
-      (such as WeatherKit and the App Store), — if <em>you</em> configure it — your own self-hosted Home Assistant / MQTT broker,
-      and — if you enable NWS weather alerts — the National Weather Service API (<code>api.weather.gov</code>), a US government service, which receives your approximate location to return local alert data.
+      <strong>The short version:</strong> Allarise is a local-first app. Your alarms, settings and
+      credentials stay on your device. There are no ads, no sign-in, no advertising identifiers, and we
+      do not sell or share your data with anyone. Two things do leave your device, and
+      <strong>only if you switch them on</strong>: anonymous usage and crash data, and product-update
+      notifications — both off by default, both switchable off at any time in
+      <strong>Settings → Allarise Pro</strong>. Everything else is limited to Apple services used by app
+      features (WeatherKit, MapKit, the App Store) and — if <em>you</em> configure it — your own
+      self-hosted Home Assistant / MQTT broker.
+    </div>
+  </div>
+
+  <!-- What changed -->
+  <div class="callout yellow">
+    <span class="icon">🆕</span>
+    <div class="body">
+      <strong>What changed in July 2026:</strong> the app is now published by DoMore Tech LLC rather than
+      by an individual; optional anonymous usage data and crash reporting were added (see §2.3), along with
+      optional product-update notifications (see §2.7); and the NWS Weather Alerts feature was removed from
+      the app, along with everything this policy previously said about it.
     </div>
   </div>
 
   <!-- 1. Who we are -->
   <h2>1. Who We Are</h2>
   <p>
-    Allarise ("the app") is developed and published by <strong>Bryan Scott Daniel, doing business as Allarise</strong>
-    ("we", "us", "our"). This policy describes how the app handles your information when you
-    use it on your iPhone or iPad.
+    Allarise ("the app") is developed and published by <strong>DoMore Tech LLC</strong>, a Michigan
+    limited liability company ("we", "us", "our"). DoMore Tech LLC is the data controller for the
+    limited information described in this policy. This policy describes how the app handles your
+    information when you use it on your iPhone or iPad.
   </p>
   <p>If you have questions, contact us at: <a href="mailto:privacy@domoretech.net">privacy@domoretech.net</a></p>
 
@@ -334,13 +349,6 @@
     If you enable the weather widget, the app requests <strong>When In Use</strong> location access to fetch
     your local weather conditions. Your coordinates are sent directly to Apple's WeatherKit API — we never
     see them. Location is not stored on disk and is never sent to our servers.
-  </p>
-  <p>
-    If you enable <strong>NWS (National Weather Service) weather alerts</strong>, your approximate location
-    (coordinates or city/region) is sent to the National Weather Service public API
-    (<code>api.weather.gov</code>) to retrieve weather alerts relevant to your area. The NWS is a US
-    government agency; no account is required, and we do not receive or store any data from this exchange.
-    This feature is opt-in and can be disabled at any time in Settings.
   </p>
   <p>
     WiFi SSID detection (used to identify your home network for MQTT routing) also requires location
@@ -362,12 +370,6 @@
       <td>Display in weather widget</td>
       <td><span class="badge local">Memory only</span></td>
       <td><span class="badge apple">Apple MapKit (reverse geocode)</span></td>
-    </tr>
-    <tr>
-      <td>GPS coordinates / city</td>
-      <td>Fetch NWS weather alerts (if enabled)</td>
-      <td><span class="badge local">Memory only</span></td>
-      <td><span class="badge opt-in">NWS api.weather.gov (opt-in)</span></td>
     </tr>
     <tr>
       <td>WiFi SSID</td>
@@ -416,6 +418,57 @@
     </tr>
   </table>
 
+  <h3>2.3 Anonymous Usage Data &amp; Crash Reports <span class="badge opt-in">Opt-in</span></h3>
+  <p>
+    Allarise can send us anonymous usage statistics and crash reports so we can find crashes we
+    cannot reproduce and see which features are actually used. <strong>This is off by default.</strong>
+    You are asked once, on a screen where nothing is pre-ticked, and you can change your answer at any
+    time in <strong>Settings → Allarise Pro → Usage Data &amp; Crash Reports</strong>.
+  </p>
+  <p>
+    <strong>Nothing is collected before you say yes.</strong> The analytics provider is not merely
+    disabled until then — it is never started at all. If you turn the setting off later, collection
+    stops <em>and</em> we instruct the provider to delete the data already gathered for your device.
+  </p>
+  <p>
+    Crash reporting rides the same switch, deliberately: a crash report describes your device's state,
+    so it is not treated as exempt from the choice you made.
+  </p>
+
+  <p><strong>What an event may contain.</strong> Events carry counts, on/off flags, bucketed durations
+    and a fixed list of feature names — nothing you typed. The app is built so that free-form text
+    <em>cannot</em> reach an event: there is no field for it. In particular we never receive:</p>
+  <ul>
+    <li>alarm names or labels, or note text</li>
+    <li>custom sound, radio station or wallpaper names</li>
+    <li>Home Assistant entity IDs, zone names, topics or MQTT payloads</li>
+    <li>Shortcut names, locations, contacts, photos, or anything from other apps</li>
+  </ul>
+  <p>
+    A typical event is "an alarm fired and was dismissed after two snoozes", "a mission was completed",
+    or "the paywall was opened from a locked theme". Alongside these we set a small number of
+    device-level properties — Pro status, whether MQTT is configured, whether the widget is in use, how
+    many alarms exist — so a crash can be read in context.
+  </p>
+  <p>
+    Analytics and crash data are processed on our behalf by <strong>Google (Firebase Analytics and
+    Firebase Crashlytics)</strong> and are stored on Google's servers, which are located in the United
+    States. Google acts as our processor. The data is keyed to a random, app-generated installation
+    identifier that is reset when you turn the setting off or delete the app; it is not your Apple
+    Account, your email, your phone number, or your device's advertising identifier.
+  </p>
+
+  <div class="callout green">
+    <span class="icon">🚫</span>
+    <div class="body">
+      <strong>This is not tracking.</strong> Advertising-identifier (IDFV/IDFA) collection and ad
+      personalisation are switched off in the app's configuration, and this data is never linked with
+      data from other companies' apps or websites, never used to build a profile of you, and never sold
+      or shared for advertising. That is why Allarise does not show an App Tracking Transparency prompt —
+      it does not do anything that Apple defines as tracking.
+    </div>
+  </div>
+
   <h3>2.4 Home Assistant / MQTT Integration (optional)</h3>
   <p>
     If you configure MQTT, the app communicates directly with <strong>your own self-hosted broker</strong>
@@ -453,20 +506,49 @@
     command labels, and notification content.
   </p>
 
+  <h3>2.7 Product Update Notifications <span class="badge opt-in">Opt-in</span></h3>
+  <p>
+    Allarise can send you occasional notifications about new features and important changes.
+    <strong>This is off by default</strong>, it is separate from the analytics choice above, and it can
+    be changed at any time in <strong>Settings → Allarise Pro → Product Updates</strong>. It is not
+    marketing, and it has nothing to do with your alarms — alarm notifications are generated on your
+    device and never involve our servers.
+  </p>
+  <p>
+    Turning it on registers your device with Apple's Push Notification service and with
+    <strong>Firebase Cloud Messaging</strong> (Google), which issues a random push token for this
+    installation and subscribes it to a single broadcast topic. We send to the topic, not to you: we
+    have no list of who is subscribed, no way to send a message to one particular person, and we
+    receive no email address, name, or contact details. Turning the setting off unsubscribes the device
+    <em>and</em> deletes the push token, so withdrawal removes the identifier rather than just silencing
+    the messages.
+  </p>
+
   <!-- 3. What we do NOT collect -->
-  <h2>3. What We Do NOT Collect</h2>
+  <h2>3. What We Never Collect</h2>
+  <p>
+    These hold whether or not you opt in to anything. They are not settings — there is no configuration
+    in which any of the following happens:
+  </p>
   <div class="no-collect">
-    <div class="item"><span class="check">✓</span> No analytics or telemetry</div>
-    <div class="item"><span class="check">✓</span> No crash reports sent to us</div>
-    <div class="item"><span class="check">✓</span> No advertising identifiers</div>
+    <div class="item"><span class="check">✓</span> No advertising identifiers (IDFA / IDFV)</div>
+    <div class="item"><span class="check">✓</span> No ads or ad networks</div>
     <div class="item"><span class="check">✓</span> No behavioral profiling</div>
-    <div class="item"><span class="check">✓</span> No cross-app tracking</div>
+    <div class="item"><span class="check">✓</span> No cross-app or cross-site tracking</div>
     <div class="item"><span class="check">✓</span> No email address required</div>
     <div class="item"><span class="check">✓</span> No account or sign-in</div>
     <div class="item"><span class="check">✓</span> No device fingerprinting</div>
-    <div class="item"><span class="check">✓</span> No third-party SDKs (ads, analytics)</div>
-    <div class="item"><span class="check">✓</span> No data sold to third parties</div>
+    <div class="item"><span class="check">✓</span> No alarm names, notes or other text you typed</div>
+    <div class="item"><span class="check">✓</span> No contacts, photos, calendars or health data</div>
+    <div class="item"><span class="check">✓</span> No precise location sent to us, ever</div>
+    <div class="item"><span class="check">✓</span> No data sold or shared for advertising</div>
+    <div class="item"><span class="check">✓</span> No data collected at all if you decline §2.3 and §2.7</div>
   </div>
+  <p>
+    Earlier versions of this policy said the app contained no analytics or crash-reporting SDK at all.
+    That is no longer accurate, and we would rather say so plainly than leave it standing: the app now
+    includes them, switched off, and they stay switched off unless you turn them on.
+  </p>
 
   <!-- 4. Third-party services -->
   <h2>4. Third-Party Services We Use</h2>
@@ -501,14 +583,30 @@
       <td>N/A — you control this</td>
     </tr>
     <tr>
-      <td>NWS Alerts API <span class="badge opt-in">Opt-in</span></td>
-      <td>National Weather Service (US Gov)</td>
-      <td>Approximate location (coordinates or bounding box) to fetch weather alerts</td>
-      <td><a href="https://www.weather.gov/privacy" target="_blank">weather.gov/privacy</a></td>
+      <td>Firebase Analytics <span class="badge opt-in">Opt-in</span></td>
+      <td>Google LLC</td>
+      <td>Anonymous feature-usage events and device properties (see §2.3). Nothing sent until you opt in.</td>
+      <td><a href="https://firebase.google.com/support/privacy" target="_blank">firebase.google.com/support/privacy</a></td>
+    </tr>
+    <tr>
+      <td>Firebase Crashlytics <span class="badge opt-in">Opt-in</span></td>
+      <td>Google LLC</td>
+      <td>Crash stack traces, OS/device model, app version. Nothing sent until you opt in.</td>
+      <td><a href="https://firebase.google.com/support/privacy" target="_blank">firebase.google.com/support/privacy</a></td>
+    </tr>
+    <tr>
+      <td>Firebase Cloud Messaging <span class="badge opt-in">Opt-in</span></td>
+      <td>Google LLC + Apple Inc. (APNs)</td>
+      <td>A random push token for this installation (see §2.7). Nothing sent until you opt in.</td>
+      <td><a href="https://firebase.google.com/support/privacy" target="_blank">firebase.google.com/support/privacy</a></td>
     </tr>
   </table>
 
-  <p>There are no advertising networks, analytics SDKs, or crash reporting services integrated into the app.</p>
+  <p>
+    There are no advertising networks in the app. The three Google services above are the only
+    non-Apple SDKs that transmit anything, they are inert unless you opt in, and each can be switched
+    back off in Settings.
+  </p>
 
   <!-- 5. Permissions -->
   <h2>5. iOS Permissions</h2>
@@ -519,14 +617,14 @@
     </tr>
     <tr>
       <td>Location (When In Use)</td>
-      <td>First time you enable weather, NWS alerts, or MQTT network detection</td>
-      <td>Weather display (WeatherKit); NWS weather alert fetching; WiFi SSID detection for MQTT routing</td>
+      <td>First time you enable weather or MQTT network detection</td>
+      <td>Weather display (WeatherKit); WiFi SSID detection for MQTT routing</td>
       <td><span class="badge opt-in">Optional</span></td>
     </tr>
     <tr>
       <td>Notifications</td>
       <td>On first launch or when scheduling an alarm</td>
-      <td>Alarm alerts, snooze reminders, background refresh warnings</td>
+      <td>Alarm alerts, snooze reminders, background refresh warnings — and, only if you opt in, product-update notifications (§2.7)</td>
       <td><span class="badge opt-in">Optional (core feature)</span></td>
     </tr>
     <tr>
@@ -548,21 +646,40 @@
   <!-- 6. Data retention -->
   <h2>6. Data Retention &amp; Deletion</h2>
   <p>
-    Because all data is stored locally on your device, you are in full control:
+    Almost everything the app holds is on your device, where you are in full control:
   </p>
   <ul>
     <li><strong>Delete the app</strong> — removes all app data, settings, and alarms from your device.</li>
     <li><strong>Diagnostic logs</strong> — auto-purge after 7 days. You can also clear them manually in Settings.</li>
     <li><strong>Purchase records</strong> — managed by Apple's App Store; deleting the app does not affect your entitlements.</li>
   </ul>
-  <p>We hold no data about you on our servers, so there is nothing for us to delete on your behalf.</p>
+  <p>The two optional items are the only things held anywhere else:</p>
+  <ul>
+    <li><strong>Usage &amp; crash data</strong> (only if you opted in) — held by Google on our behalf under
+      Firebase's retention settings; crash reports are retained for approximately 90 days and analytics
+      events for no more than 14 months. Turning <strong>Usage Data &amp; Crash Reports</strong> off in
+      Settings stops collection and instructs the provider to delete what was already gathered for your
+      device.</li>
+    <li><strong>Push token</strong> (only if you opted in) — turning <strong>Product Updates</strong> off
+      unsubscribes the device and deletes the token.</li>
+  </ul>
+  <p>
+    If you never opted in to either, we hold nothing about you at all and there is nothing for us to
+    delete. If you did and want it removed after the fact — including after deleting the app — email
+    <a href="mailto:privacy@domoretech.net">privacy@domoretech.net</a> and we will action it; because the
+    data is not tied to your identity, it helps if you can tell us roughly when and on what device you
+    used the app.
+  </p>
 
   <!-- 7. Children -->
   <h2>7. Children's Privacy</h2>
   <p>
-    Allarise is not directed at children under the age of 13. We do not knowingly collect
-    personal information from children. The app does not require an account, age verification,
-    or any personal details to function.
+    Allarise is not directed at children under the age of 13, and we do not knowingly collect personal
+    information from children. The app does not require an account, age verification, or any personal
+    details to function. The optional usage data described in §2.3 is not used to build a profile of any
+    user, child or adult, and is never used for advertising. If you believe a child has enabled the
+    optional data settings and you want the associated data removed, contact us at
+    <a href="mailto:privacy@domoretech.net">privacy@domoretech.net</a>.
   </p>
 
   <!-- 8. Changes -->
@@ -576,14 +693,33 @@
   <!-- 9. Your rights -->
   <h2>9. Your Rights</h2>
   <p>
-    Depending on your jurisdiction, you may have rights including access to, correction of, or
-    deletion of personal data. Because Allarise stores all data locally on your device and
-    transmits none to our servers, the practical exercise of these rights is:
+    Depending on where you live, you may have rights including access to, correction of, or deletion of
+    personal data, and the right to object to or restrict its processing. Because Allarise keeps almost
+    everything on your device, the practical exercise of these rights is:
   </p>
   <ul>
-    <li><strong>Access / Export:</strong> All your data is on your device — export alarm data or logs directly from the app's Settings.</li>
-    <li><strong>Deletion:</strong> Delete the app to remove all data, or use Settings to clear specific items.</li>
+    <li><strong>Access / Export:</strong> Your alarms, settings and diagnostic logs are on your device — export them directly from the app's Settings.</li>
+    <li><strong>Deletion:</strong> Delete the app to remove all local data, or use Settings to clear specific items. For the optional usage data and push token, see §6.</li>
+    <li><strong>Withdraw consent:</strong> Switch <strong>Usage Data &amp; Crash Reports</strong> or <strong>Product Updates</strong> off in Settings → Allarise Pro. Withdrawal takes effect immediately and does not affect any use of your data before you withdrew.</li>
   </ul>
+
+  <h3>9.1 EEA / UK</h3>
+  <p>
+    Our legal basis for the optional usage, crash and push data is your <strong>consent</strong>
+    (GDPR Art. 6(1)(a)), obtained before any collection starts and withdrawable at any time as above.
+    We rely on no other basis for it, and declining costs you no functionality. That data is transferred
+    to and stored in the United States by Google acting as our processor, under the transfer mechanisms
+    described in Google's own terms. You also have the right to lodge a complaint with your local
+    supervisory authority.
+  </p>
+
+  <h3>9.2 California and other US states</h3>
+  <p>
+    We do not sell your personal information and we do not share it for cross-context behavioural
+    advertising, as those terms are defined under the CCPA/CPRA and comparable state laws. We have never
+    done so. The optional usage data described in §2.3 is collected only with your prior opt-in and is
+    used solely to improve the app.
+  </p>
   <p>If you have a privacy concern, please contact us at <a href="mailto:privacy@domoretech.net">privacy@domoretech.net</a>.</p>
 
   <!-- Contact -->
@@ -591,7 +727,8 @@
     <h3>Contact Us</h3>
     <p style="margin-bottom:8px;">Questions about this policy or how your data is handled?</p>
     <p>
-      <strong>Bryan Scott Daniel, doing business as Allarise</strong><br />
+      <strong>DoMore Tech LLC</strong><br />
+      A Michigan limited liability company<br />
       Email: <a href="mailto:privacy@domoretech.net">privacy@domoretech.net</a>
     </p>
   </div>
