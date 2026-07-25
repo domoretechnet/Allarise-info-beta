@@ -260,6 +260,19 @@
     .ref-body h3:first-child { margin-top: 0; padding-top: 0; border-top: none; }
     .ref-body strong { font-weight: 600; }
 
+    /* Sub-headings inside a reference block (e.g. the Missions / Notes page
+       groupings under a service). Matches .step-body h4 so the two sections
+       read the same; without this rule they fall back to an unstyled browser
+       h4 that is smaller than the body text around it. */
+    .ref-body h4 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--secondary);
+      margin-bottom: 10px;
+    }
+
     /* ── Section label divider ── */
     .section-label-divider {
       max-width: 760px;
@@ -549,7 +562,7 @@
     <div class="wyg-card">
       <span class="wyg-icon">⚡</span>
       <h3>Commands</h3>
-      <p>Commands are named MQTT triggers you define in the app. When fired, Allarise publishes to their topic in Home Assistant so your automations can react. Assign them as swipe actions on alarm rows, swipe commands in the alarm widget, a tappable list, or buttons on the alarm screen itself via the notes widget.</p>
+      <p>Commands are named MQTT triggers you define in the app. When fired, Allarise publishes to their topic in Home Assistant so your automations can react. Assign them as swipe actions on alarm rows, swipe commands in the alarm widget, a tappable list, or buttons on the Notes page that follows an alarm once you've dismissed it.</p>
     </div>
   </div>
 </div>
@@ -783,14 +796,13 @@ customize:
         <tbody>
           <tr><td>Alarm State</td><td><code>idle</code> / <code>ringing</code> / <code>snoozed</code> / <code>dismissed</code></td></tr>
           <tr><td>Alarm Name</td><td>Name of the currently ringing or next upcoming alarm</td></tr>
-          <tr><td>Alarm Mission</td><td>Mission type required to dismiss (<code>shake</code>, <code>math</code>, <code>ha</code>, <code>none</code>)</td></tr>
+          <tr><td>Alarm Mission</td><td>First mission required to dismiss (<code>none</code> = Tap, <code>shake</code>, <code>math</code>, <code>balance ball</code>, <code>block drop</code>, <code>meteor defense</code>, <code>home assistant</code>)</td></tr>
           <tr><td>Alarm Fire Time</td><td>Scheduled fire time of the active or next alarm</td></tr>
           <tr><td>Alarm Snooze Fire Time</td><td>When a snoozed alarm will re-fire</td></tr>
           <tr><td>Alarm Sound</td><td>Sound ID playing for the active alarm</td></tr>
           <tr><td>Alarm Volume</td><td>Volume % for the active alarm</td></tr>
           <tr><td>Alarm Vibrate</td><td>Whether vibration is enabled</td></tr>
           <tr><td>Alarm Fade In</td><td>Whether fade-in is active</td></tr>
-          <tr><td>Alarm Notes</td><td>Notes attached to the active alarm</td></tr>
           <tr><td>Alarm ID</td><td>MQTT index of the active alarm</td></tr>
           <tr><td>Alarm Snooze Count</td><td>Number of times the current alarm has been snoozed</td></tr>
           <tr><td>Snoozes Remaining</td><td>Snoozes left before alarm is force-dismissed</td></tr>
@@ -821,8 +833,23 @@ customize:
       <h3>Per-alarm sensors</h3>
       <p>For each alarm you create in the app, a dedicated HA device is created containing:</p>
       <p style="margin-top:8px; font-size:14px; color:var(--secondary);">
-        <code>Name</code> · <code>Enabled</code> · <code>State</code> · <code>Fire Time</code> · <code>Snooze Fire Time</code> · <code>Days</code> · <code>Mission</code> · <code>Sound</code> · <code>Snoozes</code> · <code>Volume</code> · <code>Vibrate</code> · <code>Fade In</code> · <code>Notes</code> · <code>Sort Order</code> · <code>Commands</code> · <code>Swipe Left/Right Commands</code>
+        <code>Name</code> · <code>Enabled</code> · <code>State</code> · <code>Fire Time</code> · <code>Snooze Fire Time</code> · <code>Days</code> · <code>Mission</code> · <code>Missions</code> · <code>Mission Count</code> · <code>Tap Dismiss Mode</code> · <code>Tap Count</code> · <code>Tap Hold Duration</code> · <code>Sound</code> · <code>Snoozes</code> · <code>Volume</code> · <code>Vibrate</code> · <code>Fade In</code> · <code>Notes</code> · <code>Sort Order</code> · <code>Commands</code> · <code>Swipe Left/Right Commands</code> · <code>Morning Weather</code> · <code>Dismiss App Link</code> · <code>Snooze App Link</code>
       </p>
+
+      <table class="data-table" style="margin-top:16px;">
+        <thead><tr><th>Sensor</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Mission</td><td>The <strong>first</strong> mission only. Kept unchanged so existing dashboards keep working.</td></tr>
+          <tr><td>Missions</td><td>The <strong>full ordered sequence</strong>, comma-separated (e.g. <code>math,shake,meteor</code>). An alarm can require up to five. <code>none</code> when nothing gates dismissal.</td></tr>
+          <tr><td>Mission Count</td><td>How many missions gate dismissal. <code>0</code> for a plain single-tap alarm.</td></tr>
+          <tr><td>Tap Dismiss Mode</td><td><code>tap</code> or <code>hold</code>. Published only when the first mission is Tap.</td></tr>
+          <tr><td>Tap Count / Tap Hold Duration</td><td>How many taps, or how many seconds to hold, to dismiss.</td></tr>
+          <tr><td>Notes</td><td>Text shown on the after-alarm Notes page. Publishes the literal <code>None</code> when empty.</td></tr>
+          <tr><td>Commands</td><td>Names of the command buttons on the Notes page, comma-separated with <strong>no space</strong> — split on <code>","</code>.</td></tr>
+          <tr><td>Morning Weather</td><td><code>on</code> when the Good Morning weather card shows after dismissing.</td></tr>
+          <tr><td>Dismiss / Snooze App Link</td><td>URL opened after dismiss or snooze (e.g. a Shortcut), or <code>None</code>.</td></tr>
+        </tbody>
+      </table>
 
       <h3>Buttons</h3>
       <p><strong>Dashboard buttons</strong> are intended to act on the currently active alarm:</p>
@@ -1028,7 +1055,54 @@ data:
   snooze_duration: 9
   max_snooze_count: 3
   notes: "Team meeting at 9am"
-  morning_weather: true      # show Morning Weather card after dismissing</pre>
+  morning_weather: true      # show Morning Weather card after dismissing
+  dismiss_app_uri: "shortcuts://run-shortcut?name=Morning"</pre>
+      </div>
+
+      <h4 style="margin-top:24px;">Missions</h4>
+      <p>An alarm can require <strong>up to five missions in sequence</strong>. Use <code>missions</code> to set the whole chain — each entry is either a type name or an object with its own settings:</p>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>Multi-mission alarm</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>service: allarise.update_alarm
+data:
+  index: 3
+  missions:
+    - mission: math
+      mission_config:
+        math_count: 3
+        math_difficulty: hard
+    - shake
+    - mission: meteor
+      mission_config:
+        meteor_difficulty: easy</pre>
+      </div>
+
+      <div class="callout callout-warn" style="margin-top:16px;">
+        <span class="callout-icon">⚠️</span>
+        <span><strong><code>mission</code> on its own clears the rest.</strong> Sending <code>mission: math</code> to an alarm that has three missions leaves it with math and nothing else — "set this alarm's mission" is taken literally, and it's what the <code>Mission</code> sensor reports back. To change one mission on a multi-mission alarm, send the full <code>missions</code> list.</span>
+      </div>
+
+      <p style="margin-top:16px;">Mission types: <code>none</code> (Tap) · <code>shake</code> · <code>math</code> · <code>balance_ball</code> · <code>block_drop</code> (Bricks) · <code>meteor</code> · <code>home_assistant</code>. Per-mission settings go in <code>mission_config</code> — see the <a href="mqtt-builder.html">MQTT Payload Builder</a>, which writes these payloads for you.</p>
+
+      <h4 style="margin-top:24px;">Notes page</h4>
+      <p><code>notes</code> replaces the text on the after-alarm Notes page. <code>append_notes</code> adds a line instead — prefixed <code>HA:</code> and divider-separated — so a routine can build a briefing up over several steps without re-sending the whole note:</p>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>Append to the Notes page</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>service: allarise.update_alarm
+data:
+  index: 1
+  append_notes: "Bins go out tonight"
+  alarm_screen_commands: ["Coffee", "Lights"]   # up to 4 buttons</pre>
+      </div>
+      <div class="callout callout-tip" style="margin-top:16px;">
+        <span class="callout-icon">💡</span>
+        <span>If the Notes page is <strong>on screen</strong> when the write lands — the alarm was just dismissed and you're still reading it — the page updates live.</span>
       </div>
 
       <h3>allarise.trigger_alert</h3>
