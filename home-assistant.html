@@ -797,8 +797,8 @@ customize:
           <tr><td>Alarm State</td><td><code>idle</code> / <code>ringing</code> / <code>snoozed</code> / <code>dismissed</code></td></tr>
           <tr><td>Alarm Name</td><td>Name of the currently ringing or next upcoming alarm</td></tr>
           <tr><td>Alarm Mission</td><td>First mission required to dismiss (<code>none</code> = Tap, <code>shake</code>, <code>math</code>, <code>balance ball</code>, <code>block drop</code>, <code>meteor defense</code>, <code>home assistant</code>)</td></tr>
-          <tr><td>Alarm Fire Time</td><td>Scheduled fire time of the active or next alarm</td></tr>
-          <tr><td>Alarm Snooze Fire Time</td><td>When a snoozed alarm will re-fire</td></tr>
+          <tr><td>Alarm Fire Time</td><td>Scheduled fire time of the active or next alarm. <strong>Timestamp sensor</strong> — usable directly in a Time trigger. Carries a <code>minutes_until</code> attribute.</td></tr>
+          <tr><td>Alarm Snooze Fire Time</td><td>When a snoozed alarm will re-fire. <strong>Timestamp sensor.</strong></td></tr>
           <tr><td>Alarm Sound</td><td>Sound ID playing for the active alarm</td></tr>
           <tr><td>Alarm Volume</td><td>Volume % for the active alarm</td></tr>
           <tr><td>Alarm Vibrate</td><td>Whether vibration is enabled</td></tr>
@@ -833,12 +833,14 @@ customize:
       <h3>Per-alarm sensors</h3>
       <p>For each alarm you create in the app, a dedicated HA device is created containing:</p>
       <p style="margin-top:8px; font-size:14px; color:var(--secondary);">
-        <code>Name</code> · <code>Enabled</code> · <code>State</code> · <code>Fire Time</code> · <code>Snooze Fire Time</code> · <code>Days</code> · <code>Mission</code> · <code>Missions</code> · <code>Mission Count</code> · <code>Tap Dismiss Mode</code> · <code>Tap Count</code> · <code>Tap Hold Duration</code> · <code>Sound</code> · <code>Snoozes</code> · <code>Volume</code> · <code>Vibrate</code> · <code>Fade In</code> · <code>Notes</code> · <code>Sort Order</code> · <code>Commands</code> · <code>Swipe Left/Right Commands</code> · <code>Morning Weather</code> · <code>Dismiss App Link</code> · <code>Snooze App Link</code>
+        <code>Name</code> · <code>Enabled</code> · <code>State</code> · <code>Fire Time</code> · <code>Snooze Fire Time</code> · <code>Fire Time (Display)</code> · <code>Snooze Fire Time (Display)</code> · <code>Days</code> · <code>Mission</code> · <code>Missions</code> · <code>Mission Count</code> · <code>Tap Dismiss Mode</code> · <code>Tap Count</code> · <code>Tap Hold Duration</code> · <code>Sound</code> · <code>Snoozes</code> · <code>Volume</code> · <code>Vibrate</code> · <code>Fade In</code> · <code>Notes</code> · <code>Sort Order</code> · <code>Commands</code> · <code>Swipe Left/Right Commands</code> · <code>Morning Weather</code> · <code>Dismiss App Link</code> · <code>Snooze App Link</code>
       </p>
 
       <table class="data-table" style="margin-top:16px;">
         <thead><tr><th>Sensor</th><th>Description</th></tr></thead>
         <tbody>
+          <tr><td>Fire Time / Snooze Fire Time</td><td><strong>Timestamp sensors.</strong> Point a Time trigger at these with an offset to run something before an alarm — see <a href="#ref-automations">Example automations</a>. Each carries a <code>minutes_until</code> attribute.</td></tr>
+          <tr><td>Fire Time (Display) / Snooze Fire Time (Display)</td><td>The same times as the app's own short-format text, for dashboards and notification templates.</td></tr>
           <tr><td>Mission</td><td>The <strong>first</strong> mission only. Kept unchanged so existing dashboards keep working.</td></tr>
           <tr><td>Missions</td><td>The <strong>full ordered sequence</strong>, comma-separated (e.g. <code>math,shake,meteor</code>). An alarm can require up to five. <code>none</code> when nothing gates dismissal.</td></tr>
           <tr><td>Mission Count</td><td>How many missions gate dismissal. <code>0</code> for a plain single-tap alarm.</td></tr>
@@ -1238,26 +1240,50 @@ data:
       </div>
 
       <h3>Turn on bedroom lights 5 minutes before alarm</h3>
+      <p>Every alarm's <strong>Fire Time</strong> sensor is a timestamp sensor, so Home Assistant's <strong>Time</strong> trigger can point straight at it with an offset. Home Assistant schedules a single callback at exactly the right moment and re-arms it automatically whenever you move the alarm — no polling, no template maths.</p>
       <div class="code-wrap">
         <div class="code-label">
           <span>automation.yaml</span>
           <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
         <pre>automation:
-  trigger:
-    - trigger: time_pattern
-      minutes: /1
-  condition:
-    - condition: template
-      value_template: >
-        {% set alarm = states('sensor.YOUR_DEVICE_alarm_fire_time') | as_datetime | as_local %}
-        {% set diff = (alarm - now()).total_seconds() %}
-        {{ 240 &lt;= diff &lt;= 360 }}
-  action:
+  triggers:
+    - trigger: time
+      at:
+        entity_id: sensor.allarise_YOUR_DEVICE_alarm_1_fire_time
+        offset: "-00:05:00"     # negative = before the alarm
+  actions:
     - action: light.turn_on
       target:
         entity_id: light.YOUR_LIGHT
+      data:
+        brightness_pct: 40
+        transition: 300         # fade up over the 5 minutes
   mode: single</pre>
+      </div>
+      <p style="margin-top:12px;">In the UI editor this is <em>Add trigger → Time</em>, then <em>Value of a date/time helper or timestamp-class sensor</em>, pick the alarm's <strong>Fire Time</strong>, and set the offset to <code>-00:05:00</code>.</p>
+
+      <div class="callout callout-tip" style="margin-top:16px;">
+        <span class="callout-icon">💡</span>
+        <span>Use a <strong>per-alarm</strong> Fire Time (<code>…_alarm_1_fire_time</code>) to tie the automation to one specific alarm. The dashboard <strong>Alarm Fire Time</strong> sensor tracks whichever alarm is next, so it will follow you across alarms — handy for a general "pre-wake" routine, but it also means a nap alarm will trigger it.</span>
+      </div>
+
+      <div class="callout callout-note" style="margin-top:16px;">
+        <span class="callout-icon">ℹ️</span>
+        <span><strong>On older releases</strong>, Fire Time was a plain text sensor and this trigger would not accept it — the workaround was a Template sensor helper with <em>Device class: Timestamp</em> wrapping <code>{{ states('sensor.…_fire_time') }}</code>. That helper still works, but it is no longer needed; point the trigger at the Fire Time sensor directly. <em>Thanks to the user who suggested this.</em></span>
+      </div>
+
+      <p style="margin-top:20px;">If you need a window rather than an instant — say "while the alarm is under 30 minutes away" — every fire-time sensor also carries a <code>minutes_until</code> attribute that refreshes each minute:</p>
+      <div class="code-wrap">
+        <div class="code-label">
+          <span>condition using minutes_until</span>
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>condition:
+  - condition: template
+    value_template: >
+      {{ state_attr('sensor.allarise_YOUR_DEVICE_alarm_1_fire_time',
+                    'minutes_until') | int(9999) &lt;= 30 }}</pre>
       </div>
 
     </div>
