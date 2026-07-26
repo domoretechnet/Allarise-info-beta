@@ -259,6 +259,9 @@
   .aa-tile svg { width:22px; height:22px; display:block }
   .aa-tile span { font-weight:600; text-align:center; line-height:1.2 }
   .aa-tile:has(input:checked) { background:var(--surface2); border-color:var(--accent); color:var(--text) }
+
+  /* Added upstream — see Documents/mqtt-builder.html */
+  .field-hint.hint-warn { color: var(--yellow); }
 </style>
 </head>
 <body>
@@ -431,6 +434,7 @@
                 <option value="Perimeter_Breach">Perimeter Breach</option>
                 <option value="Solarpsychedelic">Solarpsychedelic</option>
               </select>
+              <div class="field-hint" id="ca-sound-backup-hint" style="display:none">A radio station does not replace this tone — it becomes the <strong>backup</strong>. The stream plays when the alarm rings; this tone rings instead if the stream cannot start, so leave it set.</div>
             </div>
             <div class="field-group">
               <label>Volume (0–100)</label>
@@ -466,6 +470,11 @@
                 </select>
               <div class="field-hint">Matches the app's own picker: Off, a 30-second fade, or 1–15 minutes.</div>
             </div>
+          </div>
+          <div class="field-group">
+            <label>Wake-Up Radio Station</label>
+            <input type="text" id="ca-radio-station" placeholder="name of a station you favourited in the app" oninput="updateCreateAlarm()">
+            <div class="field-hint">The name of a station you have <strong>favourited in the app</strong> (Sleep Sounds → Radio → heart), matched ignoring capitalisation. Blank leaves it unchanged; send "" to clear it.</div>
           </div>
         </div>
 
@@ -946,11 +955,6 @@
                 <input type="text" id="ca-swipe-right" placeholder="command name" oninput="updateCreateAlarm()">
               </div>
             </div>
-          <div class="field-group">
-            <label>Wake-Up Radio Station</label>
-            <input type="text" id="ca-radio-station" placeholder="name of a station you favourited in the app" oninput="updateCreateAlarm()">
-            <div class="field-hint">The name of a station you have <strong>favourited in the app</strong> (Sleep Sounds → Radio → heart), matched ignoring capitalisation. Blank leaves it unchanged; send "" to clear it.</div>
-          </div>
           <div class="toggle-row">
             <input type="checkbox" id="ca-ephemeral" onchange="updateCreateAlarm()">
             <label for="ca-ephemeral">Ephemeral (auto-delete after firing)</label>
@@ -1066,6 +1070,7 @@
                   <option value="Perimeter_Breach">Perimeter Breach</option>
                   <option value="Solarpsychedelic">Solarpsychedelic</option>
                 </select>
+                <div class="field-hint" id="ua-sound-backup-hint" style="display:none">A radio station does not replace this tone — it becomes the <strong>backup</strong>. The stream plays when the alarm rings; this tone rings instead if the stream cannot start, so leave it set.</div>
               </div>
               <div class="field-group">
                 <label>Volume (0–100)</label>
@@ -1104,6 +1109,11 @@
                     <option value="15">15 min</option>
                 </select>
               </div>
+            </div>
+            <div class="field-group">
+              <label>Wake-Up Radio Station</label>
+              <input type="text" id="ua-radio-station" placeholder="name of a station you favourited in the app" oninput="updateUpdateAlarm()">
+              <div class="field-hint">The name of a station you have <strong>favourited in the app</strong> (Sleep Sounds → Radio → heart), matched ignoring capitalisation. Blank leaves it unchanged; send "" to clear it.</div>
             </div>
             <div class="row-2">
               <div class="field-group">
@@ -1303,11 +1313,6 @@
               </div>
             </div>
             <div class="field-hint" style="margin-top:-8px">Alarm-screen swipe gestures. Leave blank to keep what the alarm already has.</div>
-          <div class="field-group">
-            <label>Wake-Up Radio Station</label>
-            <input type="text" id="ua-radio-station" placeholder="name of a station you favourited in the app" oninput="updateUpdateAlarm()">
-            <div class="field-hint">The name of a station you have <strong>favourited in the app</strong> (Sleep Sounds → Radio → heart), matched ignoring capitalisation. Blank leaves it unchanged; send "" to clear it.</div>
-          </div>
           </div>
         </div>
 
@@ -1401,6 +1406,7 @@
                   <option value="Perimeter_Breach">Perimeter Breach</option>
                   <option value="Solarpsychedelic">Solarpsychedelic</option>
                 </select>
+                <div class="field-hint" id="ubn-sound-backup-hint" style="display:none">A radio station does not replace this tone — it becomes the <strong>backup</strong>. The stream plays when the alarm rings; this tone rings instead if the stream cannot start, so leave it set.</div>
               </div>
               <div class="field-group">
                 <label>Volume (0–100)</label>
@@ -1439,6 +1445,11 @@
                     <option value="15">15 min</option>
                 </select>
               </div>
+            </div>
+            <div class="field-group">
+              <label>Wake-Up Radio Station</label>
+              <input type="text" id="ubn-radio-station" placeholder="name of a station you favourited in the app" oninput="updateByName()">
+              <div class="field-hint">The name of a station you have <strong>favourited in the app</strong> (Sleep Sounds → Radio → heart), matched ignoring capitalisation. Blank leaves it unchanged; send "" to clear it.</div>
             </div>
             <div class="row-2">
               <div class="field-group">
@@ -1638,11 +1649,6 @@
               </div>
             </div>
             <div class="field-hint" style="margin-top:-8px">Alarm-screen swipe gestures. Leave blank to keep what the alarm already has.</div>
-          <div class="field-group">
-            <label>Wake-Up Radio Station</label>
-            <input type="text" id="ubn-radio-station" placeholder="name of a station you favourited in the app" oninput="updateByName()">
-            <div class="field-hint">The name of a station you have <strong>favourited in the app</strong> (Sleep Sounds → Radio → heart), matched ignoring capitalisation. Blank leaves it unchanged; send "" to clear it.</div>
-          </div>
           </div>
         </div>
 
@@ -2314,6 +2320,7 @@ function updateAll() {
   buildSleepControlCards();
   buildRadioControlCards();
   ['ca','ua','ubn'].forEach(syncMissionSlots);
+  ['ca','ua','ubn'].forEach(syncRadioBackupHint);
   updateRadioStart(); buildPerAlarmCards();
 }
 
@@ -2517,6 +2524,26 @@ function slotConfig(prefix, i) {
     if (val !== null && val !== '' && val !== undefined) cfg[f.key] = val;
   });
   return Object.keys(cfg).length ? cfg : null;
+}
+
+// A station does not replace the alarm tone — the app keeps the tone as the
+// backup that rings if the stream cannot start, and badges it BACKUP in its own
+// editor. Showing that only once a station is entered keeps the Audio card quiet
+// the rest of the time.
+function syncRadioBackupHint(prefix) {
+  const field = document.getElementById(prefix + '-radio-station');
+  const hint = document.getElementById(prefix + '-sound-backup-hint');
+  if (!hint) return;
+  if (!field || !field.value.trim()) { hint.style.display = 'none'; return; }
+  const sound = (document.getElementById(prefix + '-sound') || {}).value || '';
+  hint.style.display = '';
+  hint.className = sound ? 'field-hint' : 'field-hint hint-warn';
+  hint.innerHTML = sound
+    ? 'This tone is now the <strong>backup</strong>: the station plays when the alarm rings, '
+      + 'and this tone rings instead if the stream cannot start.'
+    : '<strong>Pick a sound above.</strong> A station is not enough on its own — the alarm needs '
+      + 'a normal tone as its backup for when the stream cannot start. Leaving this on the default '
+      + 'falls back to whatever tone the app is set to, which may not be what you want.';
 }
 
 function syncMissionSlots(prefix) {
@@ -2746,6 +2773,7 @@ function updateCreateAlarm() {
   const du = v('ca-dismiss-uri'); if (du) p.dismiss_app_uri = du;
   const su = v('ca-snooze-uri'); if (su) p.snooze_app_uri = su;
   const rs = v('ca-radio-station'); if (rs) p.radio_station = rs;
+  syncRadioBackupHint('ca');
   const aa = buildAfterAlarmActions('ca'); if (aa.length) p.after_alarm_actions = aa;
   if (vCheck('ca-ephemeral')) p.ephemeral = true;
   const mid = v('ca-mqtt-id'); if (mid) p.mqtt_id = mid;
@@ -2782,6 +2810,7 @@ function updateUpdateAlarm() {
   const du = v('ua-dismiss-uri'); if (du) p.dismiss_app_uri = du;
   const su = v('ua-snooze-uri'); if (su) p.snooze_app_uri = su;
   const rs = v('ua-radio-station'); if (rs) p.radio_station = rs;
+  syncRadioBackupHint('ua');
   const aa = buildAfterAlarmActions('ua'); if (aa.length) p.after_alarm_actions = aa;
   setPreview('ua-preview', 'ua-yaml', 'update_alarm', p);
 }
@@ -2817,6 +2846,7 @@ function updateByName() {
   const du = v('ubn-dismiss-uri'); if (du) p.dismiss_app_uri = du;
   const su = v('ubn-snooze-uri'); if (su) p.snooze_app_uri = su;
   const rs = v('ubn-radio-station'); if (rs) p.radio_station = rs;
+  syncRadioBackupHint('ubn');
   const aa = buildAfterAlarmActions('ubn'); if (aa.length) p.after_alarm_actions = aa;
   setPreview('ubn-preview', 'ubn-yaml', 'update_alarm', p);
 }
