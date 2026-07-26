@@ -606,12 +606,135 @@
               <div class="field-group">
                 <label>Fallback Mission</label>
                 <select id="ca-ha-fallback" onchange="updateCreateAlarm()">
-                  <option value="">— none —</option>
+                  <option value="">— no fallback —</option>
+                  <option value="none">Tap to Dismiss</option>
                   <option value="shake">Shake</option>
                   <option value="math">Math</option>
                 </select>
                 <div class="field-hint">If no HA response, fall back to this mission</div>
               </div>
+            </div>
+            <!-- Fallback settings, shown for whichever fallback type is picked above.
+                 Same show/hide pattern as the primary mission panels, so a fallback
+                 is configurable rather than merely selectable. -->
+            <div id="ca-fb-shake" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Shake Mode</label>
+                  <select id="ca-fb-shake-mode" onchange="updateCreateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="duration">Duration</option>
+                    <option value="count">Count</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Intensity</label>
+                  <select id="ca-fb-shake-intensity" onchange="updateCreateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="light">Light</option>
+                    <option value="medium">Medium</option>
+                    <option value="vigorous">Vigorous</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Duration (s)</label>
+                  <input type="number" id="ca-fb-shake-duration" min="1" max="30" placeholder="— default —" oninput="updateCreateAlarm()">
+                </div>
+                <div class="field-group">
+                  <label>Shake Count</label>
+                  <input type="number" id="ca-fb-shake-count" min="5" max="100" placeholder="— default —" oninput="updateCreateAlarm()">
+                </div>
+              </div>
+            </div>
+            <div id="ca-fb-math" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Math Difficulty</label>
+                  <select id="ca-fb-math-difficulty" onchange="updateCreateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="super_easy">Super Easy</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Problems</label>
+                  <input type="number" id="ca-fb-math-count" min="1" max="20" placeholder="— default —" oninput="updateCreateAlarm()">
+                </div>
+              </div>
+            </div>
+            <div id="ca-fb-balance" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Balance Difficulty</label>
+                  <select id="ca-fb-balance-difficulty" onchange="updateCreateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Hold (s)</label>
+                  <input type="number" id="ca-fb-balance-hold" min="1" max="30" placeholder="— default —" oninput="updateCreateAlarm()">
+                </div>
+              </div>
+            </div>
+            <div id="ca-fb-blockdrop" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Bricks Difficulty</label>
+                  <select id="ca-fb-blockdrop-difficulty" onchange="updateCreateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Lines to Clear</label>
+                  <input type="number" id="ca-fb-blockdrop-lines" min="1" max="12" placeholder="— default —" oninput="updateCreateAlarm()">
+                </div>
+              </div>
+            </div>
+            <div id="ca-fb-meteor" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Meteor Difficulty</label>
+                  <select id="ca-fb-meteor-difficulty" onchange="updateCreateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Meteors to Destroy</label>
+                  <input type="number" id="ca-fb-meteor-targets" min="3" max="40" placeholder="— default —" oninput="updateCreateAlarm()">
+                </div>
+              </div>
+            </div>
+            <div id="ca-fb-tap" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Tap Mode</label>
+                  <select id="ca-fb-tap-mode" onchange="updateCreateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="tap">Tap</option>
+                    <option value="hold">Hold</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Taps</label>
+                  <input type="number" id="ca-fb-tap-count" min="1" max="50" placeholder="— default —" oninput="updateCreateAlarm()">
+                </div>
+                <div class="field-group">
+                  <label>Hold (s)</label>
+                  <input type="number" id="ca-fb-tap-hold" min="1" max="10" placeholder="— default —" oninput="updateCreateAlarm()">
+                </div>
+              </div>
+              <div class="field-hint">A Tap fallback used to always be a single tap — these make it a real backup mission.</div>
             </div>
           </div>
         </div>
@@ -983,12 +1106,134 @@
                   <label>Fallback Mission</label>
                   <select id="ua-ha-fallback" onchange="updateUpdateAlarm()">
                     <option value="">— no change —</option>
-                    <option value="none">None</option>
+                    <option value="none">Tap to Dismiss</option>
                     <option value="shake">Shake</option>
                     <option value="math">Math</option>
                   </select>
                 </div>
               </div>
+            </div>
+            <!-- Fallback settings, shown for whichever fallback type is picked above.
+                 Same show/hide pattern as the primary mission panels, so a fallback
+                 is configurable rather than merely selectable. -->
+            <div id="ua-fb-shake" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Shake Mode</label>
+                  <select id="ua-fb-shake-mode" onchange="updateUpdateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="duration">Duration</option>
+                    <option value="count">Count</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Intensity</label>
+                  <select id="ua-fb-shake-intensity" onchange="updateUpdateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="light">Light</option>
+                    <option value="medium">Medium</option>
+                    <option value="vigorous">Vigorous</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Duration (s)</label>
+                  <input type="number" id="ua-fb-shake-duration" min="1" max="30" placeholder="— default —" oninput="updateUpdateAlarm()">
+                </div>
+                <div class="field-group">
+                  <label>Shake Count</label>
+                  <input type="number" id="ua-fb-shake-count" min="5" max="100" placeholder="— default —" oninput="updateUpdateAlarm()">
+                </div>
+              </div>
+            </div>
+            <div id="ua-fb-math" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Math Difficulty</label>
+                  <select id="ua-fb-math-difficulty" onchange="updateUpdateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="super_easy">Super Easy</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Problems</label>
+                  <input type="number" id="ua-fb-math-count" min="1" max="20" placeholder="— default —" oninput="updateUpdateAlarm()">
+                </div>
+              </div>
+            </div>
+            <div id="ua-fb-balance" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Balance Difficulty</label>
+                  <select id="ua-fb-balance-difficulty" onchange="updateUpdateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Hold (s)</label>
+                  <input type="number" id="ua-fb-balance-hold" min="1" max="30" placeholder="— default —" oninput="updateUpdateAlarm()">
+                </div>
+              </div>
+            </div>
+            <div id="ua-fb-blockdrop" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Bricks Difficulty</label>
+                  <select id="ua-fb-blockdrop-difficulty" onchange="updateUpdateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Lines to Clear</label>
+                  <input type="number" id="ua-fb-blockdrop-lines" min="1" max="12" placeholder="— default —" oninput="updateUpdateAlarm()">
+                </div>
+              </div>
+            </div>
+            <div id="ua-fb-meteor" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Meteor Difficulty</label>
+                  <select id="ua-fb-meteor-difficulty" onchange="updateUpdateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Meteors to Destroy</label>
+                  <input type="number" id="ua-fb-meteor-targets" min="3" max="40" placeholder="— default —" oninput="updateUpdateAlarm()">
+                </div>
+              </div>
+            </div>
+            <div id="ua-fb-tap" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Tap Mode</label>
+                  <select id="ua-fb-tap-mode" onchange="updateUpdateAlarm()">
+                    <option value="">— default —</option>
+                    <option value="tap">Tap</option>
+                    <option value="hold">Hold</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Taps</label>
+                  <input type="number" id="ua-fb-tap-count" min="1" max="50" placeholder="— default —" oninput="updateUpdateAlarm()">
+                </div>
+                <div class="field-group">
+                  <label>Hold (s)</label>
+                  <input type="number" id="ua-fb-tap-hold" min="1" max="10" placeholder="— default —" oninput="updateUpdateAlarm()">
+                </div>
+              </div>
+              <div class="field-hint">A Tap fallback used to always be a single tap — these make it a real backup mission.</div>
             </div>
           </div>
 
@@ -1344,12 +1589,134 @@
                   <label>Fallback Mission</label>
                   <select id="ubn-ha-fallback" onchange="updateByName()">
                     <option value="">— no change —</option>
-                    <option value="none">None</option>
+                    <option value="none">Tap to Dismiss</option>
                     <option value="shake">Shake</option>
                     <option value="math">Math</option>
                   </select>
                 </div>
               </div>
+            </div>
+            <!-- Fallback settings, shown for whichever fallback type is picked above.
+                 Same show/hide pattern as the primary mission panels, so a fallback
+                 is configurable rather than merely selectable. -->
+            <div id="ubn-fb-shake" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Shake Mode</label>
+                  <select id="ubn-fb-shake-mode" onchange="updateByName()">
+                    <option value="">— default —</option>
+                    <option value="duration">Duration</option>
+                    <option value="count">Count</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Intensity</label>
+                  <select id="ubn-fb-shake-intensity" onchange="updateByName()">
+                    <option value="">— default —</option>
+                    <option value="light">Light</option>
+                    <option value="medium">Medium</option>
+                    <option value="vigorous">Vigorous</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Duration (s)</label>
+                  <input type="number" id="ubn-fb-shake-duration" min="1" max="30" placeholder="— default —" oninput="updateByName()">
+                </div>
+                <div class="field-group">
+                  <label>Shake Count</label>
+                  <input type="number" id="ubn-fb-shake-count" min="5" max="100" placeholder="— default —" oninput="updateByName()">
+                </div>
+              </div>
+            </div>
+            <div id="ubn-fb-math" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Math Difficulty</label>
+                  <select id="ubn-fb-math-difficulty" onchange="updateByName()">
+                    <option value="">— default —</option>
+                    <option value="super_easy">Super Easy</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Problems</label>
+                  <input type="number" id="ubn-fb-math-count" min="1" max="20" placeholder="— default —" oninput="updateByName()">
+                </div>
+              </div>
+            </div>
+            <div id="ubn-fb-balance" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Balance Difficulty</label>
+                  <select id="ubn-fb-balance-difficulty" onchange="updateByName()">
+                    <option value="">— default —</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Hold (s)</label>
+                  <input type="number" id="ubn-fb-balance-hold" min="1" max="30" placeholder="— default —" oninput="updateByName()">
+                </div>
+              </div>
+            </div>
+            <div id="ubn-fb-blockdrop" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Bricks Difficulty</label>
+                  <select id="ubn-fb-blockdrop-difficulty" onchange="updateByName()">
+                    <option value="">— default —</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Lines to Clear</label>
+                  <input type="number" id="ubn-fb-blockdrop-lines" min="1" max="12" placeholder="— default —" oninput="updateByName()">
+                </div>
+              </div>
+            </div>
+            <div id="ubn-fb-meteor" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Meteor Difficulty</label>
+                  <select id="ubn-fb-meteor-difficulty" onchange="updateByName()">
+                    <option value="">— default —</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Meteors to Destroy</label>
+                  <input type="number" id="ubn-fb-meteor-targets" min="3" max="40" placeholder="— default —" oninput="updateByName()">
+                </div>
+              </div>
+            </div>
+            <div id="ubn-fb-tap" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
+              <div class="row-2">
+                <div class="field-group">
+                  <label>Fallback Tap Mode</label>
+                  <select id="ubn-fb-tap-mode" onchange="updateByName()">
+                    <option value="">— default —</option>
+                    <option value="tap">Tap</option>
+                    <option value="hold">Hold</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label>Taps</label>
+                  <input type="number" id="ubn-fb-tap-count" min="1" max="50" placeholder="— default —" oninput="updateByName()">
+                </div>
+                <div class="field-group">
+                  <label>Hold (s)</label>
+                  <input type="number" id="ubn-fb-tap-hold" min="1" max="10" placeholder="— default —" oninput="updateByName()">
+                </div>
+              </div>
+              <div class="field-hint">A Tap fallback used to always be a single tap — these make it a real backup mission.</div>
             </div>
           </div>
 
@@ -2168,13 +2535,31 @@ const MISSION_PANELS = {
   ha: 'home_assistant',
 };
 
+const FALLBACK_PANELS = {
+  shake: 'shake', math: 'math', balance: 'balance_ball',
+  blockdrop: 'block_drop', meteor: 'meteor', tap: 'none',
+};
+
 function syncMissionDisplay(prefix) {
   const mission = v(prefix + '-mission');
   Object.entries(MISSION_PANELS).forEach(([suffix, type]) => {
     const el = document.getElementById(prefix + '-mc-' + suffix);
     if (el) el.style.display = (mission === type) ? '' : 'none';
   });
+  syncFallbackDisplay(prefix);
 }
+
+// The fallback panels sit INSIDE the Home Assistant mission panel, so they are
+// only reachable when that mission is selected — and then only the one matching
+// the chosen fallback type is shown.
+function syncFallbackDisplay(prefix) {
+  const fb = v(prefix + '-ha-fallback');
+  Object.entries(FALLBACK_PANELS).forEach(([suffix, type]) => {
+    const el = document.getElementById(prefix + '-fb-' + suffix);
+    if (el) el.style.display = (fb === type) ? '' : 'none';
+  });
+}
+
 
 // Returns the payload fragment carrying this alarm's mission settings.
 //
@@ -2204,7 +2589,29 @@ function buildMissionConfig(prefix) {
     const tgts = vInt(prefix + '-meteor-targets'); if (tgts !== null) cfg.meteor_targets = tgts;
   } else if (mission === 'home_assistant') {
     const sm = v(prefix + '-ha-snooze-mode'); if (sm) cfg.ha_snooze_mode = sm;
-    const fb = v(prefix + '-ha-fallback'); if (fb) cfg.fallback_mission = fb;
+    const fb = v(prefix + '-ha-fallback');
+    if (fb) {
+      cfg.fallback_mission = fb;
+      // Every fallback takes the settings its primary form does; only the keys
+      // for the chosen type are emitted.
+      const fbNum = (k, out) => { const x = vInt(prefix + '-fb-' + k); if (x !== null) cfg[out] = x; };
+      const fbStr = (k, out) => { const x = v(prefix + '-fb-' + k); if (x) cfg[out] = x; };
+      if (fb === 'shake') {
+        fbStr('shake-mode','fallback_shake_mode'); fbStr('shake-intensity','fallback_shake_intensity');
+        fbNum('shake-duration','fallback_shake_duration'); fbNum('shake-count','fallback_shake_count');
+      } else if (fb === 'math') {
+        fbStr('math-difficulty','fallback_math_difficulty'); fbNum('math-count','fallback_math_count');
+      } else if (fb === 'balance_ball') {
+        fbStr('balance-difficulty','fallback_balance_difficulty'); fbNum('balance-hold','fallback_balance_hold');
+      } else if (fb === 'block_drop') {
+        fbStr('blockdrop-difficulty','fallback_block_drop_difficulty'); fbNum('blockdrop-lines','fallback_block_drop_lines');
+      } else if (fb === 'meteor') {
+        fbStr('meteor-difficulty','fallback_meteor_difficulty'); fbNum('meteor-targets','fallback_meteor_targets');
+      } else if (fb === 'none') {
+        fbStr('tap-mode','fallback_tap_dismiss_mode');
+        fbNum('tap-count','fallback_tap_count'); fbNum('tap-hold','fallback_tap_hold_duration');
+      }
+    }
   } else if (mission === 'none') {
     // Tap dismiss: anything beyond a single tap makes it a real mission.
     const mode = v(prefix + '-tap-mode'); if (mode) cfg.tap_dismiss_mode = mode;
