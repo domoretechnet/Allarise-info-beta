@@ -241,6 +241,24 @@
   .mission-slot select {
     position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer;
   }
+
+  /* Added upstream — see Documents/mqtt-builder.html */
+  /* After-alarm steps: the same tiles as the mission grid, but each toggles on
+     its own rather than picking from a list, so they are checkboxes wearing a
+     mission slot's clothes. */
+  .aa-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:12px }
+  .aa-tile {
+    position:relative; border:1px solid var(--border); border-radius:10px;
+    background:var(--surface); min-height:74px; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:4px; padding:8px 6px; font-size:12px; color:var(--text2);
+    transition:border-color .12s, background .12s;
+  }
+  .aa-tile:hover { border-color:var(--accent) }
+  .aa-tile input { position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer; margin:0 }
+  .aa-tile svg { width:22px; height:22px; display:block }
+  .aa-tile span { font-weight:600; text-align:center; line-height:1.2 }
+  .aa-tile:has(input:checked) { background:var(--surface2); border-color:var(--accent); color:var(--text) }
 </style>
 </head>
 <body>
@@ -867,21 +885,27 @@
             <div class="card-title">After Alarm</div>
             <div class="field-hint" style="margin-bottom:10px">Steps that run once the alarm is fully dismissed, in order. Tick what should run; leave all unticked to keep whatever the alarm already has.</div>
 
-            <div class="toggle-row">
-              <input type="checkbox" id="ca-aa-notes" onchange="updateCreateAlarm()">
-              <label for="ca-aa-notes">Notes</label>
-            </div>
-            <div class="toggle-row">
-              <input type="checkbox" id="ca-aa-verse" onchange="updateCreateAlarm()">
-              <label for="ca-aa-verse">Verse of the Day</label>
-            </div>
-            <div class="toggle-row">
-              <input type="checkbox" id="ca-aa-weather" onchange="updateCreateAlarm()">
-              <label for="ca-aa-weather">Morning Weather</label>
-            </div>
-            <div class="toggle-row">
-              <input type="checkbox" id="ca-aa-applink" onchange="updateCreateAlarm()">
-              <label for="ca-aa-applink">Open App Link</label>
+            <div class="aa-grid">
+              <label class="aa-tile" title="Notes">
+                <input type="checkbox" id="ca-aa-notes" onchange="updateCreateAlarm()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+                <span>Notes</span>
+              </label>
+              <label class="aa-tile" title="Verse of the Day">
+                <input type="checkbox" id="ca-aa-verse" onchange="updateCreateAlarm()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H19v3H6.5A2.5 2.5 0 0 1 4 20.5z"/></svg>
+                <span>Verse of the Day</span>
+              </label>
+              <label class="aa-tile" title="Morning Weather">
+                <input type="checkbox" id="ca-aa-weather" onchange="updateCreateAlarm()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.7 3.7l1 1M11.3 11.3l1 1M12.3 3.7l-1 1M4.7 11.3l-1 1"/><path d="M9.5 20a3.5 3.5 0 0 1 .4-7 5 5 0 0 1 9.4 1.6A3 3 0 0 1 18.5 20z"/></svg>
+                <span>Morning Weather</span>
+              </label>
+              <label class="aa-tile" title="Open App Link">
+                <input type="checkbox" id="ca-aa-applink" onchange="updateCreateAlarm()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-8 8"/><path d="M18 14v4.5A2.5 2.5 0 0 1 15.5 21h-9A2.5 2.5 0 0 1 4 18.5v-9A2.5 2.5 0 0 1 6.5 7H11"/></svg>
+                <span>Open App Link</span>
+              </label>
             </div>
             <div class="field-group">
               <label>Order (comma-separated)</label>
@@ -1217,21 +1241,27 @@
               <div class="card-title">After Alarm</div>
               <div class="field-hint" style="margin-bottom:10px">Steps that run once the alarm is fully dismissed. Leave everything blank to change nothing.</div>
 
-              <div class="toggle-row">
-                <input type="checkbox" id="ua-aa-notes" onchange="updateUpdateAlarm()">
-                <label for="ua-aa-notes">Notes</label>
-              </div>
-              <div class="toggle-row">
-                <input type="checkbox" id="ua-aa-verse" onchange="updateUpdateAlarm()">
-                <label for="ua-aa-verse">Verse of the Day</label>
-              </div>
-              <div class="toggle-row">
-                <input type="checkbox" id="ua-aa-weather" onchange="updateUpdateAlarm()">
-                <label for="ua-aa-weather">Morning Weather</label>
-              </div>
-              <div class="toggle-row">
-                <input type="checkbox" id="ua-aa-applink" onchange="updateUpdateAlarm()">
-                <label for="ua-aa-applink">Open App Link</label>
+              <div class="aa-grid">
+                <label class="aa-tile" title="Notes">
+                  <input type="checkbox" id="ua-aa-notes" onchange="updateUpdateAlarm()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+                  <span>Notes</span>
+                </label>
+                <label class="aa-tile" title="Verse of the Day">
+                  <input type="checkbox" id="ua-aa-verse" onchange="updateUpdateAlarm()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H19v3H6.5A2.5 2.5 0 0 1 4 20.5z"/></svg>
+                  <span>Verse of the Day</span>
+                </label>
+                <label class="aa-tile" title="Morning Weather">
+                  <input type="checkbox" id="ua-aa-weather" onchange="updateUpdateAlarm()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.7 3.7l1 1M11.3 11.3l1 1M12.3 3.7l-1 1M4.7 11.3l-1 1"/><path d="M9.5 20a3.5 3.5 0 0 1 .4-7 5 5 0 0 1 9.4 1.6A3 3 0 0 1 18.5 20z"/></svg>
+                  <span>Morning Weather</span>
+                </label>
+                <label class="aa-tile" title="Open App Link">
+                  <input type="checkbox" id="ua-aa-applink" onchange="updateUpdateAlarm()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-8 8"/><path d="M18 14v4.5A2.5 2.5 0 0 1 15.5 21h-9A2.5 2.5 0 0 1 4 18.5v-9A2.5 2.5 0 0 1 6.5 7H11"/></svg>
+                  <span>Open App Link</span>
+                </label>
               </div>
               <div class="field-group">
                 <label>Order (comma-separated)</label>
@@ -1546,21 +1576,27 @@
               <div class="card-title">After Alarm</div>
               <div class="field-hint" style="margin-bottom:10px">Steps that run once the alarm is fully dismissed. Leave everything blank to change nothing.</div>
 
-              <div class="toggle-row">
-                <input type="checkbox" id="ubn-aa-notes" onchange="updateByName()">
-                <label for="ubn-aa-notes">Notes</label>
-              </div>
-              <div class="toggle-row">
-                <input type="checkbox" id="ubn-aa-verse" onchange="updateByName()">
-                <label for="ubn-aa-verse">Verse of the Day</label>
-              </div>
-              <div class="toggle-row">
-                <input type="checkbox" id="ubn-aa-weather" onchange="updateByName()">
-                <label for="ubn-aa-weather">Morning Weather</label>
-              </div>
-              <div class="toggle-row">
-                <input type="checkbox" id="ubn-aa-applink" onchange="updateByName()">
-                <label for="ubn-aa-applink">Open App Link</label>
+              <div class="aa-grid">
+                <label class="aa-tile" title="Notes">
+                  <input type="checkbox" id="ubn-aa-notes" onchange="updateByName()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+                  <span>Notes</span>
+                </label>
+                <label class="aa-tile" title="Verse of the Day">
+                  <input type="checkbox" id="ubn-aa-verse" onchange="updateByName()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H19v3H6.5A2.5 2.5 0 0 1 4 20.5z"/></svg>
+                  <span>Verse of the Day</span>
+                </label>
+                <label class="aa-tile" title="Morning Weather">
+                  <input type="checkbox" id="ubn-aa-weather" onchange="updateByName()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.7 3.7l1 1M11.3 11.3l1 1M12.3 3.7l-1 1M4.7 11.3l-1 1"/><path d="M9.5 20a3.5 3.5 0 0 1 .4-7 5 5 0 0 1 9.4 1.6A3 3 0 0 1 18.5 20z"/></svg>
+                  <span>Morning Weather</span>
+                </label>
+                <label class="aa-tile" title="Open App Link">
+                  <input type="checkbox" id="ubn-aa-applink" onchange="updateByName()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-8 8"/><path d="M18 14v4.5A2.5 2.5 0 0 1 15.5 21h-9A2.5 2.5 0 0 1 4 18.5v-9A2.5 2.5 0 0 1 6.5 7H11"/></svg>
+                  <span>Open App Link</span>
+                </label>
               </div>
               <div class="field-group">
                 <label>Order (comma-separated)</label>
