@@ -265,6 +265,7 @@
 
   <div class="nav-group-label">Ambient</div>
   <button class="nav-item" onclick="showPage('sleep-sounds', this)">Sleep Sounds</button>
+  <button class="nav-item" onclick="showPage('radio', this)">Radio</button>
 </nav>
 
 <!-- Main -->
@@ -641,6 +642,11 @@
             <input type="text" id="ca-extra-missions" placeholder="math, shake" oninput="updateCreateAlarm()">
             <div class="field-hint">Comma-separated. When set, the payload uses <code>missions</code> — the full ordered sequence — instead of <code>mission</code>.</div>
           </div>
+          <div class="field-group">
+            <label>Wake-Up Radio Station</label>
+            <input type="text" id="ca-radio-station" placeholder="WDET (a favourited station's name)" oninput="updateCreateAlarm()">
+            <div class="field-hint">A favourited station's name or UUID. For any other stream use a URL — see the Radio page. Send "" to clear.</div>
+          </div>
           <div class="toggle-row">
             <input type="checkbox" id="ca-morning-weather" onchange="updateCreateAlarm()">
             <label for="ca-morning-weather">Morning Weather (show weather card after dismissing)</label>
@@ -1010,6 +1016,11 @@
                 <input type="text" id="ua-swipe-right" oninput="updateUpdateAlarm()">
               </div>
             </div>
+              <div class="field-group">
+                <label>Wake-Up Radio Station</label>
+                <input type="text" id="ua-radio-station" placeholder="WDET (a favourited station's name)" oninput="updateUpdateAlarm()">
+                <div class="field-hint">A favourited station's name or UUID. For any other stream use a URL — see the Radio page. Send "" to clear.</div>
+              </div>
             <div class="field-group">
               <label>Additional Missions (slots 2–5)</label>
               <input type="text" id="ua-extra-missions" placeholder="math, shake" oninput="updateUpdateAlarm()">
@@ -1366,6 +1377,11 @@
                 <input type="text" id="ubn-swipe-right" oninput="updateByName()">
               </div>
             </div>
+              <div class="field-group">
+                <label>Wake-Up Radio Station</label>
+                <input type="text" id="ubn-radio-station" placeholder="WDET (a favourited station's name)" oninput="updateByName()">
+                <div class="field-hint">A favourited station's name or UUID. For any other stream use a URL — see the Radio page. Send "" to clear.</div>
+              </div>
             <div class="field-group">
               <label>Additional Missions (slots 2–5)</label>
               <input type="text" id="ubn-extra-missions" placeholder="math, shake" oninput="updateByName()">
@@ -1903,6 +1919,94 @@
   </div><!-- /page-sleep-sounds -->
 
 
+
+  <div id="page-radio" class="page">
+    <div class="page-header">
+      <h1>Radio</h1>
+      <p>Control internet radio playback on the HaWake device over MQTT.</p>
+    </div>
+
+    <div class="tab-bar" style="display:flex;gap:4px;margin-bottom:20px">
+      <button class="tab-btn active" onclick="showTab('rd-tab-start',this)">Start</button>
+      <button class="tab-btn" onclick="showTab('rd-tab-control',this)">Control</button>
+    </div>
+
+    <!-- ── Start ── -->
+    <div id="rd-tab-start" class="tab-pane active">
+      <div class="two-col">
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">Station</div>
+
+            <div class="field-group">
+              <label>Favourited Station Name or UUID</label>
+              <input type="text" id="rd-station" placeholder="WDET" oninput="updateRadioStart()">
+              <div class="field-hint">Matched against the device's favourites, case-insensitively. The app publishes the full list on <code>sensor/radio_stations_available</code>.</div>
+            </div>
+
+            <div class="field-group">
+              <label>…or a direct stream URL</label>
+              <input type="text" id="rd-url" placeholder="https://stream.example/live" oninput="updateRadioStart()">
+              <div class="field-hint">Takes precedence over the name above. No favourite required — any stream works.</div>
+            </div>
+
+            <div class="field-group">
+              <label>Stream Display Name</label>
+              <input type="text" id="rd-url-name" placeholder="My Stream" oninput="updateRadioStart()">
+              <div class="field-hint">Only used with a stream URL. Defaults to "Radio".</div>
+            </div>
+
+            <div class="field-group">
+              <label>System Volume (0–100)</label>
+              <input type="number" id="rd-volume" min="0" max="100" placeholder="leave blank to keep current" oninput="updateRadioStart()">
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Sleep Timer</div>
+            <div class="toggle-row">
+              <input type="checkbox" id="rd-until-alarm" onchange="updateRadioStart()">
+              <label for="rd-until-alarm">Play until the next alarm fires</label>
+            </div>
+            <div class="field-group">
+              <label>Duration (minutes)</label>
+              <input type="number" id="rd-duration" min="1" max="720" placeholder="omit for indefinite" oninput="updateRadioStart()">
+              <div class="field-hint">Ignored when "until next alarm" is on. Max 720 (12 h).</div>
+            </div>
+            <div class="field-group">
+              <label>Fade-Out (minutes)</label>
+              <input type="number" id="rd-fade-out-min" min="0" max="60" placeholder="0 = no fade" oninput="updateRadioStart()">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Topic</div>
+          <code id="rd-start-topic" style="display:block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:var(--mono);font-size:12px;color:var(--green);overflow-x:auto;white-space:nowrap;margin-bottom:14px"></code>
+
+          <div class="card-title">JSON Payload</div>
+          <div style="position:relative">
+            <pre id="rd-start-preview" style="font-size:12.5px;min-height:48px"></pre>
+            <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('rd-start-preview',this)">Copy</button>
+          </div>
+
+          <div class="card-title" style="margin-top:14px">HA Automation YAML</div>
+          <div style="position:relative">
+            <pre id="rd-start-yaml" style="font-size:11.5px"></pre>
+            <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('rd-start-yaml',this)">Copy YAML</button>
+          </div>
+
+          <div class="field-hint" style="margin-top:14px">radio_start is ignored while an alarm is ringing — the app keeps the alarm's audio session.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Control ── -->
+    <div id="rd-tab-control" class="tab-pane">
+      <div id="rd-control-cards"></div>
+    </div>
+  </div><!-- /page-radio -->
+
 </div><!-- /content -->
 </div><!-- /main -->
 </div><!-- /app -->
@@ -1952,7 +2056,9 @@ function updateAll() {
   updateCreateCommand(); updateDeleteCommand(); updateAlert();
   updateByName(); buildDashboardCards();
   updateSleepSoundStart(); updateSleepSoundSetVolume(); updateSleepSoundChange();
-  buildSleepControlCards(); buildPerAlarmCards();
+  buildSleepControlCards();
+  buildRadioControlCards();
+  updateRadioStart(); buildPerAlarmCards();
   updateSystemVolume();
 }
 
@@ -1975,7 +2081,7 @@ function showPageFromSelect(sel) {
 function pageToCmd(id) {
   const map = { 'create-alarm':'create_alarm','update-alarm':'update_alarm','delete-alarm':'delete_alarm',
     'create-command':'create_command','delete-command':'delete_command','alert':'alert','dashboard':'…',
-    'per-alarm':'alarm/{index}/command/…','sleep-sounds':'sleep_sound_start' };
+    'per-alarm':'alarm/{index}/command/…','sleep-sounds':'sleep_sound_start','radio':'radio_start' };
   return map[id] || id;
 }
 
@@ -2179,6 +2285,7 @@ function updateCreateAlarm() {
   const cmds = csvToArray(v('ca-commands')); if (cmds) p.alarm_screen_commands = cmds;
   const sl = v('ca-swipe-left'); if (sl) p.swipe_left_command = sl;
   const sr = v('ca-swipe-right'); if (sr) p.swipe_right_command = sr;
+  const rs = v('ca-radio-station'); if (rs) p.radio_station = rs;
   if (vCheck('ca-morning-weather')) p.morning_weather = true;
   if (vCheck('ca-ephemeral')) p.ephemeral = true;
   const mid = v('ca-mqtt-id'); if (mid) p.mqtt_id = mid;
@@ -2209,6 +2316,7 @@ function updateUpdateAlarm() {
   const cmds = csvToArray(v('ua-commands')); if (cmds) p.alarm_screen_commands = cmds;
   const sl = v('ua-swipe-left'); if (sl) p.swipe_left_command = sl;
   const sr = v('ua-swipe-right'); if (sr) p.swipe_right_command = sr;
+  const rs = v('ua-radio-station'); if (rs) p.radio_station = rs;
   const uaMW = v('ua-morning-weather'); if (uaMW !== '') p.morning_weather = uaMW === 'true';
   setPreview('ua-preview', 'ua-yaml', 'update_alarm', p);
 }
@@ -2238,6 +2346,7 @@ function updateByName() {
   const cmds = csvToArray(v('ubn-commands')); if (cmds) p.alarm_screen_commands = cmds;
   const sl = v('ubn-swipe-left'); if (sl) p.swipe_left_command = sl;
   const sr = v('ubn-swipe-right'); if (sr) p.swipe_right_command = sr;
+  const rs = v('ubn-radio-station'); if (rs) p.radio_station = rs;
   const ubnMW = v('ubn-morning-weather'); if (ubnMW !== '') p.morning_weather = ubnMW === 'true';
   setPreview('ubn-preview', 'ubn-yaml', 'update_alarm', p);
 }
@@ -2410,6 +2519,55 @@ function updateSleepSoundChange() {
   document.getElementById('ss-ch-topic').textContent = t;
   document.getElementById('ss-ch-preview').innerHTML = highlight(json);
   document.getElementById('ss-ch-yaml').textContent = buildYAML(t, json);
+}
+
+function updateRadioStart() {
+  const p = {};
+  const url = v('rd-url');
+  if (url) {
+    p.station = { url: url };
+    const nm = v('rd-url-name'); if (nm) p.station.name = nm;
+  } else {
+    const st = v('rd-station'); if (st) p.station = st;
+  }
+  const vol = vInt('rd-volume'); if (vol !== null) p.volume = vol;
+
+  if (document.getElementById('rd-until-alarm').checked) {
+    p.until_next_alarm = true;
+  } else {
+    const dur = vInt('rd-duration'); if (dur !== null && dur > 0) p.duration_minutes = dur;
+  }
+  const fom = vInt('rd-fade-out-min'); if (fom !== null && fom > 0) p.fade_out_minutes = fom;
+
+  const t = topic('radio_start');
+  document.getElementById('rd-start-topic').textContent = t;
+  const json = JSON.stringify(p, null, 2);
+  document.getElementById('rd-start-preview').innerHTML = highlight(json);
+  document.getElementById('rd-start-yaml').textContent = buildYAML(t, json);
+}
+
+const RD_CONTROL_CMDS = [
+  { cmd:'radio_stop',   label:'Stop',   desc:'Stops playback and releases the player.', icon:'⏹' },
+  { cmd:'radio_pause',  label:'Pause',  desc:'Pauses while keeping the station loaded.', icon:'⏸' },
+  { cmd:'radio_resume', label:'Resume', desc:'Resumes a paused station. No-op if already playing.', icon:'▶' },
+];
+
+function buildRadioControlCards() {
+  const host = document.getElementById('rd-control-cards');
+  if (!host) return;
+  host.innerHTML = RD_CONTROL_CMDS.map(c => {
+    const t = topic(c.cmd);
+    const yaml = buildYAML(t, '{}');
+    return `<div class="card" style="margin-bottom:16px">
+      <div class="card-title">${c.icon} ${c.label}</div>
+      <p style="margin:0 0 10px;color:var(--muted);font-size:13px">${c.desc}</p>
+      <code style="display:block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:var(--mono);font-size:12px;color:var(--green);overflow-x:auto;white-space:nowrap;margin-bottom:10px">${t}</code>
+      <div style="position:relative">
+        <pre style="font-size:11.5px">${yaml}</pre>
+        <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload(this.previousElementSibling,this)">Copy YAML</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 const SS_CONTROL_CMDS = [
