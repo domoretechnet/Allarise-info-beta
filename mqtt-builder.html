@@ -215,6 +215,29 @@
     .site-nav a:not(.nav-home) { display: none !important; }
     .nav-menu-btn { display: block !important; }
   }
+  /* Mission tiles — mirrors the app's numbered 1–5 grid so the builder reads
+     like the screen it is generating payloads for. */
+  .mission-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:10px }
+  .mission-slot {
+    position:relative; border:1px solid var(--border); border-radius:10px;
+    background:var(--surface); min-height:74px; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:4px; padding:8px 6px; font-size:12px; color:var(--text2);
+    transition:border-color .12s, background .12s;
+  }
+  .mission-slot:hover { border-color:var(--accent) }
+  .mission-slot.filled { background:var(--surface2); border-color:var(--accent); color:var(--text) }
+  .mission-slot.empty { border-style:dashed }
+  .mission-slot .slot-num {
+    position:absolute; top:5px; left:7px; font-size:10px; font-weight:700;
+    color:var(--text3);
+  }
+  .mission-slot.filled .slot-num { color:var(--accent) }
+  .mission-slot .slot-icon { font-size:19px; line-height:1 }
+  .mission-slot .slot-label { font-weight:600; text-align:center; line-height:1.2 }
+  .mission-slot select {
+    position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer;
+  }
 </style>
 </head>
 <body>
@@ -454,317 +477,89 @@
 
         <div class="card" style="margin-top:12px">
           <div class="card-title">Mission</div>
-          <div class="field-group">
-            <label>Mission Type</label>
-            <select id="ca-mission" onchange="syncMissionDisplay('ca');updateCreateAlarm()">
-              <option value="">— none —</option>
-              <option value="none">Tap</option>
-              <option value="shake">Shake</option>
-              <option value="math">Math</option>
-              <option value="balance_ball">Balance Ball</option>
-              <option value="block_drop">Bricks</option>
-              <option value="meteor">Meteor Defense</option>
-              <option value="home_assistant">Home Assistant</option>
-              <option value="alert">Alert</option>
-            </select>
-          </div>
-          <!-- Shake sub-options -->
-          <div id="ca-mc-shake" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Difficulty</label>
-                <select id="ca-shake-mode" onchange="updateCreateAlarm()">
-                  <option value="">— default —</option>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Shake Count</label>
-                <input type="number" id="ca-shake-count" placeholder="— default —" min="1" max="200" oninput="updateCreateAlarm()">
-              </div>
+                              <div class="mission-grid" id="ca-mission-grid">
+            <div class="mission-slot empty" id="ca-slot-1-tile">
+              <span class="slot-num">1</span>
+              <span class="slot-icon" id="ca-slot-1-icon">+</span>
+              <span class="slot-label" id="ca-slot-1-label">Empty</span>
+              <select id="ca-slot-1" onchange="syncMissionSlots('ca');updateCreateAlarm()" aria-label="Mission slot 1">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
+                <option value="alert">Alert</option>
+              </select>
             </div>
-            <div class="row-2">
-              <div class="field-group">
-                <label>Duration (seconds)</label>
-                <input type="number" id="ca-shake-duration" placeholder="— default —" min="1" max="60" oninput="updateCreateAlarm()">
-              </div>
-              <div class="field-group">
-                <label>Intensity (1–4)</label>
-                <input type="number" id="ca-shake-intensity" placeholder="— default —" min="1" max="4" oninput="updateCreateAlarm()">
-              </div>
+            <div class="mission-slot empty" id="ca-slot-2-tile">
+              <span class="slot-num">2</span>
+              <span class="slot-icon" id="ca-slot-2-icon">+</span>
+              <span class="slot-label" id="ca-slot-2-label">Empty</span>
+              <select id="ca-slot-2" onchange="syncMissionSlots('ca');updateCreateAlarm()" aria-label="Mission slot 2">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
+                <option value="alert">Alert</option>
+              </select>
             </div>
-          </div>
-          <!-- Math sub-options -->
-          <div id="ca-mc-math" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Difficulty</label>
-                <select id="ca-math-difficulty" onchange="updateCreateAlarm()">
-                  <option value="">— default —</option>
-                  <option value="super_easy">Super Easy</option>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Problem Count</label>
-                <input type="number" id="ca-math-count" placeholder="— default —" min="1" max="20" oninput="updateCreateAlarm()">
-              </div>
+            <div class="mission-slot empty" id="ca-slot-3-tile">
+              <span class="slot-num">3</span>
+              <span class="slot-icon" id="ca-slot-3-icon">+</span>
+              <span class="slot-label" id="ca-slot-3-label">Empty</span>
+              <select id="ca-slot-3" onchange="syncMissionSlots('ca');updateCreateAlarm()" aria-label="Mission slot 3">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
+                <option value="alert">Alert</option>
+              </select>
             </div>
-          </div>
-          <!-- Balance Ball sub-options -->
-          <div id="ca-mc-balance" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Difficulty</label>
-                <select id="ca-balance-difficulty" onchange="updateCreateAlarm()">
-                  <option value="">— default —</option>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Hold Duration (s)</label>
-                <input type="number" id="ca-balance-hold" placeholder="— default —" min="3" max="120" oninput="updateCreateAlarm()">
-              </div>
+            <div class="mission-slot empty" id="ca-slot-4-tile">
+              <span class="slot-num">4</span>
+              <span class="slot-icon" id="ca-slot-4-icon">+</span>
+              <span class="slot-label" id="ca-slot-4-label">Empty</span>
+              <select id="ca-slot-4" onchange="syncMissionSlots('ca');updateCreateAlarm()" aria-label="Mission slot 4">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
+                <option value="alert">Alert</option>
+              </select>
             </div>
-          </div>
-          <!-- Bricks sub-options -->
-          <div id="ca-mc-blockdrop" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Difficulty</label>
-                <select id="ca-blockdrop-difficulty" onchange="updateCreateAlarm()">
-                  <option value="">— default —</option>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Lines to Clear</label>
-                <input type="number" id="ca-blockdrop-lines" placeholder="— default —" min="1" max="12" oninput="updateCreateAlarm()">
-              </div>
+            <div class="mission-slot empty" id="ca-slot-5-tile">
+              <span class="slot-num">5</span>
+              <span class="slot-icon" id="ca-slot-5-icon">+</span>
+              <span class="slot-label" id="ca-slot-5-label">Empty</span>
+              <select id="ca-slot-5" onchange="syncMissionSlots('ca');updateCreateAlarm()" aria-label="Mission slot 5">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
+                <option value="alert">Alert</option>
+              </select>
             </div>
           </div>
-          <!-- Meteor Defense sub-options -->
-          <div id="ca-mc-meteor" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Difficulty</label>
-                <select id="ca-meteor-difficulty" onchange="updateCreateAlarm()">
-                  <option value="">— default —</option>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Meteors to Destroy</label>
-                <input type="number" id="ca-meteor-targets" placeholder="— default —" min="3" max="40" oninput="updateCreateAlarm()">
-              </div>
-            </div>
-          </div>
-          <!-- Tap sub-options -->
-          <div id="ca-mc-tap" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Dismiss Mode</label>
-                <select id="ca-tap-mode" onchange="updateCreateAlarm()">
-                  <option value="">— default —</option>
-                  <option value="tap">Tap</option>
-                  <option value="hold">Hold</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Tap Count</label>
-                <input type="number" id="ca-tap-count" placeholder="— default —" min="1" max="50" oninput="updateCreateAlarm()">
-              </div>
-            </div>
-            <div class="field-group">
-              <label>Hold Duration (s)</label>
-              <input type="number" id="ca-tap-hold" placeholder="— default —" min="1" max="10" oninput="updateCreateAlarm()">
-            </div>
-            <div class="field-hint">More than one tap, or any hold, makes this a real mission — the alarm opens the app instead of stopping from the lock screen.</div>
-          </div>
-                    <!-- HA sub-options -->
-          <div id="ca-mc-ha" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Snooze Mode</label>
-                <select id="ca-ha-snooze-mode" onchange="updateCreateAlarm()">
-                  <option value="">— default —</option>
-                  <option value="dismiss">Dismiss (no snooze)</option>
-                  <option value="snooze">Snooze allowed</option>
-                </select>
-                <div class="field-hint">What happens when HA confirms the mission</div>
-              </div>
-              <div class="field-group">
-                <label>Fallback Mission</label>
-                <select id="ca-ha-fallback" onchange="updateCreateAlarm()">
-                  <option value="">— no fallback —</option>
-                  <option value="none">Tap to Dismiss</option>
-                  <option value="shake">Shake</option>
-                  <option value="math">Math</option>
-                </select>
-                <div class="field-hint">If no HA response, fall back to this mission</div>
-              </div>
-            </div>
-            <!-- Fallback settings, shown for whichever fallback type is picked above.
-                 Same show/hide pattern as the primary mission panels, so a fallback
-                 is configurable rather than merely selectable. -->
-            <div id="ca-fb-shake" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Shake Mode</label>
-                  <select id="ca-fb-shake-mode" onchange="updateCreateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="duration">Duration</option>
-                    <option value="count">Count</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Intensity</label>
-                  <select id="ca-fb-shake-intensity" onchange="updateCreateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="light">Light</option>
-                    <option value="medium">Medium</option>
-                    <option value="vigorous">Vigorous</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Duration (s)</label>
-                  <input type="number" id="ca-fb-shake-duration" min="1" max="30" placeholder="— default —" oninput="updateCreateAlarm()">
-                </div>
-                <div class="field-group">
-                  <label>Shake Count</label>
-                  <input type="number" id="ca-fb-shake-count" min="5" max="100" placeholder="— default —" oninput="updateCreateAlarm()">
-                </div>
-              </div>
-            </div>
-            <div id="ca-fb-math" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Math Difficulty</label>
-                  <select id="ca-fb-math-difficulty" onchange="updateCreateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="super_easy">Super Easy</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Problems</label>
-                  <input type="number" id="ca-fb-math-count" min="1" max="20" placeholder="— default —" oninput="updateCreateAlarm()">
-                </div>
-              </div>
-            </div>
-            <div id="ca-fb-balance" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Balance Difficulty</label>
-                  <select id="ca-fb-balance-difficulty" onchange="updateCreateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Hold (s)</label>
-                  <input type="number" id="ca-fb-balance-hold" min="1" max="30" placeholder="— default —" oninput="updateCreateAlarm()">
-                </div>
-              </div>
-            </div>
-            <div id="ca-fb-blockdrop" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Bricks Difficulty</label>
-                  <select id="ca-fb-blockdrop-difficulty" onchange="updateCreateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Lines to Clear</label>
-                  <input type="number" id="ca-fb-blockdrop-lines" min="1" max="12" placeholder="— default —" oninput="updateCreateAlarm()">
-                </div>
-              </div>
-            </div>
-            <div id="ca-fb-meteor" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Meteor Difficulty</label>
-                  <select id="ca-fb-meteor-difficulty" onchange="updateCreateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Meteors to Destroy</label>
-                  <input type="number" id="ca-fb-meteor-targets" min="3" max="40" placeholder="— default —" oninput="updateCreateAlarm()">
-                </div>
-              </div>
-            </div>
-            <div id="ca-fb-tap" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Tap Mode</label>
-                  <select id="ca-fb-tap-mode" onchange="updateCreateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="tap">Tap</option>
-                    <option value="hold">Hold</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Taps</label>
-                  <input type="number" id="ca-fb-tap-count" min="1" max="50" placeholder="— default —" oninput="updateCreateAlarm()">
-                </div>
-                <div class="field-group">
-                  <label>Hold (s)</label>
-                  <input type="number" id="ca-fb-tap-hold" min="1" max="10" placeholder="— default —" oninput="updateCreateAlarm()">
-                </div>
-              </div>
-              <div class="field-hint">A Tap fallback used to always be a single tap — these make it a real backup mission.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:12px">
-          <div class="card-title">Alarm Screen</div>
-          <div class="field-group">
-            <label>Notes</label>
-            <textarea id="ca-notes" placeholder="Text shown on the alarm screen…" oninput="updateCreateAlarm()"></textarea>
-          </div>
-          <div class="field-group">
-            <label>Alarm Screen Commands (comma-separated names, max 4)</label>
-            <input type="text" id="ca-commands" placeholder="Lock Front Door, Turn Off Lights" oninput="updateCreateAlarm()">
-            <div class="field-hint">Command names must already exist in the app</div>
-          </div>
-          <div class="row-2">
-            <div class="field-group">
-              <label>Swipe Left Command</label>
-              <input type="text" id="ca-swipe-left" placeholder="command name" oninput="updateCreateAlarm()">
-            </div>
-            <div class="field-group">
-              <label>Swipe Right Command</label>
-              <input type="text" id="ca-swipe-right" placeholder="command name" oninput="updateCreateAlarm()">
-            </div>
-          </div>
-          <div class="field-group">
-            <label>Additional Missions (slots 2–5)</label>
-            <input type="text" id="ca-extra-missions" placeholder="math, shake" oninput="updateCreateAlarm()">
-            <div class="field-hint">Comma-separated. When set, the payload uses <code>missions</code> — the full ordered sequence — instead of <code>mission</code>.</div>
-          </div>
+          <div class="field-hint">Missions run in order. Slot 1 alone sends <code>mission</code>; two or more send <code>missions</code>, the full ordered sequence. Leave all empty for a plain tap-to-dismiss alarm.</div>
           <div class="field-group">
             <label>Wake-Up Radio Station</label>
             <input type="text" id="ca-radio-station" placeholder="WDET (a favourited station's name)" oninput="updateCreateAlarm()">
@@ -954,323 +749,89 @@
 
           <div class="card" style="margin-top:12px">
             <div class="card-title">Mission</div>
-            <div class="field-group">
-              <label>Mission Type</label>
-              <select id="ua-mission" onchange="syncMissionDisplay('ua');updateUpdateAlarm()">
-                <option value="">— no change —</option>
+                                  <div class="mission-grid" id="ua-mission-grid">
+            <div class="mission-slot empty" id="ua-slot-1-tile">
+              <span class="slot-num">1</span>
+              <span class="slot-icon" id="ua-slot-1-icon">+</span>
+              <span class="slot-label" id="ua-slot-1-label">Empty</span>
+              <select id="ua-slot-1" onchange="syncMissionSlots('ua');updateUpdateAlarm()" aria-label="Mission slot 1">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
                 <option value="shake">Shake</option>
                 <option value="math">Math</option>
-                <option value="balance_ball">Balance Ball</option>
+                <option value="balance_ball">Balance</option>
                 <option value="block_drop">Bricks</option>
-                <option value="meteor">Meteor Defense</option>
-                <option value="home_assistant">Home Assistant</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
                 <option value="alert">Alert</option>
-                <option value="none">Tap (remove mission)</option>
               </select>
             </div>
-            <!-- Shake sub-options -->
-            <div id="ua-mc-shake" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Difficulty</label>
-                  <select id="ua-shake-mode" onchange="updateUpdateAlarm()">
-                    <option value="">— no change —</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Shake Count</label>
-                  <input type="number" id="ua-shake-count" placeholder="— no change —" min="1" max="200" oninput="updateUpdateAlarm()">
-                </div>
-              </div>
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Duration (seconds)</label>
-                  <input type="number" id="ua-shake-duration" placeholder="— no change —" min="1" max="60" oninput="updateUpdateAlarm()">
-                </div>
-                <div class="field-group">
-                  <label>Intensity (1–4)</label>
-                  <input type="number" id="ua-shake-intensity" placeholder="— no change —" min="1" max="4" oninput="updateUpdateAlarm()">
-                </div>
-              </div>
+            <div class="mission-slot empty" id="ua-slot-2-tile">
+              <span class="slot-num">2</span>
+              <span class="slot-icon" id="ua-slot-2-icon">+</span>
+              <span class="slot-label" id="ua-slot-2-label">Empty</span>
+              <select id="ua-slot-2" onchange="syncMissionSlots('ua');updateUpdateAlarm()" aria-label="Mission slot 2">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
+                <option value="alert">Alert</option>
+              </select>
             </div>
-            <!-- Math sub-options -->
-            <div id="ua-mc-math" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Difficulty</label>
-                  <select id="ua-math-difficulty" onchange="updateUpdateAlarm()">
-                    <option value="">— no change —</option>
-                    <option value="super_easy">Super Easy</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Problem Count</label>
-                  <input type="number" id="ua-math-count" placeholder="— no change —" min="1" max="20" oninput="updateUpdateAlarm()">
-                </div>
-              </div>
+            <div class="mission-slot empty" id="ua-slot-3-tile">
+              <span class="slot-num">3</span>
+              <span class="slot-icon" id="ua-slot-3-icon">+</span>
+              <span class="slot-label" id="ua-slot-3-label">Empty</span>
+              <select id="ua-slot-3" onchange="syncMissionSlots('ua');updateUpdateAlarm()" aria-label="Mission slot 3">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
+                <option value="alert">Alert</option>
+              </select>
             </div>
-          <!-- Balance Ball sub-options -->
-          <div id="ua-mc-balance" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Difficulty</label>
-                <select id="ua-balance-difficulty" onchange="updateUpdateAlarm()">
-                  <option value="">— default —</option>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Hold Duration (s)</label>
-                <input type="number" id="ua-balance-hold" placeholder="— default —" min="3" max="120" oninput="updateUpdateAlarm()">
-              </div>
+            <div class="mission-slot empty" id="ua-slot-4-tile">
+              <span class="slot-num">4</span>
+              <span class="slot-icon" id="ua-slot-4-icon">+</span>
+              <span class="slot-label" id="ua-slot-4-label">Empty</span>
+              <select id="ua-slot-4" onchange="syncMissionSlots('ua');updateUpdateAlarm()" aria-label="Mission slot 4">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
+                <option value="alert">Alert</option>
+              </select>
             </div>
-          </div>
-          <!-- Bricks sub-options -->
-          <div id="ua-mc-blockdrop" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Difficulty</label>
-                <select id="ua-blockdrop-difficulty" onchange="updateUpdateAlarm()">
-                  <option value="">— default —</option>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Lines to Clear</label>
-                <input type="number" id="ua-blockdrop-lines" placeholder="— default —" min="1" max="12" oninput="updateUpdateAlarm()">
-              </div>
+            <div class="mission-slot empty" id="ua-slot-5-tile">
+              <span class="slot-num">5</span>
+              <span class="slot-icon" id="ua-slot-5-icon">+</span>
+              <span class="slot-label" id="ua-slot-5-label">Empty</span>
+              <select id="ua-slot-5" onchange="syncMissionSlots('ua');updateUpdateAlarm()" aria-label="Mission slot 5">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
+                <option value="alert">Alert</option>
+              </select>
             </div>
           </div>
-          <!-- Meteor Defense sub-options -->
-          <div id="ua-mc-meteor" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Difficulty</label>
-                <select id="ua-meteor-difficulty" onchange="updateUpdateAlarm()">
-                  <option value="">— default —</option>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Meteors to Destroy</label>
-                <input type="number" id="ua-meteor-targets" placeholder="— default —" min="3" max="40" oninput="updateUpdateAlarm()">
-              </div>
-            </div>
-          </div>
-          <!-- Tap sub-options -->
-          <div id="ua-mc-tap" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Dismiss Mode</label>
-                <select id="ua-tap-mode" onchange="updateUpdateAlarm()">
-                  <option value="">— default —</option>
-                  <option value="tap">Tap</option>
-                  <option value="hold">Hold</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Tap Count</label>
-                <input type="number" id="ua-tap-count" placeholder="— default —" min="1" max="50" oninput="updateUpdateAlarm()">
-              </div>
-            </div>
-            <div class="field-group">
-              <label>Hold Duration (s)</label>
-              <input type="number" id="ua-tap-hold" placeholder="— default —" min="1" max="10" oninput="updateUpdateAlarm()">
-            </div>
-            <div class="field-hint">More than one tap, or any hold, makes this a real mission — the alarm opens the app instead of stopping from the lock screen.</div>
-          </div>
-                        <!-- HA sub-options -->
-            <div id="ua-mc-ha" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Snooze Mode</label>
-                  <select id="ua-ha-snooze-mode" onchange="updateUpdateAlarm()">
-                    <option value="">— no change —</option>
-                    <option value="dismiss">Dismiss (no snooze)</option>
-                    <option value="snooze">Snooze allowed</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Fallback Mission</label>
-                  <select id="ua-ha-fallback" onchange="updateUpdateAlarm()">
-                    <option value="">— no change —</option>
-                    <option value="none">Tap to Dismiss</option>
-                    <option value="shake">Shake</option>
-                    <option value="math">Math</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <!-- Fallback settings, shown for whichever fallback type is picked above.
-                 Same show/hide pattern as the primary mission panels, so a fallback
-                 is configurable rather than merely selectable. -->
-            <div id="ua-fb-shake" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Shake Mode</label>
-                  <select id="ua-fb-shake-mode" onchange="updateUpdateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="duration">Duration</option>
-                    <option value="count">Count</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Intensity</label>
-                  <select id="ua-fb-shake-intensity" onchange="updateUpdateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="light">Light</option>
-                    <option value="medium">Medium</option>
-                    <option value="vigorous">Vigorous</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Duration (s)</label>
-                  <input type="number" id="ua-fb-shake-duration" min="1" max="30" placeholder="— default —" oninput="updateUpdateAlarm()">
-                </div>
-                <div class="field-group">
-                  <label>Shake Count</label>
-                  <input type="number" id="ua-fb-shake-count" min="5" max="100" placeholder="— default —" oninput="updateUpdateAlarm()">
-                </div>
-              </div>
-            </div>
-            <div id="ua-fb-math" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Math Difficulty</label>
-                  <select id="ua-fb-math-difficulty" onchange="updateUpdateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="super_easy">Super Easy</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Problems</label>
-                  <input type="number" id="ua-fb-math-count" min="1" max="20" placeholder="— default —" oninput="updateUpdateAlarm()">
-                </div>
-              </div>
-            </div>
-            <div id="ua-fb-balance" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Balance Difficulty</label>
-                  <select id="ua-fb-balance-difficulty" onchange="updateUpdateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Hold (s)</label>
-                  <input type="number" id="ua-fb-balance-hold" min="1" max="30" placeholder="— default —" oninput="updateUpdateAlarm()">
-                </div>
-              </div>
-            </div>
-            <div id="ua-fb-blockdrop" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Bricks Difficulty</label>
-                  <select id="ua-fb-blockdrop-difficulty" onchange="updateUpdateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Lines to Clear</label>
-                  <input type="number" id="ua-fb-blockdrop-lines" min="1" max="12" placeholder="— default —" oninput="updateUpdateAlarm()">
-                </div>
-              </div>
-            </div>
-            <div id="ua-fb-meteor" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Meteor Difficulty</label>
-                  <select id="ua-fb-meteor-difficulty" onchange="updateUpdateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Meteors to Destroy</label>
-                  <input type="number" id="ua-fb-meteor-targets" min="3" max="40" placeholder="— default —" oninput="updateUpdateAlarm()">
-                </div>
-              </div>
-            </div>
-            <div id="ua-fb-tap" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Tap Mode</label>
-                  <select id="ua-fb-tap-mode" onchange="updateUpdateAlarm()">
-                    <option value="">— default —</option>
-                    <option value="tap">Tap</option>
-                    <option value="hold">Hold</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Taps</label>
-                  <input type="number" id="ua-fb-tap-count" min="1" max="50" placeholder="— default —" oninput="updateUpdateAlarm()">
-                </div>
-                <div class="field-group">
-                  <label>Hold (s)</label>
-                  <input type="number" id="ua-fb-tap-hold" min="1" max="10" placeholder="— default —" oninput="updateUpdateAlarm()">
-                </div>
-              </div>
-              <div class="field-hint">A Tap fallback used to always be a single tap — these make it a real backup mission.</div>
-            </div>
-          </div>
-
-          <div class="card" style="margin-top:12px">
-            <div class="card-title">Alarm Screen</div>
-            <div class="field-group">
-              <label>Notes (replaces all existing notes)</label>
-              <textarea id="ua-notes" oninput="updateUpdateAlarm()"></textarea>
-            </div>
-            <div class="field-group">
-              <label>Append Notes</label>
-              <textarea id="ua-append-notes" placeholder="Appends with 'HA:' prefix, keeps existing notes" oninput="updateUpdateAlarm()"></textarea>
-            </div>
-            <div class="field-group">
-              <label>Alarm Screen Commands (comma-separated names)</label>
-              <input type="text" id="ua-commands" placeholder="Command 1, Command 2" oninput="updateUpdateAlarm()">
-            </div>
-            <div class="row-2">
-              <div class="field-group">
-                <label>Swipe Left Command</label>
-                <input type="text" id="ua-swipe-left" oninput="updateUpdateAlarm()">
-              </div>
-              <div class="field-group">
-                <label>Swipe Right Command</label>
-                <input type="text" id="ua-swipe-right" oninput="updateUpdateAlarm()">
-              </div>
-            </div>
-              <div class="field-group">
-                <label>Wake-Up Radio Station</label>
-                <input type="text" id="ua-radio-station" placeholder="WDET (a favourited station's name)" oninput="updateUpdateAlarm()">
-                <div class="field-hint">A favourited station's name or UUID. For any other stream use a URL — see the Radio page. Send "" to clear.</div>
-              </div>
-            <div class="field-group">
-              <label>Additional Missions (slots 2–5)</label>
-              <input type="text" id="ua-extra-missions" placeholder="math, shake" oninput="updateUpdateAlarm()">
-              <div class="field-hint">Comma-separated. When set, the payload uses <code>missions</code> — the full ordered sequence — instead of <code>mission</code>.</div>
-            </div>
+          <div class="field-hint">Missions run in order. Slot 1 alone sends <code>mission</code>; two or more send <code>missions</code>, the full ordered sequence. Leave all empty for a plain tap-to-dismiss alarm.</div>
             <div class="toggle-row">
               <select id="ua-morning-weather" onchange="updateUpdateAlarm()">
                 <option value="">— no change —</option>
@@ -1437,323 +998,89 @@
 
           <div class="card" style="margin-top:12px">
             <div class="card-title">Mission</div>
-            <div class="field-group">
-              <label>Mission Type</label>
-              <select id="ubn-mission" onchange="syncMissionDisplay('ubn');updateByName()">
-                <option value="">— no change —</option>
+                                  <div class="mission-grid" id="ubn-mission-grid">
+            <div class="mission-slot empty" id="ubn-slot-1-tile">
+              <span class="slot-num">1</span>
+              <span class="slot-icon" id="ubn-slot-1-icon">+</span>
+              <span class="slot-label" id="ubn-slot-1-label">Empty</span>
+              <select id="ubn-slot-1" onchange="syncMissionSlots('ubn');updateByName()" aria-label="Mission slot 1">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
                 <option value="shake">Shake</option>
                 <option value="math">Math</option>
-                <option value="balance_ball">Balance Ball</option>
+                <option value="balance_ball">Balance</option>
                 <option value="block_drop">Bricks</option>
-                <option value="meteor">Meteor Defense</option>
-                <option value="home_assistant">Home Assistant</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
                 <option value="alert">Alert</option>
-                <option value="none">Tap (remove mission)</option>
               </select>
             </div>
-            <!-- Shake sub-options -->
-            <div id="ubn-mc-shake" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Difficulty</label>
-                  <select id="ubn-shake-mode" onchange="updateByName()">
-                    <option value="">— no change —</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Shake Count</label>
-                  <input type="number" id="ubn-shake-count" placeholder="— no change —" min="1" max="200" oninput="updateByName()">
-                </div>
-              </div>
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Duration (seconds)</label>
-                  <input type="number" id="ubn-shake-duration" placeholder="— no change —" min="1" max="60" oninput="updateByName()">
-                </div>
-                <div class="field-group">
-                  <label>Intensity (1–4)</label>
-                  <input type="number" id="ubn-shake-intensity" placeholder="— no change —" min="1" max="4" oninput="updateByName()">
-                </div>
-              </div>
+            <div class="mission-slot empty" id="ubn-slot-2-tile">
+              <span class="slot-num">2</span>
+              <span class="slot-icon" id="ubn-slot-2-icon">+</span>
+              <span class="slot-label" id="ubn-slot-2-label">Empty</span>
+              <select id="ubn-slot-2" onchange="syncMissionSlots('ubn');updateByName()" aria-label="Mission slot 2">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
+                <option value="alert">Alert</option>
+              </select>
             </div>
-            <!-- Math sub-options -->
-            <div id="ubn-mc-math" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Difficulty</label>
-                  <select id="ubn-math-difficulty" onchange="updateByName()">
-                    <option value="">— no change —</option>
-                    <option value="super_easy">Super Easy</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Problem Count</label>
-                  <input type="number" id="ubn-math-count" placeholder="— no change —" min="1" max="20" oninput="updateByName()">
-                </div>
-              </div>
+            <div class="mission-slot empty" id="ubn-slot-3-tile">
+              <span class="slot-num">3</span>
+              <span class="slot-icon" id="ubn-slot-3-icon">+</span>
+              <span class="slot-label" id="ubn-slot-3-label">Empty</span>
+              <select id="ubn-slot-3" onchange="syncMissionSlots('ubn');updateByName()" aria-label="Mission slot 3">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
+                <option value="alert">Alert</option>
+              </select>
             </div>
-          <!-- Balance Ball sub-options -->
-          <div id="ubn-mc-balance" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Difficulty</label>
-                <select id="ubn-balance-difficulty" onchange="updateByName()">
-                  <option value="">— default —</option>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Hold Duration (s)</label>
-                <input type="number" id="ubn-balance-hold" placeholder="— default —" min="3" max="120" oninput="updateByName()">
-              </div>
+            <div class="mission-slot empty" id="ubn-slot-4-tile">
+              <span class="slot-num">4</span>
+              <span class="slot-icon" id="ubn-slot-4-icon">+</span>
+              <span class="slot-label" id="ubn-slot-4-label">Empty</span>
+              <select id="ubn-slot-4" onchange="syncMissionSlots('ubn');updateByName()" aria-label="Mission slot 4">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
+                <option value="alert">Alert</option>
+              </select>
             </div>
-          </div>
-          <!-- Bricks sub-options -->
-          <div id="ubn-mc-blockdrop" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Difficulty</label>
-                <select id="ubn-blockdrop-difficulty" onchange="updateByName()">
-                  <option value="">— default —</option>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Lines to Clear</label>
-                <input type="number" id="ubn-blockdrop-lines" placeholder="— default —" min="1" max="12" oninput="updateByName()">
-              </div>
+            <div class="mission-slot empty" id="ubn-slot-5-tile">
+              <span class="slot-num">5</span>
+              <span class="slot-icon" id="ubn-slot-5-icon">+</span>
+              <span class="slot-label" id="ubn-slot-5-label">Empty</span>
+              <select id="ubn-slot-5" onchange="syncMissionSlots('ubn');updateByName()" aria-label="Mission slot 5">
+                <option value="">Empty</option>
+                <option value="none">Tap</option>
+                <option value="shake">Shake</option>
+                <option value="math">Math</option>
+                <option value="balance_ball">Balance</option>
+                <option value="block_drop">Bricks</option>
+                <option value="meteor">Meteor</option>
+                <option value="home_assistant">Home Asst</option>
+                <option value="alert">Alert</option>
+              </select>
             </div>
           </div>
-          <!-- Meteor Defense sub-options -->
-          <div id="ubn-mc-meteor" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Difficulty</label>
-                <select id="ubn-meteor-difficulty" onchange="updateByName()">
-                  <option value="">— default —</option>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Meteors to Destroy</label>
-                <input type="number" id="ubn-meteor-targets" placeholder="— default —" min="3" max="40" oninput="updateByName()">
-              </div>
-            </div>
-          </div>
-          <!-- Tap sub-options -->
-          <div id="ubn-mc-tap" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-            <div class="row-2">
-              <div class="field-group">
-                <label>Dismiss Mode</label>
-                <select id="ubn-tap-mode" onchange="updateByName()">
-                  <option value="">— default —</option>
-                  <option value="tap">Tap</option>
-                  <option value="hold">Hold</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label>Tap Count</label>
-                <input type="number" id="ubn-tap-count" placeholder="— default —" min="1" max="50" oninput="updateByName()">
-              </div>
-            </div>
-            <div class="field-group">
-              <label>Hold Duration (s)</label>
-              <input type="number" id="ubn-tap-hold" placeholder="— default —" min="1" max="10" oninput="updateByName()">
-            </div>
-            <div class="field-hint">More than one tap, or any hold, makes this a real mission — the alarm opens the app instead of stopping from the lock screen.</div>
-          </div>
-                        <!-- HA sub-options -->
-            <div id="ubn-mc-ha" style="display:none;border-top:1px solid var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Snooze Mode</label>
-                  <select id="ubn-ha-snooze-mode" onchange="updateByName()">
-                    <option value="">— no change —</option>
-                    <option value="dismiss">Dismiss (no snooze)</option>
-                    <option value="snooze">Snooze allowed</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Fallback Mission</label>
-                  <select id="ubn-ha-fallback" onchange="updateByName()">
-                    <option value="">— no change —</option>
-                    <option value="none">Tap to Dismiss</option>
-                    <option value="shake">Shake</option>
-                    <option value="math">Math</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <!-- Fallback settings, shown for whichever fallback type is picked above.
-                 Same show/hide pattern as the primary mission panels, so a fallback
-                 is configurable rather than merely selectable. -->
-            <div id="ubn-fb-shake" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Shake Mode</label>
-                  <select id="ubn-fb-shake-mode" onchange="updateByName()">
-                    <option value="">— default —</option>
-                    <option value="duration">Duration</option>
-                    <option value="count">Count</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Intensity</label>
-                  <select id="ubn-fb-shake-intensity" onchange="updateByName()">
-                    <option value="">— default —</option>
-                    <option value="light">Light</option>
-                    <option value="medium">Medium</option>
-                    <option value="vigorous">Vigorous</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Duration (s)</label>
-                  <input type="number" id="ubn-fb-shake-duration" min="1" max="30" placeholder="— default —" oninput="updateByName()">
-                </div>
-                <div class="field-group">
-                  <label>Shake Count</label>
-                  <input type="number" id="ubn-fb-shake-count" min="5" max="100" placeholder="— default —" oninput="updateByName()">
-                </div>
-              </div>
-            </div>
-            <div id="ubn-fb-math" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Math Difficulty</label>
-                  <select id="ubn-fb-math-difficulty" onchange="updateByName()">
-                    <option value="">— default —</option>
-                    <option value="super_easy">Super Easy</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Problems</label>
-                  <input type="number" id="ubn-fb-math-count" min="1" max="20" placeholder="— default —" oninput="updateByName()">
-                </div>
-              </div>
-            </div>
-            <div id="ubn-fb-balance" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Balance Difficulty</label>
-                  <select id="ubn-fb-balance-difficulty" onchange="updateByName()">
-                    <option value="">— default —</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Hold (s)</label>
-                  <input type="number" id="ubn-fb-balance-hold" min="1" max="30" placeholder="— default —" oninput="updateByName()">
-                </div>
-              </div>
-            </div>
-            <div id="ubn-fb-blockdrop" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Bricks Difficulty</label>
-                  <select id="ubn-fb-blockdrop-difficulty" onchange="updateByName()">
-                    <option value="">— default —</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Lines to Clear</label>
-                  <input type="number" id="ubn-fb-blockdrop-lines" min="1" max="12" placeholder="— default —" oninput="updateByName()">
-                </div>
-              </div>
-            </div>
-            <div id="ubn-fb-meteor" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Meteor Difficulty</label>
-                  <select id="ubn-fb-meteor-difficulty" onchange="updateByName()">
-                    <option value="">— default —</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Meteors to Destroy</label>
-                  <input type="number" id="ubn-fb-meteor-targets" min="3" max="40" placeholder="— default —" oninput="updateByName()">
-                </div>
-              </div>
-            </div>
-            <div id="ubn-fb-tap" style="display:none;border-top:1px dashed var(--border);margin-top:10px;padding-top:10px">
-              <div class="row-2">
-                <div class="field-group">
-                  <label>Fallback Tap Mode</label>
-                  <select id="ubn-fb-tap-mode" onchange="updateByName()">
-                    <option value="">— default —</option>
-                    <option value="tap">Tap</option>
-                    <option value="hold">Hold</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label>Taps</label>
-                  <input type="number" id="ubn-fb-tap-count" min="1" max="50" placeholder="— default —" oninput="updateByName()">
-                </div>
-                <div class="field-group">
-                  <label>Hold (s)</label>
-                  <input type="number" id="ubn-fb-tap-hold" min="1" max="10" placeholder="— default —" oninput="updateByName()">
-                </div>
-              </div>
-              <div class="field-hint">A Tap fallback used to always be a single tap — these make it a real backup mission.</div>
-            </div>
-          </div>
-
-          <div class="card" style="margin-top:12px">
-            <div class="card-title">Alarm Screen</div>
-            <div class="field-group">
-              <label>Notes (replaces all existing notes)</label>
-              <textarea id="ubn-notes" oninput="updateByName()"></textarea>
-            </div>
-            <div class="field-group">
-              <label>Append Notes</label>
-              <textarea id="ubn-append-notes" placeholder="Appends with 'HA:' prefix, keeps existing notes" oninput="updateByName()"></textarea>
-            </div>
-            <div class="field-group">
-              <label>Alarm Screen Commands (comma-separated names)</label>
-              <input type="text" id="ubn-commands" placeholder="Command 1, Command 2" oninput="updateByName()">
-            </div>
-            <div class="row-2">
-              <div class="field-group">
-                <label>Swipe Left Command</label>
-                <input type="text" id="ubn-swipe-left" oninput="updateByName()">
-              </div>
-              <div class="field-group">
-                <label>Swipe Right Command</label>
-                <input type="text" id="ubn-swipe-right" oninput="updateByName()">
-              </div>
-            </div>
-              <div class="field-group">
-                <label>Wake-Up Radio Station</label>
-                <input type="text" id="ubn-radio-station" placeholder="WDET (a favourited station's name)" oninput="updateByName()">
-                <div class="field-hint">A favourited station's name or UUID. For any other stream use a URL — see the Radio page. Send "" to clear.</div>
-              </div>
-            <div class="field-group">
-              <label>Additional Missions (slots 2–5)</label>
-              <input type="text" id="ubn-extra-missions" placeholder="math, shake" oninput="updateByName()">
-              <div class="field-hint">Comma-separated. When set, the payload uses <code>missions</code> — the full ordered sequence — instead of <code>mission</code>.</div>
-            </div>
+          <div class="field-hint">Missions run in order. Slot 1 alone sends <code>mission</code>; two or more send <code>missions</code>, the full ordered sequence. Leave all empty for a plain tap-to-dismiss alarm.</div>
             <div class="toggle-row">
               <select id="ubn-morning-weather" onchange="updateByName()">
                 <option value="">— no change —</option>
@@ -2425,6 +1752,7 @@ function updateAll() {
   updateSleepSoundStart(); updateSleepSoundSetVolume(); updateSleepSoundChange();
   buildSleepControlCards();
   buildRadioControlCards();
+  ['ca','ua','ubn'].forEach(syncMissionSlots);
   updateRadioStart(); buildPerAlarmCards();
   updateSystemVolume();
 }
@@ -2525,6 +1853,49 @@ function syncHoldDisplay(prefix, type) {
 
 // ─── Mission config helpers ───────────────────────────────
 // Panel id suffix → the mission type that reveals it.
+// ── Mission slots ───────────────────────────────────────────────────────────
+// The grid mirrors the app's numbered 1–5 tiles. Each tile is a styled <select>
+// with an invisible native control on top, so keyboard and screen-reader users
+// get a real combobox rather than a div that only responds to clicks.
+
+const MISSION_META = {
+  '':               { icon: '+',  label: 'Empty' },
+  'none':           { icon: '👆', label: 'Tap' },
+  'shake':          { icon: '📳', label: 'Shake' },
+  'math':           { icon: '🔢', label: 'Math' },
+  'balance_ball':   { icon: '⚖️', label: 'Balance' },
+  'block_drop':     { icon: '🧱', label: 'Bricks' },
+  'meteor':         { icon: '☄️', label: 'Meteor' },
+  'home_assistant': { icon: '🏠', label: 'Home Asst' },
+  'alert':          { icon: '🔔', label: 'Alert' },
+};
+
+// The ordered, non-empty slot values — the mission sequence itself.
+function missionSlots(prefix) {
+  const out = [];
+  for (let i = 1; i <= 5; i++) {
+    const val = v(prefix + '-slot-' + i);
+    if (val) out.push(val);
+  }
+  return out;
+}
+
+function syncMissionSlots(prefix) {
+  for (let i = 1; i <= 5; i++) {
+    const val = v(prefix + '-slot-' + i) || '';
+    const meta = MISSION_META[val] || MISSION_META[''];
+    const tile = document.getElementById(prefix + '-slot-' + i + '-tile');
+    const icon = document.getElementById(prefix + '-slot-' + i + '-icon');
+    const label = document.getElementById(prefix + '-slot-' + i + '-label');
+    if (icon) icon.textContent = meta.icon;
+    if (label) label.textContent = meta.label;
+    if (tile) tile.className = 'mission-slot ' + (val ? 'filled' : 'empty');
+  }
+  // The per-mission settings panels follow SLOT 1, which is the mission whose
+  // config `mission_config` describes.
+  syncMissionDisplay(prefix);
+}
+
 const MISSION_PANELS = {
   shake: 'shake',
   math: 'math',
@@ -2541,7 +1912,7 @@ const FALLBACK_PANELS = {
 };
 
 function syncMissionDisplay(prefix) {
-  const mission = v(prefix + '-mission');
+  const mission = v(prefix + '-slot-1');
   Object.entries(MISSION_PANELS).forEach(([suffix, type]) => {
     const el = document.getElementById(prefix + '-mc-' + suffix);
     if (el) el.style.display = (mission === type) ? '' : 'none';
@@ -2568,7 +1939,7 @@ function syncFallbackDisplay(prefix) {
 // payload root, where the app never looked at them and every setting chosen here
 // was silently ignored.
 function buildMissionConfig(prefix) {
-  const mission = v(prefix + '-mission');
+  const mission = v(prefix + '-slot-1');
   const cfg = {};
   if (mission === 'shake') {
     const mode = v(prefix + '-shake-mode'); if (mode) cfg.shake_mode = mode;
@@ -2628,19 +1999,51 @@ function buildMissionConfig(prefix) {
 // `mission` on its own sets slot 1 AND CLEARS slots 2..5 — that is what "set the
 // alarm's mission" means, and it is what the …/mission state topic reports back.
 // To keep a multi-mission alarm intact, send the full sequence.
+// Builds the `after_alarm_actions` array — the ordered after-alarm steps.
+//
+// ADDITIVE ON PURPOSE. If nothing is ticked and no order is typed, the key is
+// omitted entirely and the alarm keeps whatever it had. That matters: `notes`,
+// `morning_weather` and the app links have always implied their own steps, and
+// automations written before this field existed rely on that inference. Sending
+// an empty array would switch those steps off; omitting the key leaves them be.
+function buildAfterAlarmActions(prefix) {
+  const typed = csvToArray(v(prefix + '-aa-order'));
+  if (typed && typed.length) {
+    return typed.map(x => x.trim().toLowerCase().replace(/[ _]/g, ''))
+                .map(x => x === 'applink' ? 'appLink' : x)
+                .filter(x => ['notes','verse','weather','appLink'].includes(x));
+  }
+  const ticked = [];
+  if (document.getElementById(prefix + '-aa-notes')?.checked)   ticked.push('notes');
+  if (document.getElementById(prefix + '-aa-verse')?.checked)   ticked.push('verse');
+  if (document.getElementById(prefix + '-aa-weather')?.checked) ticked.push('weather');
+  if (document.getElementById(prefix + '-aa-applink')?.checked) ticked.push('appLink');
+  return ticked;
+}
+
 function applyMissions(p, prefix) {
-  const first = v(prefix + '-mission');
-  const extras = csvToArray(v(prefix + '-extra-missions'));
+  const slots = missionSlots(prefix);
   const cfg = buildMissionConfig(prefix);
-  if (extras && extras.length) {
-    const head = cfg.mission_config
-      ? { mission: first || 'none', mission_config: cfg.mission_config }
-      : (first || 'none');
-    p.missions = [head].concat(extras).slice(0, 5);
+
+  if (slots.length === 0) return;   // nothing chosen — leave the alarm alone
+
+  // ONE slot → `mission`, which sets slot 1 and clears 2..5. TWO OR MORE →
+  // `missions`, the whole ordered sequence. Sending `mission` for a
+  // multi-mission alarm would silently drop the rest, which is exactly the
+  // trap the sequence field exists to avoid.
+  if (slots.length === 1) {
+    p.mission = slots[0];
+    Object.assign(p, cfg);
     return;
   }
-  if (first) p.mission = first;
-  Object.assign(p, cfg);
+
+  // Slot 1 carries its mission_config inline; later slots are bare type names.
+  // (Per-slot config for slots 2..5 is expressible in the payload but not in
+  // this builder — the app's own editor is the place to tune those.)
+  const head = cfg.mission_config
+    ? { mission: slots[0], mission_config: cfg.mission_config }
+    : slots[0];
+  p.missions = [head].concat(slots.slice(1));
 }
 
 // ─── Time Format Helpers ─────────────────────────────────
@@ -2693,6 +2096,7 @@ function updateCreateAlarm() {
   const sl = v('ca-swipe-left'); if (sl) p.swipe_left_command = sl;
   const sr = v('ca-swipe-right'); if (sr) p.swipe_right_command = sr;
   const rs = v('ca-radio-station'); if (rs) p.radio_station = rs;
+  const aa = buildAfterAlarmActions('ca'); if (aa.length) p.after_alarm_actions = aa;
   if (vCheck('ca-morning-weather')) p.morning_weather = true;
   if (vCheck('ca-ephemeral')) p.ephemeral = true;
   const mid = v('ca-mqtt-id'); if (mid) p.mqtt_id = mid;
@@ -2724,6 +2128,7 @@ function updateUpdateAlarm() {
   const sl = v('ua-swipe-left'); if (sl) p.swipe_left_command = sl;
   const sr = v('ua-swipe-right'); if (sr) p.swipe_right_command = sr;
   const rs = v('ua-radio-station'); if (rs) p.radio_station = rs;
+  const aa = buildAfterAlarmActions('ua'); if (aa.length) p.after_alarm_actions = aa;
   const uaMW = v('ua-morning-weather'); if (uaMW !== '') p.morning_weather = uaMW === 'true';
   setPreview('ua-preview', 'ua-yaml', 'update_alarm', p);
 }
@@ -2754,6 +2159,7 @@ function updateByName() {
   const sl = v('ubn-swipe-left'); if (sl) p.swipe_left_command = sl;
   const sr = v('ubn-swipe-right'); if (sr) p.swipe_right_command = sr;
   const rs = v('ubn-radio-station'); if (rs) p.radio_station = rs;
+  const aa = buildAfterAlarmActions('ubn'); if (aa.length) p.after_alarm_actions = aa;
   const ubnMW = v('ubn-morning-weather'); if (ubnMW !== '') p.morning_weather = ubnMW === 'true';
   setPreview('ubn-preview', 'ubn-yaml', 'update_alarm', p);
 }
