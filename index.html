@@ -6,13 +6,13 @@
 <title>[BETA] Allarise — Smart alarms for Home Assistant</title>
 <link rel="icon" type="image/png" href="app-icon.png">
 <link rel="apple-touch-icon" href="app-icon.png">
-<script src="./support.js"></script>
+<script src="./support.js?v=20260730a"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="_ds/allarise-beta-site-2ccad989-5d20-4ad7-adf7-605d27418145/styles.css">
-<script src="_ds/allarise-beta-site-2ccad989-5d20-4ad7-adf7-605d27418145/_ds_bundle.js"></script>
+<link rel="stylesheet" href="_ds/allarise-beta-site-2ccad989-5d20-4ad7-adf7-605d27418145/styles.css?v=20260730a">
+<script src="_ds/allarise-beta-site-2ccad989-5d20-4ad7-adf7-605d27418145/_ds_bundle.js?v=20260730a"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -300,6 +300,9 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   .data-table { display: block; max-width: 100%; overflow-x: auto; }
 }
 .code-wrap pre { overflow-x: auto; }
+/* Long unbreakable tokens (repo URLs in the install steps) must wrap inside
+   their card instead of running past it on narrow screens. */
+.code-inline { overflow-wrap: anywhere; word-break: break-word; }
 .ar-marquee:hover, [data-mq=marqwrap]:hover .ar-marquee { animation-play-state: paused !important; }
 .ar-marquee img { transition: transform .2s ease, border-color .2s ease; }
 .ar-marquee img:hover { transform: translateY(-4px); border-color: var(--text-tertiary); }
@@ -324,9 +327,6 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 </helmet>
 
 <div style="background: var(--bg); min-height: 100vh; overflow-x: clip; font-family: var(--font-sans);">
-
-  <!-- BETA SITE BANNER — present only on beta.allarise.app, not on the production site. -->
-  <div style="background: #1A1B33; color: #FFD84D; padding: 10px 16px; text-align: center; font: 600 14px/1.45 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif; position: relative; z-index: 9999;">🧪 Beta site — documents the TestFlight build and the <code style="background: rgba(255,255,255,.12); padding: 1px 5px; border-radius: 4px; font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;">allarise-hacs-beta</code> integration. <a href="https://allarise.app" style="color: #fff; text-decoration: underline;">Go to the release site →</a></div>
 
   <div style="position: sticky; top: 0; z-index: 200;">
     <x-import component-from-global-scope="Allarise.SiteNav" brand="Allarise" icon-light="app-icon.png" home-href="#home" links="{{ navLinks }}" hint-size="100%,52px"></x-import>
