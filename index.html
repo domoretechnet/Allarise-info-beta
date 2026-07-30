@@ -303,6 +303,13 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 /* Long unbreakable tokens (repo URLs in the install steps) must wrap inside
    their card instead of running past it on narrow screens. */
 .code-inline { overflow-wrap: anywhere; word-break: break-word; }
+/* The DS hides .site-nav links on mobile to collapse into the hamburger, but
+   the SiteNav component renders its dropdown INSIDE the nav, so the same rule
+   also hid every dropdown link — tapping ☰ opened a 1px-tall, empty menu.
+   Re-show links that live in the dropdown. */
+@media (max-width: 600px) {
+  .site-nav .nav-dropdown a { display: block !important; }
+}
 .ar-marquee:hover, [data-mq=marqwrap]:hover .ar-marquee { animation-play-state: paused !important; }
 .ar-marquee img { transition: transform .2s ease, border-color .2s ease; }
 .ar-marquee img:hover { transform: translateY(-4px); border-color: var(--text-tertiary); }
@@ -1257,7 +1264,10 @@ class Component extends DCLogic {
         if (window.innerWidth <= 700) {
           const rows = document.querySelectorAll('[data-showrow]');
           if (!rows.length) return;
-          const line = window.innerHeight * 0.34;
+          // 0.7, not 0.34: the showcase is the last section on the page, so
+          // with a high activation line the bottom rows could never scroll
+          // past it — the page ran out first and the list stopped advancing.
+          const line = window.innerHeight * 0.7;
           rows.forEach((r, k) => { if (r.getBoundingClientRect().top <= line) idx = k; });
         } else {
           const sec = document.querySelector('[data-showsection]');

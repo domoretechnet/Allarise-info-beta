@@ -148,7 +148,9 @@ body {
   .site-nav {
     padding: 0 16px;
   }
-  .site-nav a:not(.nav-home) {
+  /* Direct children only: the dropdown lives inside the nav, and hiding
+     every descendant link left the hamburger opening an empty 1px menu. */
+  .site-nav > a:not(.nav-home) {
     display: none !important;
   }
   .nav-menu-btn {
