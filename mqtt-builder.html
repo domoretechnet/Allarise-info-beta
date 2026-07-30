@@ -198,6 +198,7 @@
     .config-bar { padding: 14px 16px; }
     .two-col { grid-template-columns: 1fr; }
     .site-nav a:not(.nav-home) { display: none !important; }
+    .nav-ha-group { display: none !important; }
     .nav-menu-btn { display: block !important; }
   }
   /* Mission tiles — mirrors the app's numbered 1–5 grid so the builder reads
@@ -249,10 +250,15 @@
   .field-hint.hint-warn { color: var(--yellow); }
 
 
-  /* Blue pill links matching the Home Assistant page header. */
-  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
-  .pill-btn { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff !important; text-decoration: none !important; transition: background .15s, border-color .15s; }
-  .pill-btn:hover { background: var(--accent2); border-color: var(--accent2); }
+  /* HA submenu in the top nav: Setup guide / Entity reference / MQTT Builder
+     nest under one item. Outer layer is the hover bridge. */
+  .nav-ha-group { position: relative; display: flex; align-items: center; }
+  .nav-submenu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 10px; z-index: 300; }
+  .nav-ha-group:hover .nav-submenu, .nav-ha-group:focus-within .nav-submenu { display: block; }
+  .nav-submenu-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5); padding: 6px 0; min-width: 185px; }
+  .nav-submenu-box a { display: block; padding: 9px 16px; font-size: 14px; white-space: nowrap; color: var(--text2); }
+  .nav-submenu-box a:hover { background: var(--surface2); color: var(--text); text-decoration: none; }
+  .nav-dd-label { padding: 12px 24px 4px; font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); }
 
   /* Device Settings page: shared topic strip inside each command card. */
   .dev-topic { display: block; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-family: var(--mono); font-size: 11.5px; color: var(--green); margin-bottom: 10px; overflow: auto; white-space: nowrap; }
@@ -265,17 +271,25 @@
     <img src="app-icon-dark.png" class="icon-dark" alt="Allarise" />
     <span>Allarise</span>
   </a>
-  <a href="index.html">About</a>
-  <a href="home-assistant.html">Home Assistant</a>
-  <a href="mqtt-builder.html" class="nav-active">MQTT Builder</a>
-  <a href="faq.html">FAQ</a>
+  <a href="index.html#home">About</a>
+  <div class="nav-ha-group">
+    <a href="index.html#home-assistant" class="nav-active">Home Assistant <span style="font-size:9px;opacity:.7">▼</span></a>
+    <div class="nav-submenu"><div class="nav-submenu-box">
+      <a href="index.html#home-assistant">Setup guide</a>
+      <a href="index.html#ha-reference">Entity reference</a>
+      <a href="mqtt-builder.html" class="nav-active">MQTT Builder</a>
+    </div></div>
+  </div>
+  <a href="index.html#faq">FAQ</a>
   <button class="nav-menu-btn" id="nav-menu-btn" onclick="toggleNav()">☰</button>
 </nav>
 <div class="nav-dropdown" id="nav-dropdown">
-  <a href="index.html">About</a>
-  <a href="home-assistant.html">Home Assistant</a>
-  <a href="mqtt-builder.html" class="nav-active">MQTT Builder</a>
-  <a href="faq.html">FAQ</a>
+  <a href="index.html#home">About</a>
+  <div class="nav-dd-label">Home Assistant</div>
+  <a href="index.html#home-assistant" style="padding-left:38px">Setup guide</a>
+  <a href="index.html#ha-reference" style="padding-left:38px">Entity reference</a>
+  <a href="mqtt-builder.html" class="nav-active" style="padding-left:38px">MQTT Builder</a>
+  <a href="index.html#faq">FAQ</a>
 </div>
 
 <div class="app">
@@ -338,11 +352,6 @@
 
 <div class="content">
 
-  <!-- Same blue pills as the Home Assistant page header -->
-  <div class="pill-row">
-    <a class="pill-btn" href="index.html#home-assistant">Setup guide</a>
-    <a class="pill-btn" href="index.html#ha-reference">Entity reference</a>
-  </div>
 
   <!-- Global config -->
   <div class="config-bar">
