@@ -300,7 +300,9 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   [data-mq=stage] { aspect-ratio: auto !important; height: 700px !important; max-height: none !important; }
   [data-mq=stage] { display: none !important; }
   [data-mq=inlinestage] { display: block !important; }
-  [data-mq=inlinecta][data-on="1"] { display: flex !important; }
+  /* No [data-on] rule here: rows are pre-expanded and real CTAs always shown
+     further down. The old active-slide rule made the seven CTA-less rows flash
+     their hardcoded "Open →" chip as the vestigial slide index swept past. */
   [data-mq=tiles] { grid-template-columns: 1fr !important; align-content: start !important; gap: 6px 0 !important; }
 }
 @media (max-width: 520px) {
