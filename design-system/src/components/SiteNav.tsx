@@ -40,8 +40,12 @@ export function SiteNav({
       {...rest}
     >
       <a className="nav-home" href={homeHref}>
-        <img className="icon-light" src={iconLight} alt="" />
-        <img className="icon-dark" src={iconDark ?? iconLight} alt="" />
+        {iconLight && (
+          <>
+            <img className="icon-light" src={iconLight} alt="" />
+            <img className="icon-dark" src={iconDark ?? iconLight} alt="" />
+          </>
+        )}
         <span>{brand}</span>
       </a>
 

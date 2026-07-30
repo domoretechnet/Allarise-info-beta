@@ -66,6 +66,35 @@ on 2026-07-25 to **replace** them. Because the project had no `_ds_sync.json`,
 those deletes had to be listed explicitly in the upload plan — a diff could not
 derive them.
 
+## Fixes made during the first sync (2026-07-25)
+
+- **`Callout` default warn icon is `⚡`, not `⚠️` — deliberate.**
+  `package-validate.mjs` (line ~535) treats any preview cell whose text starts
+  with `⚠` as a caught render error, so a `⚠️` default flagged every warn callout
+  as `bad` forever. `home-assistant.html` uses `⚡` and `⚠️` exactly once each, so
+  `⚡` is equally faithful. Do not "fix" this back; pass `icon="⚠️"` per-instance
+  if a specific callout needs it.
+- **The DS ships a `body` base rule.** Components set their own `font-family`,
+  but text placed *outside* a component was falling back to browser serif in
+  every preview. `components.css` now sets `font-family`/`background`/`color`/
+  `font-size`/`line-height` on `body`, matching what each HTML page does inline.
+  `.section-label-divider` also needed an explicit `font-family`.
+- **`SiteNav` guards its icon.** It rendered `<img src="">` unconditionally,
+  producing a broken-image glyph whenever no icon was passed. It now omits the
+  images entirely when `iconLight` is empty, matching `Hero`.
+- **`cardMode: "column"`** is set for `DataTable` and `SiteNav` in
+  `cfg.overrides` — both render wider than a grid cell and were being cropped.
+- **Prop interfaces `Omit<…, 'title'>`.** Nine components take a `title` prop of
+  type `ReactNode`, which collides with the HTML `title` attribute (`string`).
+  Any new component with a `title` prop needs the same `Omit`, or `tsc` fails
+  the declaration build.
+
+## Known render warns
+
+None outstanding. The final validate run was clean: 31/31 previews render, 0
+bad, 0 thin, 0 variants-identical, no font warnings. Any warn on a future run is
+new — investigate rather than assume it is pre-existing.
+
 ## Re-sync risks
 
 - **The extraction is manual and one-way.** The HTML pages remain the live site;
@@ -77,3 +106,13 @@ derive them.
 - The 11 hand-authored cards were deleted from the project. They exist nowhere
   else — if they are ever wanted back, they must be recovered from the project's
   own history, not this repo.
+- **`conventions.md` enumerates real names.** Every token, class and component
+  it lists was grepped against `ds-bundle/_ds_bundle.css` and the
+  `components/general/` tree at sync time. If a token is renamed or a component
+  removed, that file goes stale silently and the design agent will emit
+  vocabulary that no longer resolves. Re-validate it on every sync.
+- **Emoji are the icon system.** There is no icon package. If one is ever added,
+  `cfg.extraEntries` needs it or icons render as empty boxes.
+- The preview harness's caught-error heuristic (leading `⚠`) is a real
+  constraint on default icon choices — see the Callout note above before
+  changing any component's default glyph.

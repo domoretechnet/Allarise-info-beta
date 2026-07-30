@@ -16,6 +16,17 @@
   box-sizing: border-box;
 }
 
+/* Base typography. The site sets this on `body` in every page's inline CSS;
+   without it any text placed outside a component falls back to the browser
+   serif, which is never what this design system intends. */
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
 /* ─────────────────────────── Nav ─────────────────────────── */
 
 .site-nav {
@@ -334,6 +345,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  font-family: var(--font-sans);
 }
 .section-label-divider .sld-label {
   font-size: 13px;

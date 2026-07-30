@@ -293,6 +293,38 @@
     and 2.7). Declining either costs you nothing else in the app.
   </p>
 
+  <h3>App Persistence is now three-way</h3>
+  <p>
+    App Persistence &mdash; the setting that keeps Allarise awake in the background &mdash;
+    used to be on or off. It now has a third option, and <strong>everyone has been moved
+    to it</strong>. You will see a one-time notice in the app explaining the change.
+  </p>
+  <p>
+    <strong>On &mdash; always ready.</strong> The app stays awake all night. Highest battery use.
+  </p>
+  <p>
+    <strong>Dynamic &mdash; ready when it matters.</strong> The app stays awake while your phone is
+    charging and in the roughly 75 minutes before your next alarm, and sleeps the rest of the
+    time. This is the new default.
+  </p>
+  <p>
+    <strong>Off &mdash; best battery.</strong> The app sleeps until you open it.
+  </p>
+  <p>
+    <strong>Your alarm rings on time in all three.</strong> The alarm is scheduled with iOS
+    itself no matter which you pick. What changes is the quality of the wake-up: whether the
+    app can use your custom volume, play a radio station rather than its own tone, and answer
+    Home Assistant. Under Dynamic those depend on iOS waking the app, so treat them as usually
+    available in those windows rather than guaranteed &mdash; choose <strong>On</strong> if you
+    need certainty. Change it under Settings &rarr; Reliability.
+  </p>
+  <p>
+    <strong>If you use Home Assistant:</strong> commands sent to a phone on Dynamic reach it while
+    it is charging or close to an alarm, and not while it is asleep. Switch to <strong>On</strong>
+    if you need the phone to answer at any hour. Details are on the
+    <a href="home-assistant.html#ref-persistence">Home Assistant page</a>.
+  </p>
+
   <h3>Removed</h3>
   <p>
     <strong>NWS Weather Alerts</strong> has been removed. The relevant sections of the

@@ -262,11 +262,19 @@
     </svg>
   </button>
   <div class="faq-answer">
-    <p>Allarise is designed to remain active in the background so your alarms can run reliably, respond to inbound MQTT commands, and play at your chosen volume independent of your ringer settings. Because of this, it may use more battery than a typical alarm app.</p>
+    <p>Allarise stays active in the background so it can play at your chosen volume independent of your ringer settings, stream a radio station, and respond to inbound MQTT commands. Because of this, it can use more battery than a typical alarm app.</p>
 
-    <p>You can reduce battery usage by turning off background persistence in the app’s settings. Keep in mind that doing so may limit features like custom alarm volume and Home Assistant integration.</p>
+    <p>The <strong>App Persistence</strong> setting, under Settings ▸ Reliability, gives you three choices.</p>
 
-    <p>For a full breakdown of what’s affected, see the persistence setting inside the app.</p>
+    <p><strong>On — always ready.</strong> The app stays awake all night. Highest battery use.</p>
+
+    <p><strong>Dynamic — ready when it matters.</strong> The app stays awake while the phone is charging and in the roughly 75 minutes before your next alarm, and sleeps the rest of the time. This is the default.</p>
+
+    <p><strong>Off — best battery.</strong> The app sleeps until you open it.</p>
+
+    <p><strong>Your alarm rings on time in all three.</strong> The alarm is scheduled with iOS itself no matter which you choose. What the setting changes is the quality of the wake-up: whether the app can use your custom volume, play a radio station rather than its own tone, and answer Home Assistant. Under Dynamic those depend on iOS waking the app, so treat them as usually-available in those windows rather than guaranteed — pick <strong>On</strong> if you need certainty.</p>
+
+    <p>Existing users, including anyone who previously turned persistence off, were moved to Dynamic, and the app shows a one-time notice about it. If you send commands to the app from Home Assistant, note that those reach a Dynamic phone while it is charging or near an alarm, and not while it is asleep — choose <strong>On</strong> if you need it to answer at any hour.</p>
   </div>
 </div>
 

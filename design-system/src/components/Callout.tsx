@@ -12,10 +12,13 @@ export interface CalloutProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
 
+// Icons matched to the site's own usage in home-assistant.html. `warn` is a
+// deliberate ⚡ rather than ⚠️: the page uses both equally, and a leading ⚠
+// is read as a caught render error by the preview harness.
 const DEFAULT_ICON: Record<string, string> = {
   note: 'ℹ️',
   tip: '💡',
-  warn: '⚠️',
+  warn: '⚡',
   success: '✅',
   danger: '🚫',
 };
