@@ -6,42 +6,34 @@
 <link rel="icon" type="image/png" href="app-icon.png">
 <link rel="apple-touch-icon" href="app-icon.png">
 <title>[BETA] Allarise MQTT Payload Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
+  /* Palette and type mirror the redesigned beta site (Allarise Beta Site
+     design system): warm paper background, ink text, indigo signal accent,
+     IBM Plex Mono for labels/code, Pretendard for everything else.
+     The redesign is light-locked, so there is deliberately no dark mode. */
   :root {
-    --bg: #ffffff;
-    --surface: #f5f5f7;
-    --surface2: #e8e8ed;
-    --border: #d2d2d7;
-    --accent: #0071e3;
-    --accent2: #6e40c9;
-    --green: #1d8348;
-    --green-bg: #eafaf1;
-    --red: #c0392b;
-    --yellow: #9e6200;
-    --text: #1d1d1f;
-    --text2: #6e6e73;
-    --text3: #98989d;
-    --mono: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #000000;
-      --surface: #1c1c1e;
-      --surface2: #2c2c2e;
-      --border: #38383a;
-      --accent: #2997ff;
-      --accent2: #9b6dff;
-      --green: #30d158;
-      --green-bg: #0d2614;
-      --red: #ff453a;
-      --yellow: #ffd60a;
-      --text: #f5f5f7;
-      --text2: #98989d;
-      --text3: #636366;
-    }
+    --bg: #FCFAF6;
+    --surface: #FFFFFF;
+    --surface2: #F1EFF7;
+    --border: #DBD8E6;
+    --accent: #2E4A9E;
+    --accent2: #283070;
+    --green: #22603A;
+    --green-bg: #E8F0E8;
+    --red: #8E2A1E;
+    --yellow: #92620A;
+    --text: #1A1B33;
+    --text2: #565A78;
+    --text3: #8A8DA6;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --card-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 16px; line-height: 1.6; cursor: pointer; }
+  body { background: var(--bg); color: var(--text); font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 16px; line-height: 1.6; cursor: pointer; }
 
   /* ─── Layout ─── */
   .app { display: flex; height: 100vh; }
@@ -50,22 +42,22 @@
   .content { flex: 1; overflow-y: auto; padding: 28px 32px; }
 
   /* ─── Sidebar ─── */
-  .sidebar-title { padding: 0 20px 16px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); }
+  .sidebar-title { padding: 0 20px 16px; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); }
   .nav-group { margin-bottom: 8px; }
-  .nav-group-label { padding: 4px 20px; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-top: 8px; }
+  .nav-group-label { padding: 4px 20px; font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-top: 8px; }
   .nav-item { display: block; width: 100%; text-align: left; background: none; border: none; cursor: pointer;
     padding: 8px 20px; color: var(--text); font-size: 14px; transition: all 0.15s; border-left: 3px solid transparent; }
   .nav-item:hover { background: var(--surface2); }
-  .nav-item.active { color: var(--accent); background: rgba(0,113,227,0.08); border-left-color: var(--accent); font-weight: 500; }
+  .nav-item.active { color: var(--accent); background: rgba(46,74,158,0.08); border-left-color: var(--accent); font-weight: 600; }
   .nav-item .badge { float: right; font-size: 10px; background: var(--accent2); color: white; padding: 1px 6px; border-radius: 10px; opacity: 0.8; }
 
   /* ─── Page header ─── */
   .page-header { margin-bottom: 24px; }
-  .page-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .page-header h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 4px; }
   .page-header p { color: var(--text2); font-size: 15px; }
 
   /* ─── Config bar ─── */
-  .config-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 20px; margin-bottom: 24px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .config-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--card-shadow); padding: 16px 20px; margin-bottom: 24px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
   .config-bar label { font-size: 13px; color: var(--text2); margin-bottom: 4px; display: block; }
   .config-bar .field { flex: 1; min-width: 140px; }
   .config-bar input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; color: var(--text); font-size: 14px; }
@@ -78,8 +70,8 @@
   @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
 
   /* ─── Card ─── */
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
-  .card-title { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--card-shadow); padding: 20px; }
+  .card-title { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; }
 
   /* ─── Form fields ─── */
   .field-group { margin-bottom: 12px; }
@@ -92,7 +84,7 @@
     width: 100%; background: var(--surface2); border: 1px solid var(--border);
     border-radius: 8px; padding: 8px 10px; color: var(--text); font-size: 14px; font-family: inherit;
   }
-  .field-group input:focus, .field-group select:focus, .field-group textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,0.12); }
+  .field-group input:focus, .field-group select:focus, .field-group textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(46,74,158,0.12); }
   .field-group textarea { resize: vertical; min-height: 72px; }
   .field-group select { cursor: pointer; }
   .field-hint { font-size: 12px; color: var(--text3); margin-top: 3px; }
@@ -101,7 +93,7 @@
   .days-picker { display: flex; gap: 6px; flex-wrap: wrap; }
   .day-btn { padding: 5px 12px; border-radius: 980px; border: 1px solid var(--border);
     background: var(--surface2); color: var(--text2); cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.15s; }
-  .day-btn.selected { background: rgba(0,113,227,0.12); border-color: var(--accent); color: var(--accent); }
+  .day-btn.selected { background: rgba(46,74,158,0.12); border-color: var(--accent); color: var(--accent); }
 
   /* Toggle row */
   .toggle-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
@@ -111,14 +103,14 @@
   /* ─── JSON preview ─── */
   .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .preview-header .card-title { margin-bottom: 0; }
-  .copy-btn { background: var(--accent); color: white; border: none; border-radius: 980px; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 600; transition: opacity 0.15s; }
-  .copy-btn:hover { opacity: 0.85; }
-  .copy-btn.copied { background: var(--green); }
+  .copy-btn { background: var(--accent); color: white; border: 1px solid var(--accent); border-radius: 8px; padding: 6px 14px; font-family: var(--mono); font-size: 12px; letter-spacing: .04em; cursor: pointer; font-weight: 500; transition: background 0.15s, border-color 0.15s; }
+  .copy-btn:hover { background: var(--accent2); border-color: var(--accent2); }
+  .copy-btn.copied { background: var(--green); border-color: var(--green); }
   pre { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-family: var(--mono); font-size: 12px; color: var(--text); overflow-x: auto; white-space: pre-wrap; word-break: break-all; line-height: 1.7; }
-  .json-key { color: #7ec8e3; }
-  .json-str { color: #a8d5a2; }
-  .json-num { color: #f0c27f; }
-  .json-bool { color: #cc99ff; }
+  .json-key { color: #2E4A9E; }
+  .json-str { color: #22603A; }
+  .json-num { color: #92620A; }
+  .json-bool { color: #8E2A1E; }
   .json-null { color: var(--text3); }
 
   /* ─── YAML block ─── */
@@ -136,14 +128,11 @@
   .tab-pane.active { display: block; }
 
   /* ─── Info box ─── */
-  .info-box { background: rgba(0,113,227,0.06); border: 1px solid rgba(0,113,227,0.2); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: 14px; color: var(--text2); }
+  /* Callouts mirror the redesign's left-rule style rather than tinted boxes. */
+  .info-box { background: transparent; border: none; border-left: 3px solid var(--accent); border-radius: 0; padding: 2px 0 2px 16px; margin-bottom: 16px; font-size: 14px; color: var(--text2); }
   .info-box strong { color: var(--accent); }
-  .warn-box { background: rgba(158,98,0,0.06); border: 1px solid rgba(158,98,0,0.2); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: 14px; color: var(--text2); }
+  .warn-box { background: transparent; border: none; border-left: 3px solid #F5A623; border-radius: 0; padding: 2px 0 2px 16px; margin-bottom: 16px; font-size: 14px; color: var(--text2); }
   .warn-box strong { color: var(--yellow); }
-  @media (prefers-color-scheme: dark) {
-    .info-box { background: rgba(41,151,255,0.08); border-color: rgba(41,151,255,0.25); }
-    .warn-box { background: rgba(255,214,10,0.08); border-color: rgba(255,214,10,0.25); }
-  }
 
   /* ─── Page sections ─── */
   .page { display: none; }
@@ -165,10 +154,6 @@
   .site-nav .nav-home img { width: 28px; height: 28px; border-radius: 6px; }
   .site-nav .nav-home .icon-light { display: block; }
   .site-nav .nav-home .icon-dark  { display: none;  }
-  @media (prefers-color-scheme: dark) {
-    .site-nav .nav-home .icon-light { display: none;  }
-    .site-nav .nav-home .icon-dark  { display: block; }
-  }
   .site-nav .nav-home span { font-size: 16px; font-weight: 700; color: var(--text); }
   .site-nav .nav-active { color: var(--accent) !important; font-weight: 600; }
   .app { height: calc(100vh - 52px); }
@@ -262,12 +247,15 @@
 
   /* Added upstream — see Documents/mqtt-builder.html */
   .field-hint.hint-warn { color: var(--yellow); }
+
+  /* Device Settings page: shared topic strip inside each command card. */
+  .dev-topic { display: block; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-family: var(--mono); font-size: 11.5px; color: var(--green); margin-bottom: 10px; overflow: auto; white-space: nowrap; }
 </style>
 </head>
 <body>
 <!-- BETA SITE BANNER — present only on beta.allarise.app, not on the production site. -->
-<div style="background:#b45309;color:#fff;padding:10px 16px;text-align:center;font:600 14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;position:relative;z-index:9999">
-  🧪 Beta site — documents the TestFlight build and the <code style="background:rgba(0,0,0,.22);padding:1px 5px;border-radius:4px">allarise-hacs-beta</code> integration.
+<div style="background:#1A1B33;color:#FFD84D;padding:10px 16px;text-align:center;font:600 14px/1.45 'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;position:relative;z-index:9999">
+  🧪 Beta site — documents the TestFlight build and the <code style="background:rgba(255,255,255,.12);padding:1px 5px;border-radius:4px;font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace">allarise-hacs-beta</code> integration.
   <a href="https://allarise.app" style="color:#fff;text-decoration:underline">Go to the release site →</a>
 </div>
 
@@ -313,6 +301,9 @@
   <div class="nav-group-label">Ambient</div>
   <button class="nav-item" onclick="showPage('sleep-sounds', this)">Sleep Sounds</button>
   <button class="nav-item" onclick="showPage('radio', this)">Radio</button>
+
+  <div class="nav-group-label">Device</div>
+  <button class="nav-item" onclick="showPage('device', this)">Device Settings</button>
 </nav>
 
 <!-- Main -->
@@ -338,7 +329,9 @@
     <optgroup label="Ambient">
       <option value="sleep-sounds">Sleep Sounds</option>
       <option value="radio">Radio</option>
-      <option value="radio">Radio</option>
+    </optgroup>
+    <optgroup label="Device">
+      <option value="device">Device Settings</option>
     </optgroup>
   </select>
 </div>
@@ -2089,6 +2082,11 @@
               <label>Fade-Out Duration (seconds)</label>
               <input type="number" id="ss-fade-out-sec" min="0" max="3600" placeholder="overrides minutes if set" oninput="updateSleepSoundStart()">
             </div>
+            <div class="field-group">
+              <label>Sync Interval (seconds) <span style="font-weight:400;color:var(--text2);font-size:11px">advanced</span></label>
+              <input type="number" id="ss-sync-interval" min="5" placeholder="leave blank for immediate start" oninput="updateSleepSoundStart()">
+              <div class="field-hint">Delays playback so it starts on the next multiple of this interval — useful for keeping several devices in step. Minimum 5.</div>
+            </div>
           </div>
         </div>
 
@@ -2259,6 +2257,12 @@
               <input type="number" id="rd-volume" min="0" max="100" placeholder="defaults to the sleep volume" oninput="updateRadioStart()">
               <div class="field-hint">The playback level — the same one the Sleep Volume slider controls. Leave blank to inherit the current sleep-sound volume.</div>
             </div>
+
+            <div class="field-group">
+              <label>System Volume (0–100) <span style="font-weight:400;color:var(--text2);font-size:11px">optional</span></label>
+              <input type="number" id="rd-system-volume" min="0" max="100" placeholder="leave blank to keep current" oninput="updateRadioStart()">
+              <div class="field-hint">Sets the device's hardware media volume (volume buttons / Control Center). Independent of the radio volume above.</div>
+            </div>
           </div>
 
           <div class="card">
@@ -2275,6 +2279,10 @@
             <div class="field-group">
               <label>Fade-Out (minutes)</label>
               <input type="number" id="rd-fade-out-min" min="0" max="60" placeholder="0 = no fade" oninput="updateRadioStart()">
+            </div>
+            <div class="field-group">
+              <label>Fade-Out (seconds)</label>
+              <input type="number" id="rd-fade-out-sec" min="0" max="3600" placeholder="overrides minutes if set" oninput="updateRadioStart()">
             </div>
           </div>
         </div>
@@ -2305,6 +2313,138 @@
       <div id="rd-control-cards"></div>
     </div>
   </div><!-- /page-radio -->
+
+  <!-- ══════════════════════════════════════════════════
+       DEVICE SETTINGS
+  ══════════════════════════════════════════════════ -->
+  <div id="page-device" class="page">
+    <div class="page-header">
+      <h1>Device Settings</h1>
+      <p>App-wide settings controllable over MQTT. Published to <code style="color:var(--green)">allarise/{device}/command/{cmd}</code> — none of these are tied to a specific alarm.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px">
+
+      <div class="card">
+        <div class="card-title">⚡ App Persistence</div>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">Background keep-alive mode. <strong>Dynamic</strong> keeps the app awake only while charging or near an alarm. The app reports the chosen mode on <code>sensor/app_persistence_mode</code> and the live on/off residency on <code>sensor/app_persistence</code>.</p>
+        <div class="field-group">
+          <label>Mode</label>
+          <select id="dev-persistence" onchange="updateDeviceCommands()">
+            <option value="ON">On — always resident</option>
+            <option value="DYNAMIC">Dynamic — awake while charging or near an alarm</option>
+            <option value="OFF">Off — background features disabled</option>
+          </select>
+        </div>
+        <code id="dev-persistence-topic" class="dev-topic"></code>
+        <div style="position:relative">
+          <pre style="font-size:11.5px" id="dev-persistence-yaml"></pre>
+          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dev-persistence-yaml',this)">Copy</button>
+        </div>
+        <div class="field-hint hint-warn" style="margin-top:8px">Once the app has fully suspended (Off, or Dynamic while asleep), it cannot hear the command to wake it — change modes while the app is reachable.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🎨 Appearance &amp; Theme</div>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">Switch the app between light, dark and system appearance, and optionally select a theme by name.</p>
+        <div class="field-group">
+          <label>Appearance</label>
+          <select id="dev-appearance" onchange="updateDeviceCommands()">
+            <option value="">— leave unchanged —</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="system">System</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Theme Name</label>
+          <input type="text" id="dev-theme" placeholder="exactly as shown in Settings → Theme" oninput="updateDeviceCommands()">
+        </div>
+        <code id="dev-theme-topic" class="dev-topic"></code>
+        <div style="position:relative">
+          <pre style="font-size:11.5px" id="dev-theme-yaml"></pre>
+          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dev-theme-yaml',this)">Copy</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔊 System Volume</div>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">Sets the device's hardware media volume — the one the volume buttons control. Reported back on <code>sensor/system_volume</code>; the HACS integration exposes it as the System Volume slider.</p>
+        <div class="field-group">
+          <label>Volume (0–100)</label>
+          <input type="number" id="dev-system-volume" min="0" max="100" placeholder="60" oninput="updateDeviceCommands()">
+        </div>
+        <code id="dev-sysvol-topic" class="dev-topic"></code>
+        <div style="position:relative">
+          <pre style="font-size:11.5px" id="dev-sysvol-yaml"></pre>
+          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dev-sysvol-yaml',this)">Copy</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔔 Alert Volume</div>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">The volume used for HA-triggered alert alarms. Reported back on <code>sensor/media_alert_volume</code>; also settable via the media player entity's volume.</p>
+        <div class="field-group">
+          <label>Volume (0–100)</label>
+          <input type="number" id="dev-alert-volume" min="0" max="100" placeholder="75" oninput="updateDeviceCommands()">
+        </div>
+        <code id="dev-alertvol-topic" class="dev-topic"></code>
+        <div style="position:relative">
+          <pre style="font-size:11.5px" id="dev-alertvol-yaml"></pre>
+          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dev-alertvol-yaml',this)">Copy</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📳 Alert Vibrate</div>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">Whether HA-triggered alert alarms vibrate the phone. Mirrored by the Alert Vibrate switch in HACS.</p>
+        <div class="field-group">
+          <label>State</label>
+          <select id="dev-alert-vibrate" onchange="updateDeviceCommands()">
+            <option value="ON">On</option>
+            <option value="OFF">Off</option>
+          </select>
+        </div>
+        <code id="dev-vibrate-topic" class="dev-topic"></code>
+        <div style="position:relative">
+          <pre style="font-size:11.5px" id="dev-vibrate-yaml"></pre>
+          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dev-vibrate-yaml',this)">Copy</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔁 Alert Loop Media</div>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">Whether media audio loops during HA alerts. Mirrored by the Alert Loop Media switch in HACS.</p>
+        <div class="field-group">
+          <label>State</label>
+          <select id="dev-loop-media" onchange="updateDeviceCommands()">
+            <option value="ON">On</option>
+            <option value="OFF">Off</option>
+          </select>
+        </div>
+        <code id="dev-loop-topic" class="dev-topic"></code>
+        <div style="position:relative">
+          <pre style="font-size:11.5px" id="dev-loop-yaml"></pre>
+          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dev-loop-yaml',this)">Copy</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⏱ Alert Loop Delay</div>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">Seconds of silence between media loops during an HA alert. The payload is the bare number — no JSON.</p>
+        <div class="field-group">
+          <label>Delay (seconds, 0–60)</label>
+          <input type="number" id="dev-loop-delay" min="0" max="60" placeholder="5" oninput="updateDeviceCommands()">
+        </div>
+        <code id="dev-loopdelay-topic" class="dev-topic"></code>
+        <div style="position:relative">
+          <pre style="font-size:11.5px" id="dev-loopdelay-yaml"></pre>
+          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dev-loopdelay-yaml',this)">Copy</button>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /page-device -->
 
 </div><!-- /content -->
 </div><!-- /main -->
@@ -2350,6 +2490,7 @@ function updateAll() {
   ['ca','ua','ubn'].forEach(syncMissionSlots);
   ['ca','ua','ubn'].forEach(syncRadioBackupHint);
   updateRadioStart(); buildPerAlarmCards();
+  updateDeviceCommands();
 }
 
 function showPage(id, btn) {
@@ -2371,7 +2512,7 @@ function showPageFromSelect(sel) {
 function pageToCmd(id) {
   const map = { 'create-alarm':'create_alarm','update-alarm':'update_alarm','delete-alarm':'delete_alarm',
     'create-command':'create_command','delete-command':'delete_command','alert':'alert','dashboard':'…',
-    'per-alarm':'alarm/{index}/command/…','sleep-sounds':'sleep_sound_start','radio':'radio_start' };
+    'per-alarm':'alarm/{index}/command/…','sleep-sounds':'sleep_sound_start','radio':'radio_start','device':'app_persistence' };
   return map[id] || id;
 }
 
@@ -2394,7 +2535,10 @@ function getSelectedDays(containerId) {
     .map(b => parseInt(b.dataset.day));
 }
 
-function v(id) { return document.getElementById(id).value.trim(); }
+// Null-safe: the update/by-name forms lack some of create-alarm's panels
+// (e.g. ua-ha-fallback), and a missing element used to throw here and abort
+// updateAll() mid-run, leaving every later page uninitialised at load.
+function v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
 function vInt(id) { const s = v(id); return s === '' ? null : parseInt(s); }
 function vFloat(id) { const s = v(id); return s === '' ? null : parseFloat(s); }
 function vBool(id) { const s = v(id); if (s === 'true') return true; if (s === 'false') return false; return null; }
@@ -2933,6 +3077,7 @@ const DASH_CMDS = [
   { cmd:'unskip',  label:'Unskip Alarm',  desc:'Clears the skip on the soonest skipped alarm.', icon:'↩' },
   { cmd:'kill_snoozed', label:'Kill Snoozed', desc:'Cancels a snoozed alarm mid-snooze, preventing it from ringing again.', icon:'🔕' },
   { cmd:'delete_next_alarm', label:'Delete Next Alarm', desc:'Permanently deletes the next upcoming alarm in the queue.', icon:'🗑' },
+  { cmd:'delete_quick_alarm', label:'Delete Quick Alarm', desc:'Removes the pending Quick Alarm (an ephemeral alarm created with ephemeral: true) without ringing it.', icon:'⚡' },
 ];
 
 function buildDashboardCards() {
@@ -2965,7 +3110,7 @@ const PER_ALARM_CMDS = [
   { cmd:'skip',       label:'Skip',       desc:'Skips the next occurrence of this alarm. For recurring alarms, only the next fire is skipped.', icon:'⏭' },
   { cmd:'unskip',     label:'Unskip',     desc:'Clears the skip on this alarm, restoring the next occurrence.', icon:'↩' },
   { cmd:'kill_snoozed', label:'Kill Snoozed', desc:'Cancels this alarm mid-snooze, preventing it from ringing again this cycle.', icon:'🔕' },
-  { cmd:'delete',     label:'Delete',     desc:'Permanently deletes this alarm. Equivalent to the per-alarm Delete button in HACS.', icon:'🗑' },
+  { cmd:'delete',     label:'Delete',     desc:'Permanently deletes this alarm. Sent on the dashboard delete_alarm topic with the index as payload — the per-alarm topic has no delete command. Equivalent to the per-alarm Delete button in HACS.', icon:'🗑' },
 ];
 
 function buildPerAlarmCards() {
@@ -2976,7 +3121,11 @@ function buildPerAlarmCards() {
   const device = getDevice();
   container.innerHTML = '';
   PER_ALARM_CMDS.forEach(item => {
-    const t = `${prefix}/${device}/alarm/${idx}/command/${item.cmd}`;
+    // delete is a dashboard command carrying the index — the app does not route
+    // a per-alarm delete topic. This mirrors what the HACS Delete button sends.
+    const t = item.cmd === 'delete'
+      ? `${prefix}/${device}/command/delete_alarm`
+      : `${prefix}/${device}/alarm/${idx}/command/${item.cmd}`;
     const payload = item.cmd === 'delete' ? JSON.stringify({ index: idx }) : '""';
     const yaml = item.cmd === 'delete'
       ? `- action: mqtt.publish\n  data:\n    topic: "${t}"\n    payload: '${payload}'`
@@ -3022,6 +3171,7 @@ function updateSleepSoundStart() {
   const fom = vInt('ss-fade-out-min');
   if (fos !== null) p.fade_out_seconds = fos;
   else if (fom !== null && fom > 0) p.fade_out_minutes = fom;
+  const si = vInt('ss-sync-interval'); if (si !== null) p.sync_interval = si;
 
   const t = topic('sleep_sound_start');
   document.getElementById('ss-start-topic').textContent = t;
@@ -3059,13 +3209,17 @@ function updateRadioStart() {
     const st = v('rd-station'); if (st) p.station = st;
   }
   const vol = vInt('rd-volume'); if (vol !== null) p.volume = vol;
+  const rsv = vInt('rd-system-volume'); if (rsv !== null) p.system_volume = rsv;
 
   if (document.getElementById('rd-until-alarm').checked) {
     p.until_next_alarm = true;
   } else {
     const dur = vInt('rd-duration'); if (dur !== null && dur > 0) p.duration_minutes = dur;
   }
-  const fom = vInt('rd-fade-out-min'); if (fom !== null && fom > 0) p.fade_out_minutes = fom;
+  const rfos = vInt('rd-fade-out-sec');
+  const fom = vInt('rd-fade-out-min');
+  if (rfos !== null && rfos > 0) p.fade_out_seconds = rfos;
+  else if (fom !== null && fom > 0) p.fade_out_minutes = fom;
 
   const t = topic('radio_start');
   document.getElementById('rd-start-topic').textContent = t;
@@ -3127,6 +3281,51 @@ function buildSleepControlCards() {
       </div>`;
     container.appendChild(card);
   });
+}
+
+// ─── Device settings ─────────────────────────────────────
+// Bare-payload commands (app_persistence, alert_vibrate, alert_loop_media,
+// alert_loop_delay) take the raw string, not JSON.
+function bareYAML(topicStr, payload) {
+  return `- action: mqtt.publish\n  data:\n    topic: "${topicStr}"\n    payload: "${payload}"`;
+}
+
+function updateDeviceCommands() {
+  if (!document.getElementById('page-device')) return;
+
+  let t = topic('app_persistence');
+  document.getElementById('dev-persistence-topic').textContent = t;
+  document.getElementById('dev-persistence-yaml').textContent = bareYAML(t, v('dev-persistence') || 'ON');
+
+  const themeP = {};
+  const ap = v('dev-appearance'); if (ap) themeP.appearance = ap;
+  const th = v('dev-theme'); if (th) themeP.theme = th;
+  t = topic('set_theme');
+  document.getElementById('dev-theme-topic').textContent = t;
+  document.getElementById('dev-theme-yaml').textContent = buildYAML(t, JSON.stringify(themeP, null, 2));
+
+  const sv = vInt('dev-system-volume');
+  t = topic('set_system_volume');
+  document.getElementById('dev-sysvol-topic').textContent = t;
+  document.getElementById('dev-sysvol-yaml').textContent = buildYAML(t, JSON.stringify({ volume: sv !== null ? sv : 60 }, null, 2));
+
+  const av = vInt('dev-alert-volume');
+  t = topic('set_media_alert_volume');
+  document.getElementById('dev-alertvol-topic').textContent = t;
+  document.getElementById('dev-alertvol-yaml').textContent = buildYAML(t, JSON.stringify({ volume: av !== null ? av : 75 }, null, 2));
+
+  t = topic('alert_vibrate');
+  document.getElementById('dev-vibrate-topic').textContent = t;
+  document.getElementById('dev-vibrate-yaml').textContent = bareYAML(t, v('dev-alert-vibrate') || 'ON');
+
+  t = topic('alert_loop_media');
+  document.getElementById('dev-loop-topic').textContent = t;
+  document.getElementById('dev-loop-yaml').textContent = bareYAML(t, v('dev-loop-media') || 'ON');
+
+  const ld = vInt('dev-loop-delay');
+  t = topic('alert_loop_delay');
+  document.getElementById('dev-loopdelay-topic').textContent = t;
+  document.getElementById('dev-loopdelay-yaml').textContent = bareYAML(t, String(ld !== null ? ld : 5));
 }
 
 // ─── Init ────────────────────────────────────────────────

@@ -1,607 +1,1405 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="app-icon.png">
-  <link rel="apple-touch-icon" href="app-icon.png">
-  <title>[BETA] Allarise — The Smart Alarm for iPhone</title>
-  <meta name="description" content="Wake up smarter. Allarise syncs with Home Assistant so your lights, routines, and automations respond when your alarm goes off. Shake or solve math to dismiss." />
-  <meta property="og:title" content="Allarise — The Smart Alarm for iPhone" />
-  <meta property="og:description" content="Wake up smarter. Allarise syncs with Home Assistant so your lights, routines, and automations respond when your alarm goes off. Shake or solve math to dismiss." />
-  <meta property="og:url" content="https://beta.allarise.app" />
-  <style>
-    :root {
-      --bg: #ffffff;
-      --surface: #f5f5f7;
-      --border: #d2d2d7;
-      --text: #1d1d1f;
-      --secondary: #6e6e73;
-      --accent: #0071e3;
-      --accent-dark: #2997ff;
-      --green: #1d8348;
-      --green-bg: #eafaf1;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #000000;
-        --surface: #1c1c1e;
-        --border: #38383a;
-        --text: #f5f5f7;
-        --secondary: #98989d;
-        --accent: #2997ff;
-        --green: #30d158;
-        --green-bg: #0d2614;
-      }
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 16px;
-      line-height: 1.6;
-      cursor: pointer;
-      overflow-x: hidden;
-    }
-
-    /* ── Nav ── */
-    .site-nav {
-      position: sticky; top: 0; z-index: 50;
-      background: var(--bg);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 24px;
-      padding: 0 32px; height: 52px;
-    }
-    .site-nav .nav-home {
-      display: flex; align-items: center; gap: 10px; margin-right: auto;
-      text-decoration: none;
-    }
-    .site-nav .nav-home img { width: 28px; height: 28px; border-radius: 6px; }
-    .site-nav .nav-home .icon-light { display: block; }
-    .site-nav .nav-home .icon-dark  { display: none;  }
-    @media (prefers-color-scheme: dark) {
-      .site-nav .nav-home .icon-light { display: none;  }
-      .site-nav .nav-home .icon-dark  { display: block; }
-    }
-    .site-nav .nav-home span { font-size: 16px; font-weight: 700; color: var(--text); }
-    .site-nav a { font-size: 14px; color: var(--secondary); text-decoration: none; }
-    .site-nav a:hover { color: var(--accent); }
-    .site-nav .nav-active { color: var(--accent) !important; font-weight: 600; }
-
-    /* ── Hero ── */
-    .hero {
-      text-align: center;
-      padding: 80px 24px 64px;
-      max-width: 640px;
-      margin: 0 auto;
-    }
-    .hero .icon-wrap {
-      position: relative;
-      display: inline-block;
-      margin-bottom: 28px;
-    }
-    .hero .icon-wrap img {
-      width: 120px;
-      height: 120px;
-      border-radius: 27px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-    }
-    .hero .icon-wrap .icon-light { display: block; }
-    .hero .icon-wrap .icon-dark  { display: none;  }
-    @media (prefers-color-scheme: dark) {
-      .hero .icon-wrap .icon-light { display: none;  }
-      .hero .icon-wrap .icon-dark  { display: block; }
-    }
-    .hero h1 {
-      font-size: 44px;
-      font-weight: 800;
-      letter-spacing: -1px;
-      line-height: 1.1;
-      margin-bottom: 16px;
-    }
-    .hero .tagline {
-      font-size: 19px;
-      color: var(--secondary);
-      margin-bottom: 32px;
-      line-height: 1.5;
-    }
-    .hero .cta-group {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 22px;
-      border-radius: 980px;
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: opacity 0.15s;
-    }
-    .btn:hover { opacity: 0.85; }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-secondary {
-      background: var(--surface);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn svg { flex-shrink: 0; }
-
-    /* ── Sections ── */
-    .section { padding: 64px 24px; }
-    .section-inner { max-width: 900px; margin: 0 auto; }
-    .section-label {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 10px;
-    }
-    .section h2 {
-      font-size: 32px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      margin-bottom: 16px;
-    }
-    .section .lead {
-      font-size: 17px;
-      color: var(--secondary);
-      max-width: 560px;
-      margin-bottom: 40px;
-    }
-    .alt-bg { background: var(--surface); }
-
-    /* ── Panel navigator ── */
-    .panel-nav {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .panel-nav-label {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -0.2px;
-    }
-    .nav-dots {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .nav-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--border);
-      transition: background 0.2s, transform 0.2s;
-      cursor: pointer;
-    }
-    .nav-dot:hover { background: var(--secondary); }
-    .nav-dot.active {
-      background: var(--accent);
-      transform: scale(1.3);
-      cursor: default;
-    }
-
-    /* ── Scroll-snap panels ── */
-    .panels-viewport {
-      overflow-x: scroll;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      scrollbar-width: none;
-      /* slight negative margin to let cards breathe to page edge */
-    }
-    .panels-viewport::-webkit-scrollbar { display: none; }
-    .panels-track {
-      display: flex;
-      width: 100%;
-    }
-    .tab-panel {
-      min-width: 100%;
-      scroll-snap-align: start;
-      padding-bottom: 4px; /* prevent card shadow clip */
-    }
-    .tab-footer { margin-top: 28px; }
-
-    /* ── Feature grid ── */
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 20px;
-    }
-    .feature-card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
-    }
-    .alt-bg .feature-card { background: var(--bg); }
-    .feature-card .f-icon {
-      font-size: 28px;
-      margin-bottom: 12px;
-      display: block;
-    }
-    .feature-card h3 {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-    .feature-card p {
-      font-size: 14px;
-      color: var(--secondary);
-      line-height: 1.55;
-    }
-
-    /* ── Pages grid ── */
-    .pages-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-    }
-    .page-card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
-      text-decoration: none;
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    .page-card:hover {
-      border-color: var(--accent);
-      box-shadow: 0 4px 20px rgba(0,113,227,0.1);
-    }
-    .page-card .pc-icon { font-size: 32px; }
-    .page-card h3 { font-size: 18px; font-weight: 700; }
-    .page-card p { font-size: 14px; color: var(--secondary); line-height: 1.55; flex: 1; }
-    .page-card .pc-link {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* ── Pro / Free badges ── */
-    .pro-badge {
-      display: inline-block;
-      background: var(--accent);
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 20px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-left: 6px;
-      vertical-align: middle;
-    }
-    .free-badge {
-      display: inline-block;
-      background: var(--accent);
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 20px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-left: 6px;
-      vertical-align: middle;
-    }
-
-    /* ── Privacy badge ── */
-    .privacy-strip {
-      background: var(--green-bg);
-      border: 1px solid var(--green);
-      border-radius: 12px;
-      padding: 20px 24px;
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-      margin-top: 40px;
-    }
-    .privacy-strip .ps-icon { font-size: 22px; flex-shrink: 0; }
-    .privacy-strip .ps-body { font-size: 14px; color: var(--text); }
-    .privacy-strip .ps-body strong { color: var(--green); }
-    .privacy-strip a { color: var(--accent); }
-
-    /* ── Footer ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 32px 24px;
-      text-align: center;
-      font-size: 13px;
-      color: var(--secondary);
-    }
-    footer a { color: var(--accent); text-decoration: none; }
-    footer .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
-
-    html { overflow-x: hidden; }
-
-    /* ── Screenshots ── */
-    .screenshots-section {
-      padding: 64px 0 48px;
-      overflow: hidden;
-    }
-    .screenshots-section .section-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-    .screenshots-section h2 {
-      font-size: 32px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      margin-bottom: 8px;
-    }
-    .screenshots-section .lead {
-      font-size: 17px;
-      color: var(--secondary);
-      margin-bottom: 40px;
-    }
-    /* Single row of 4 screenshots, horizontally scrollable */
-    .ss-scroll-row {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      overflow-x: auto;
-      scroll-behavior: smooth;
-      scrollbar-width: none;
-      padding: 0 24px 16px;
-    }
-    .ss-scroll-row::-webkit-scrollbar { display: none; }
-    .ss-scroll-row img {
-      flex-shrink: 0;
-      height: 480px;
-      width: auto;
-      border-radius: 24px;
-      scroll-snap-align: start;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.18);
-    }
-    /* Paired screenshots: 5 in front of 6, side-by-side */
-    .ss-pair-wrap {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 16px;
-      margin-top: 48px;
-      position: relative;
-    }
-    .ss-pair-wrap .ss-back {
-      height: 420px;
-      width: auto;
-      border-radius: 24px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-      position: relative;
-      z-index: 1;
-    }
-    .ss-pair-wrap .ss-front {
-      height: 420px;
-      width: auto;
-      border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-      position: relative;
-      z-index: 2;
-    }
-
-    /* ── Hamburger nav ── */
-    .nav-menu-btn {
-      display: none; background: none; border: none; cursor: pointer;
-      color: var(--text); font-size: 22px; padding: 4px 8px;
-      border-radius: 6px; line-height: 1; margin-left: auto;
-    }
-    .nav-dropdown {
-      display: none; position: fixed; top: 52px; left: 0; right: 0;
-      background: var(--bg); border-bottom: 1px solid var(--border);
-      z-index: 200; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
-    .nav-dropdown a {
-      display: block; padding: 14px 24px; font-size: 16px;
-      color: var(--text); text-decoration: none;
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-dropdown a:last-child { border-bottom: none; }
-    .nav-dropdown a.nav-active { color: var(--accent); font-weight: 600; }
-    .nav-dropdown.open { display: block; }
-
-    @media (max-device-width: 600px) {
-      .hero h1 { font-size: 32px; }
-      .hero .tagline { font-size: 16px; }
-      .site-nav { padding: 0 16px; }
-      .site-nav a:not(.nav-home) { display: none !important; }
-      .nav-menu-btn { display: block !important; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[BETA] Allarise — Smart alarms for Home Assistant</title>
+<link rel="icon" type="image/png" href="app-icon.png">
+<link rel="apple-touch-icon" href="app-icon.png">
+<script src="./support.js"></script>
 </head>
 <body>
-<!-- BETA SITE BANNER — present only on beta.allarise.app, not on the production site. -->
-<div style="background:#b45309;color:#fff;padding:10px 16px;text-align:center;font:600 14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;position:relative;z-index:9999">
-  🧪 Beta site — documents the TestFlight build and the <code style="background:rgba(0,0,0,.22);padding:1px 5px;border-radius:4px">allarise-hacs-beta</code> integration.
-  <a href="https://allarise.app" style="color:#fff;text-decoration:underline">Go to the release site →</a>
-</div>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/allarise-beta-site-2ccad989-5d20-4ad7-adf7-605d27418145/styles.css">
+<script src="_ds/allarise-beta-site-2ccad989-5d20-4ad7-adf7-605d27418145/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root, :root[data-theme=light] {
+  --bg: #FCFAF6; --surface: #F1EFF7; --surface-2: #E5E3F0; --border: #DBD8E6;
+  --text: #1A1B33; --text-secondary: #565A78; --text-tertiary: #8A8DA6;
+  --accent: #2E4A9E; --accent-2: #283070;
+  --info: #2E4A9E; --info-bg: #E7EBF7;
+  --dawn: #F5A623; --dawn-2: #FFD84D; --dawn-bg: #FFEFD2;
+  --yellow: #92620A; --yellow-bg: #FFEFD2;
+  --warn: #92620A; --warn-bg: #FFEFD2;
+  --green: #22603A; --green-bg: #E8F0E8;
+  --red: #8E2A1E; --red-bg: #F9E9E5;
+  --signal: #2E4A9E; --on-signal: #FFFFFF; --signal-link: #FFD84D; --signal-soft: #E4E9F9; --ink: #1A1B33;
+  --step-bg: #FFFFFF; --step-border: #DDDCEA;
+  --shadow-sm: 0 1px 0 rgba(26,27,51,.07);
+  --shadow-md: 0 2px 0 rgba(26,27,51,.09);
+  --shadow-lg: 0 3px 0 rgba(26,27,51,.11);
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-display: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+body, button, input, select, textarea { font-family: var(--font-sans); }
+body { margin: 0; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-2); text-decoration: underline; }
+h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-display); letter-spacing: -0.02em; }
+.section-label, .ph-label, .sld-label, .code-label, .badge, .tag-pill, .toc-group p {
+  font-family: var(--font-mono) !important; text-transform: uppercase; letter-spacing: .1em; font-weight: 500 !important;
+}
+.btn { border-radius: 8px; font-weight: 600; }
+.btn.btn-primary, a.btn.btn-primary { background: var(--signal); border: 1px solid var(--signal); color: var(--on-signal); }
+.btn.btn-primary:hover, a.btn.btn-primary:hover { background: var(--accent-2); border-color: var(--accent-2); color: var(--on-signal); }
+.btn.btn-secondary, a.btn.btn-secondary { background: transparent; border: 1px solid var(--text); color: var(--text); }
+.btn.btn-secondary:hover, a.btn.btn-secondary:hover { background: var(--text); color: var(--bg); }
+.site-nav { background: var(--bg); border-bottom: 1px solid var(--border); backdrop-filter: none; }
+.feature-card, .page-card, .wyg-card, .faq-item, .card { border-radius: 10px; transition: border-color .18s ease, transform .18s ease; }
+.feature-card:hover, .wyg-card:hover { border-color: var(--ink); }
+.page-card:hover { border-color: var(--ink); box-shadow: none; transform: translateY(-2px); }
+.f-icon, .wyg-icon, .pc-icon, .callout-icon, .ps-icon { display: inline-flex !important; align-items: center; line-height: 1; }
+.privacy-strip { border-radius: 10px; }
+.step-block { margin-bottom: 64px; }
+.step-body, .toc-inner {
+  --bg: #FCFAF6; --surface: #F1EFF7; --surface-2: #E5E3F0; --border: #DBD8E6;
+  --text: #1A1B33; --text-secondary: #565A78; --text-tertiary: #8A8DA6;
+  --accent: #2E4A9E; --accent-2: #283070; --info: #2E4A9E; --info-bg: #E7EBF7;
+  --dawn: #F5A623; --yellow: #92620A; --yellow-bg: #FFEFD2; --warn: #92620A; --warn-bg: #FFEFD2;
+  --green: #22603A; --green-bg: #E8F0E8; --red: #8E2A1E; --red-bg: #F9E9E5;
+  color: var(--text) !important;
+}
+.toc-group .step-num { background: var(--accent) !important; color: #FFFFFF !important; }
+.toc-inner {
+  background: var(--step-bg) !important;
+  border: 1px solid var(--step-border) !important;
+  border-radius: 14px !important;
+  padding: 24px 28px !important;
+  box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5) !important;
+}
+.step-body {
+  background: var(--step-bg) !important;
+  border: 1px solid var(--step-border) !important;
+  border-radius: 14px !important;
+  padding: 26px 30px 28px !important;
+  box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5) !important;
+  margin-left: 46px;
+}
+.step-header { align-items: baseline !important; margin-bottom: 14px !important; }
+.step-badge {
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  width: 30px !important; height: auto !important;
+  font-family: var(--font-mono) !important;
+  font-size: 13px !important;
+  letter-spacing: .06em;
+}
+.callout {
+  background: transparent !important;
+  border: none !important;
+  border-left: 3px solid var(--border) !important;
+  border-radius: 0 !important;
+  padding: 2px 0 2px 16px !important;
+  box-shadow: none !important;
+  gap: 10px !important;
+}
+.callout .callout-icon { display: none !important; }
+.callout-note { border-left-color: var(--text-tertiary) !important; }
+.callout-tip { border-left-color: var(--accent) !important; }
+.wyg-card span:last-child { word-wrap: break-word; overflow-wrap: break-word; }
+.callout-warn { border-left-color: var(--dawn) !important; }
+.callout-success { border-left-color: var(--green) !important; }
+.callout-danger { border-left-color: var(--red) !important; }
+.step-header h2 { font-family: var(--font-display); letter-spacing: -0.02em; }
+.faq-answer { border-top: none !important; padding-top: 0 !important; }
+.step-body > p:first-child, .step-body > h4:first-child { margin-top: 0 !important; }
+@keyframes ar-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes ar-screen {
+  0%, 36% { opacity: .05; } 39%, 90% { opacity: 1; } 95%, 100% { opacity: .05; }
+}
+@keyframes ar-phoneglow {
+  0%, 36% { opacity: 0; } 40%, 90% { opacity: .85; } 96%, 100% { opacity: 0; }
+}
+@keyframes ar-lamp {
+  0%, 46% { opacity: 0; }
+  53% { opacity: .1; }
+  59% { opacity: .24; }
+  65% { opacity: .42; }
+  71% { opacity: .62; }
+  77% { opacity: .82; }
+  83%, 90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes ar-room {
+  0%, 47% { opacity: 0; }
+  54% { opacity: .08; }
+  61% { opacity: .22; }
+  68% { opacity: .4; }
+  75% { opacity: .62; }
+  82% { opacity: .84; }
+  88%, 90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes ar-lamp-ico {
+  0%, 46% { background: rgba(139,132,113,.18); color: var(--text-tertiary); }
+  56%, 90% { background: var(--yellow-bg); color: var(--yellow); }
+  97%, 100% { background: rgba(139,132,113,.18); color: var(--text-tertiary); }
+}
+@keyframes ar-lamp-off { 0%, 46% { opacity: 1; } 52%, 90% { opacity: 0; } 97%, 100% { opacity: 1; } }
+@keyframes ar-lamp-on { 0%, 46% { opacity: 0; } 52%, 90% { opacity: 1; } 97%, 100% { opacity: 0; } }
+@keyframes ar-dim { 0%, 46% { width: 0%; } 59% { width: 11%; } 68% { width: 20%; } 78% { width: 31%; } 85%, 90% { width: 40%; } 97%, 100% { width: 0%; } }
+@keyframes ar-fill { 0%, 12% { height: 0; } 34%, 90% { height: 62%; } 97%, 100% { height: 0; } }
+@keyframes ar-brewing { 0%, 11% { opacity: 0; } 15%, 32% { opacity: 1; } 36%, 100% { opacity: 0; } }
+@keyframes ar-drip { 0% { transform: translateY(-8px); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+@keyframes ar-brewled { 0%, 8% { opacity: .12; } 11%, 88% { opacity: 1; } 95%, 100% { opacity: .12; } }
+@keyframes ar-brewed { 0%, 32% { opacity: 0; } 40%, 88% { opacity: 1; } 96%, 100% { opacity: 0; } }
+@keyframes ar-spill-cool {
+  0%, 36% { opacity: 0; } 40%, 90% { opacity: .5; } 96%, 100% { opacity: 0; }
+}
+@keyframes ar-spill-warm {
+  0%, 46% { opacity: 0; } 78%, 90% { opacity: .55; } 100% { opacity: 0; }
+}
+@keyframes ar-buzz {
+  0%, 8% { transform: none; }
+  9% { transform: translate3d(-2px,0,0) rotate(-.55deg); }
+  10% { transform: translate3d(2px,0,0) rotate(.55deg); }
+  11% { transform: translate3d(-1.8px,0,0) rotate(-.45deg); }
+  12% { transform: translate3d(1.8px,0,0) rotate(.45deg); }
+  13% { transform: translate3d(-1.2px,0,0) rotate(-.28deg); }
+  14% { transform: translate3d(1.2px,0,0) rotate(.28deg); }
+  15%, 100% { transform: none; }
+}
+@keyframes ar-shake {
+  0%, 38% { transform: rotate(-3deg) translate(0,0); }
+  39% { transform: rotate(-0.6deg) translate(2px,-2px); }
+  40.5% { transform: rotate(-5deg) translate(-2px,1px); }
+  42% { transform: rotate(-1deg) translate(2px,1px); }
+  43.5% { transform: rotate(-4deg) translate(-1px,-1px); }
+  45%, 100% { transform: rotate(-3deg) translate(0,0); }
+}
+@keyframes ar-ring {
+  0%, 36% { transform: translate(0,0) rotate(0deg); }
+  37.5% { transform: translate(3px,-2px) rotate(1.4deg); }
+  39% { transform: translate(-3px,1px) rotate(-1.6deg); }
+  40.5% { transform: translate(3px,1px) rotate(1.2deg); }
+  42% { transform: translate(-2px,-1px) rotate(-1deg); }
+  43.5% { transform: translate(1px,1px) rotate(.5deg); }
+  45%, 100% { transform: translate(0,0) rotate(0deg); }
+}
+@keyframes ar-dot {
+  0% { opacity: 0; transform: scale(.5); }
+  12% { opacity: 1; transform: scale(1); }
+  36% { opacity: 1; transform: scale(1); }
+  56% { opacity: 0; transform: scale(.6); }
+  100% { opacity: 0; transform: scale(.5); }
+}
+@keyframes ar-buzz {
+  0%, 8% { transform: none; }
+  9% { transform: translate3d(-2px,0,0) rotate(-.55deg); }
+  10% { transform: translate3d(2px,0,0) rotate(.55deg); }
+  11% { transform: translate3d(-1.8px,0,0) rotate(-.45deg); }
+  12% { transform: translate3d(1.8px,0,0) rotate(.45deg); }
+  13% { transform: translate3d(-1.2px,0,0) rotate(-.28deg); }
+  14% { transform: translate3d(1.2px,0,0) rotate(.28deg); }
+  15%, 100% { transform: none; }
+}
+@keyframes ar-shake {
+  0%, 17.2% { transform: none; }
+  18.2% { transform: translate3d(-2px,0,0) rotate(-.6deg); }
+  19.2% { transform: translate3d(2px,0,0) rotate(.6deg); }
+  20.2% { transform: translate3d(-2px,0,0) rotate(-.5deg); }
+  21.2% { transform: translate3d(2px,0,0) rotate(.5deg); }
+  22.2% { transform: translate3d(-1.4px,0,0) rotate(-.32deg); }
+  23.2% { transform: translate3d(1.4px,0,0) rotate(.32deg); }
+  24.4%, 26.6% { transform: none; }
+  27.4% { transform: translate3d(-1.6px,0,0) rotate(-.4deg); }
+  28.4% { transform: translate3d(1.6px,0,0) rotate(.4deg); }
+  29.4% { transform: translate3d(-1px,0,0) rotate(-.24deg); }
+  30.4% { transform: translate3d(1px,0,0) rotate(.24deg); }
+  31.4%, 100% { transform: none; }
+}
+@keyframes ar-fr2 { 0%, 15.8% { opacity: 0; } 17.4%, 94.7% { opacity: 1; } 98.9%, 100% { opacity: 0; } }
+@keyframes ar-fr3 { 0%, 31.6% { opacity: 0; } 33.2%, 94.7% { opacity: 1; } 98.9%, 100% { opacity: 0; } }
+@keyframes ar-screen-home { 0%, 34% { opacity: 1; } 40%, 100% { opacity: 0; } }
+@keyframes ar-screen-ring { 0%, 34% { opacity: 0; } 40%, 100% { opacity: 1; } }
+@keyframes ar-wash-hold {
+  0%, 16.3% { opacity: 0; }
+  19% { opacity: .12; }
+  21.5% { opacity: .3; }
+  24% { opacity: .52; }
+  27% { opacity: .74; }
+  31%, 94.7% { opacity: 1; }
+  98.9%, 100% { opacity: 0; }
+}
+@keyframes ar-wash {
+  0%, 44% { opacity: 0; }
+  52% { opacity: .12; }
+  60% { opacity: .3; }
+  68% { opacity: .5; }
+  76% { opacity: .72; }
+  84%, 91% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes ar-steam { 0% { opacity: 0; transform: translateY(6px) scaleX(.7); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(-18px) scaleX(1.4); } }
+@keyframes ar-tile-ico {
+  0% { background: rgba(139,132,113,.18); color: var(--text-tertiary); }
+  2%, 15% { background: var(--yellow-bg); color: var(--yellow); }
+  22%, 100% { background: rgba(139,132,113,.18); color: var(--text-tertiary); }
+}
+@keyframes ar-state-off { 0% { opacity: 1; } 2%, 15% { opacity: 0; } 22%, 100% { opacity: 1; } }
+@keyframes ar-state-on { 0% { opacity: 0; } 2%, 15% { opacity: 1; } 22%, 100% { opacity: 0; } }
+@keyframes ar-fill { 0%, 5% { height: 0; } 44%, 84% { height: 62%; } 95%, 100% { height: 0; } }
+@keyframes ar-brewing { 0%, 4% { opacity: 0; } 8%, 42% { opacity: 1; } 48%, 100% { opacity: 0; } }
+@keyframes ar-drip { 0% { transform: translateY(-8px); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+@keyframes ar-brewled { 0% { opacity: .12; } 3%, 72% { opacity: 1; } 80%, 100% { opacity: .12; } }
+@keyframes ar-brewed { 0%, 30% { opacity: 0; } 46%, 84% { opacity: 1; } 96%, 100% { opacity: 0; } }
+@keyframes ar-steam { 0% { opacity: 0; transform: translateY(6px) scaleX(.7); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(-18px) scaleX(1.4); } }
+@keyframes ar-spill-cool {
+  0%, 7% { opacity: 0; } 10%, 76% { opacity: .5; } 86%, 100% { opacity: 0; }
+}
+@keyframes ar-spill-warm {
+  0%, 15% { opacity: 0; } 46%, 88% { opacity: .55; } 100% { opacity: 0; }
+}
+@keyframes ar-cursor { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@media (min-width: 701px) {
+  [data-showsection] { min-height: 210vh; padding-bottom: 0 !important; align-items: start !important; }
+  [data-showsection] > div { position: sticky; top: 84px; }
+}
+@media (max-width: 880px) {
+  [data-mq=cols] { grid-template-columns: 1fr !important; gap: 34px !important; }
+  [data-mq=cols][data-mq-pad] { padding: 30px 22px !important; }
+  [data-mq=cols] { margin-left: 0 !important; }
+  [data-mq=showcase] > div { grid-template-columns: 1fr !important; gap: 34px !important; }
+  [data-mq=chips] { grid-template-columns: 1fr 1fr !important; }
+  [data-mq=feat] { grid-template-columns: 40px 1fr !important; gap: 6px 14px !important; padding: 20px 12px !important; }
+  [data-mq=feat] > span:nth-child(3) { grid-column: 2 !important; }
+  [data-mq=lamp] { --lx: 58% !important; --lsc: .6 !important; }
+}
+@media (max-width: 880px) {
+  [data-mq=lamp] { --lx: 74% !important; --lsc: .5 !important; --lty: -40px !important; }
+  [data-hero] [data-mq=rule] { width: 58% !important; }
+  [data-hero] { padding-top: 28px !important; }
 
-<!-- Nav -->
-<nav class="site-nav">
-  <a href="index.html" class="nav-home">
-    <img src="app-icon.png" class="icon-light" alt="Allarise" />
-    <img src="app-icon-dark.png" class="icon-dark" alt="Allarise" />
-    <span>Allarise</span>
-  </a>
-  <a href="index.html" class="nav-active">About</a>
-  <a href="home-assistant.html">Home Assistant</a>
-  <a href="mqtt-builder.html">MQTT Builder</a>
-  <a href="faq.html">FAQ</a>
-  <button class="nav-menu-btn" id="nav-menu-btn" onclick="toggleNav()">☰</button>
-</nav>
-<div class="nav-dropdown" id="nav-dropdown">
-  <a href="index.html" class="nav-active">About</a>
-  <a href="home-assistant.html">Home Assistant</a>
-  <a href="mqtt-builder.html">MQTT Builder</a>
-  <a href="faq.html">FAQ</a>
+  [data-hero] h1 { margin-top: 14px !important; }
+  [data-hero] h1 + p { margin-top: 18px !important; }
+  [data-mq=cols] > div:first-of-type { position: static !important; }
+}
+@media (max-width: 700px) {
+  [data-mq=lamp] { --lx: 80% !important; --lsc: .42 !important; --lty: -60px !important; }
+  [data-hero] { padding-top: 20px !important; }
+
+  [data-mq=stage] { aspect-ratio: auto !important; height: 700px !important; max-height: none !important; }
+  [data-mq=stage] { display: none !important; }
+  [data-mq=inlinestage] { display: block !important; }
+  [data-mq=inlinecta][data-on="1"] { display: flex !important; }
+  [data-mq=tiles] { grid-template-columns: 1fr !important; align-content: start !important; gap: 6px 0 !important; }
+}
+@media (max-width: 520px) {
+  [data-mq=chips] { grid-template-columns: 1fr !important; }
+  .site-nav { gap: 0 !important; }
+}
+@media (max-width: 880px) {
+  .data-table { display: block; max-width: 100%; overflow-x: auto; }
+}
+.code-wrap pre { overflow-x: auto; }
+.ar-marquee:hover, [data-mq=marqwrap]:hover .ar-marquee { animation-play-state: paused !important; }
+.ar-marquee img { transition: transform .2s ease, border-color .2s ease; }
+.ar-marquee img:hover { transform: translateY(-4px); border-color: var(--text-tertiary); }
+[data-mq=chips] > div, [data-mq=chips] span { animation-fill-mode: backwards !important; }
+[data-ai] * { transform-box: fill-box; transform-origin: center; }
+@keyframes ai-spin { to { transform: rotate(360deg); } }
+@keyframes ai-ring { 0%, 72%, 100% { transform: rotate(0deg); } 78% { transform: rotate(-11deg); } 84% { transform: rotate(11deg); } 90% { transform: rotate(-6deg); } }
+@keyframes ai-wave { 0% { opacity: .15; transform: scale(.65); } 40% { opacity: 1; transform: scale(1); } 100% { opacity: .15; transform: scale(1.3); } }
+@keyframes ai-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }
+@keyframes ai-drop { 0% { transform: translateY(-9px); opacity: 0; } 22% { opacity: 1; } 52%, 100% { transform: translateY(0); opacity: 1; } }
+@keyframes ai-dart { 0% { transform: translate(4px, 7px); opacity: 0; } 25% { opacity: 1; } 75% { transform: translate(-2px, -7px); opacity: 0; } 100% { opacity: 0; } }
+@keyframes ai-drift { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(1.8px); } }
+@keyframes ai-glow { 0%, 100% { opacity: .28; } 50% { opacity: 1; } }
+@keyframes ai-scan { 0% { transform: translateX(-9px); opacity: 0; } 30%, 65% { opacity: 1; } 100% { transform: translateX(9px); opacity: 0; } }
+@keyframes ar-reveal { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+[data-reveal] { animation: ar-reveal .55s cubic-bezier(.2,.7,.3,1) both; }
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .ar-scene *, .ar-marquee, [data-shake], [data-mq=stage] > div, [data-mq=inlinestage] > span { animation: none !important; }
+}
+</style>
+</helmet>
+
+<div style="background: var(--bg); min-height: 100vh; overflow-x: clip; font-family: var(--font-sans);">
+
+  <!-- BETA SITE BANNER — present only on beta.allarise.app, not on the production site. -->
+  <div style="background: #1A1B33; color: #FFD84D; padding: 10px 16px; text-align: center; font: 600 14px/1.45 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif; position: relative; z-index: 9999;">🧪 Beta site — documents the TestFlight build and the <code style="background: rgba(255,255,255,.12); padding: 1px 5px; border-radius: 4px; font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;">allarise-hacs-beta</code> integration. <a href="https://allarise.app" style="color: #fff; text-decoration: underline;">Go to the release site →</a></div>
+
+  <div style="position: sticky; top: 0; z-index: 200;">
+    <x-import component-from-global-scope="Allarise.SiteNav" brand="Allarise" icon-light="app-icon.png" home-href="#home" links="{{ navLinks }}" hint-size="100%,52px"></x-import>
+  </div>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <main>
+
+    <section data-mq="cols" data-hero style="position: relative; max-width: 1120px; margin: 0 auto; padding: 72px 24px 40px; display: grid; grid-template-columns: minmax(300px, 1fr) minmax(320px, 1.05fr); gap: 56px; align-items: start;">
+      <div aria-hidden="true" data-mq="lamp" style="--lx: 38%; --lsc: 1; position: absolute; left: 0; right: 0; top: -90px; bottom: -60px; pointer-events: none;">
+        <div style="position: absolute; left: -34vw; right: -14vw; top: 0; height: 62%; opacity: 0; filter: blur(52px); background: linear-gradient(180deg, rgba(255,206,124,.4) 0%, rgba(255,203,118,.35) 12%, rgba(255,199,108,.29) 26%, rgba(255,196,101,.23) 38%, rgba(255,192,94,.16) 50%, rgba(255,189,88,.1) 62%, rgba(255,186,84,.05) 74%, rgba(255,184,80,.02) 86%, rgba(255,182,76,0) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
+        <div style="position: absolute; left: var(--lx); top: 0; transform: scale(var(--lsc)) translateY(var(--lty, 0px)); transform-origin: top left;">
+          <div style="position: absolute; left: 131px; top: 92px; width: 1180px; height: 1180px; margin: -590px 0 0 -590px; opacity: 0; border-radius: 50%; will-change: opacity; transform: translateZ(0); filter: blur(46px); background: radial-gradient(50% 50% at 50% 50%, rgba(255,202,116,.26) 0%, rgba(255,194,98,.15) 20%, rgba(255,188,86,.07) 38%, rgba(255,182,74,.025) 56%, rgba(0,0,0,0) 72%); animation: ar-wash-hold 19s linear infinite;"></div>
+
+          <div style="position: absolute; left: -40px; top: -300px; width: 340px; height: 330px; opacity: 0; filter: blur(20px); clip-path: polygon(30.5% 100%, 69.5% 100%, 100% 0, 0 0); background: linear-gradient(0deg, rgba(255,224,166,.56) 0%, rgba(255,217,148,.43) 16%, rgba(255,210,132,.32) 32%, rgba(255,205,120,.21) 48%, rgba(255,200,110,.13) 64%, rgba(255,196,100,.06) 80%, rgba(255,194,96,0) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
+
+          <div style="position: absolute; left: -84px; top: 158px; width: 428px; height: 500px; opacity: 0; filter: blur(16px); clip-path: polygon(27.6% 0, 73% 0, 100% 100%, 0 100%); background: linear-gradient(180deg, rgba(255,228,176,.64) 0%, rgba(255,221,158,.5) 11%, rgba(255,214,142,.4) 22%, rgba(255,209,130,.3) 34%, rgba(255,204,120,.22) 46%, rgba(255,200,110,.14) 59%, rgba(255,196,102,.085) 72%, rgba(255,193,96,.035) 86%, rgba(255,190,90,0) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
+          <div style="position: absolute; left: -30px; top: 160px; width: 320px; height: 400px; opacity: 0; filter: blur(11px); clip-path: polygon(35% 0, 66% 0, 88% 100%, 12% 100%); background: linear-gradient(180deg, rgba(255,236,196,.58) 0%, rgba(255,228,174,.43) 20%, rgba(255,220,154,.29) 40%, rgba(255,214,138,.18) 57%, rgba(255,208,126,.09) 74%, rgba(255,204,116,.04) 88%, rgba(255,202,112,0) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
+
+          <div style="position: absolute; left: 34px; top: 24px; width: 194px; height: 136px; opacity: .3; filter: blur(7px); clip-path: polygon(16.5% 0, 67% 0, 100% 100%, 0 100%); background: linear-gradient(172deg, rgba(226,196,148,.85) 0%, rgba(216,184,134,.7) 46%, rgba(202,172,126,.58) 100%); mix-blend-mode: multiply;"></div>
+          <img src="lamp-photo.png" alt="" style="display: block; position: relative; width: 262px; height: 682px; opacity: .44; filter: contrast(.96) brightness(1.02) saturate(.3) blur(.4px); -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 90%, rgba(0,0,0,.4) 100%); mask-image: linear-gradient(180deg, #000 0%, #000 90%, rgba(0,0,0,.4) 100%);">
+
+          <span style="position: absolute; left: 131px; top: 684px; width: 8.4px; height: 8.4px; margin: -4.2px 0 0 -4.2px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(1); animation: ar-dot 3.4s ease-in-out 0s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 652px; width: 8.1px; height: 8.1px; margin: -4.05px 0 0 -4.05px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.94); animation: ar-dot 3.4s ease-in-out 0.13s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 620px; width: 7.7px; height: 7.7px; margin: -3.85px 0 0 -3.85px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.87); animation: ar-dot 3.4s ease-in-out 0.26s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 588px; width: 7.4px; height: 7.4px; margin: -3.7px 0 0 -3.7px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.81); animation: ar-dot 3.4s ease-in-out 0.39s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 556px; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.74); animation: ar-dot 3.4s ease-in-out 0.52s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 524px; width: 6.7px; height: 6.7px; margin: -3.35px 0 0 -3.35px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.68); animation: ar-dot 3.4s ease-in-out 0.65s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 492px; width: 6.4px; height: 6.4px; margin: -3.2px 0 0 -3.2px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.62); animation: ar-dot 3.4s ease-in-out 0.78s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 460px; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.55); animation: ar-dot 3.4s ease-in-out 0.91s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 428px; width: 5.7px; height: 5.7px; margin: -2.85px 0 0 -2.85px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.49); animation: ar-dot 3.4s ease-in-out 1.04s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 396px; width: 5.3px; height: 5.3px; margin: -2.65px 0 0 -2.65px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.42); animation: ar-dot 3.4s ease-in-out 1.17s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 364px; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.36); animation: ar-dot 3.4s ease-in-out 1.3s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 332px; width: 4.7px; height: 4.7px; margin: -2.35px 0 0 -2.35px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.3); animation: ar-dot 3.4s ease-in-out 1.43s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 300px; width: 4.3px; height: 4.3px; margin: -2.15px 0 0 -2.15px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.23); animation: ar-dot 3.4s ease-in-out 1.56s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 268px; width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.17); animation: ar-dot 3.4s ease-in-out 1.69s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 236px; width: 3.6px; height: 3.6px; margin: -1.8px 0 0 -1.8px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.1); animation: ar-dot 3.4s ease-in-out 1.82s infinite;"></span>
+          <span style="position: absolute; left: 131px; top: 204px; width: 3.3px; height: 3.3px; margin: -1.65px 0 0 -1.65px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.08); animation: ar-dot 3.4s ease-in-out 1.95s infinite;"></span>
+          <img src="app-house-icon.png" alt="" data-mq="appicon" style="position: absolute; left: 77px; top: 712px; width: 108px; height: 108px;">
+          <div style="position: absolute; left: 40px; top: 34px; width: 182px; height: 120px; opacity: 0; filter: blur(13px); clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%); background: linear-gradient(180deg, rgba(255,238,202,.66) 0%, rgba(255,230,180,.6) 23%, rgba(255,222,158,.55) 46%, rgba(255,216,146,.5) 73%, rgba(255,210,132,.45) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
+          <div style="position: absolute; left: 131px; top: 96px; width: 300px; height: 300px; margin: -150px 0 0 -150px; opacity: 0; border-radius: 50%; will-change: opacity; transform: translateZ(0); filter: blur(26px); background: radial-gradient(50% 50% at 50% 50%, rgba(255,224,168,.56) 0%, rgba(255,208,128,.28) 38%, rgba(255,196,102,.09) 62%, rgba(0,0,0,0) 80%); animation: ar-wash-hold 19s linear infinite;"></div>
+          <div style="position: absolute; left: 16px; top: 546px; width: 230px; height: 56px; opacity: 0; border-radius: 50%; will-change: opacity; transform: translateZ(0); filter: blur(15px); background: radial-gradient(50% 50% at 50% 50%, rgba(255,220,158,.46) 0%, rgba(255,206,124,.22) 42%, rgba(255,196,102,.07) 66%, rgba(0,0,0,0) 84%); animation: ar-wash-hold 19s linear infinite;"></div>
+        </div>
+      </div>
+
+      <div style="position: relative;">
+        <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary); display: flex; gap: 10px; align-items: center;">
+          <span style="width: 22px; height: 1px; background: var(--text-tertiary); display: block;"></span>
+          <span>iOS · Home Assistant · MQTT</span>
+        </div>
+        <h1 style="font-family: var(--font-display); font-size: clamp(46px, 6.4vw, 82px); font-weight: 800; letter-spacing: -0.035em; line-height: .95; margin: 22px 0 0; color: var(--text);">Wake up<br>smarter.</h1>
+        <p style="font-size: 21px; line-height: 1.4; color: var(--text); margin: 26px 0 0; max-width: 30ch; text-wrap: pretty;">Your alarms shouldn't just wake you up — they should wake up your whole house.</p>
+        <div data-mq="rule" style="height: 1px; background: var(--border); margin: 28px 0;"></div>
+        <p style="font-size: 16px; line-height: 1.65; color: var(--text-secondary); margin: 0; max-width: 46ch; text-wrap: pretty;">Allarise syncs with Home Assistant so your lights, routines, and automations can respond when your alarm goes off. Wake up to a house that's already moving and an alarm that gets you out of bed. Stop oversleeping with built-in missions like math, shake and three other mission types even including games!</p>
+        
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px;">
+          <x-import component-from-global-scope="Allarise.Button" href="https://testflight.apple.com/join/DYTMR1v2" variant="primary" hint-size="auto,40px">Join the TestFlight Beta</x-import>
+          <x-import component-from-global-scope="Allarise.Button" href="#home-assistant" variant="secondary" hint-size="auto,40px">Read the integration guide</x-import>
+        </div>
+      </div>
+
+      <div>
+        <div style="position: relative;">
+        <div style="position: absolute; left: 50%; top: 46%; width: 118%; padding-bottom: 118%; margin-left: -59%; margin-top: -59%; opacity: .8; pointer-events: none; border-radius: 50%; will-change: opacity; transform: translateZ(0); filter: blur(26px); background: radial-gradient(50% 50% at 50% 50%, rgba(126,166,238,.22) 0%, rgba(126,166,238,.11) 34%, rgba(126,166,238,.04) 56%, rgba(0,0,0,0) 74%);"></div>
+
+        <div style="position: relative; z-index: 1; display: flex; justify-content: center; padding: 26px 0 30px;">
+          <div data-shake style="position: relative; width: 292px; max-width: 82%; will-change: transform; animation: ar-shake 19s linear infinite; filter: drop-shadow(0 26px 34px rgba(24,18,10,.28)) drop-shadow(0 8px 14px rgba(24,18,10,.16));">
+            <img src="phone-1.png" alt="Allarise alarm list, next alarm about to fire" style="display: block; position: relative; width: 100%; height: auto;">
+            <img src="phone-2.png" alt="Allarise alarm ringing with snooze and dismiss" style="display: block; position: absolute; left: 0; top: 0; width: 100%; height: auto; opacity: 0; animation: ar-fr2 19s linear infinite;">
+            <img src="phone-3.png" alt="Allarise alarm list after the alarm is dismissed" style="display: block; position: absolute; left: 0; top: 0; width: 100%; height: auto; opacity: 0; animation: ar-fr3 19s linear infinite;">
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <section data-reveal data-showsection data-mq="showcase" onMouseEnter="{{ pauseShow }}" onMouseLeave="{{ resumeShow }}" style="border-top: 1px solid var(--border); background: var(--surface); padding: 64px 24px 68px;">
+      <div style="max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: minmax(260px, 1fr) minmax(340px, 1.18fr); gap: 52px; align-items: center;">
+
+        <div>
+          <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 26px;">What Allarise has to offer</div>
+          <div style="display: grid; gap: 2px;">
+            <sc-for list="{{ showItems }}" as="item" hint-placeholder-count="7">
+              <button type="button" data-showrow onClick="{{ item.onClick }}" style="{{ item.rowStyle }}">
+                <span style="display: flex; align-items: center; gap: 12px;">
+                  <span style="font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; color: var(--text-tertiary); width: 20px; flex-shrink: 0;">{{ item.num }}</span>
+                  <span style="font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">{{ item.title }}</span>
+                </span>
+                <span style="{{ item.descStyle }}"><sc-for list="{{ item.parts }}" as="p" hint-placeholder-count="0"><span style="{{ p.style }}">{{ p.t }}</span></sc-for></span>
+                <span data-mq="inlinestage" style="{{ item.inlineStyle }}"><span style="{{ item.imgInlineStyle }}"></span><span style="{{ item.framesInlineStyle }}"><sc-for list="{{ item.frames }}" as="fr" hint-placeholder-count="0"><span style="{{ fr.style }}"></span></sc-for></span><sc-for list="{{ item.tiles }}" as="t" hint-placeholder-count="0"><span style="display: flex; gap: 8px; padding: 5px 0; min-width: 0;"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: 0 0 auto; margin-top: 3px;" aria-hidden="true"><path d="{{ t.icon }}"></path></svg><span style="display: block; min-width: 0;"><span style="display: block; font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: -0.01em; color: var(--text);">{{ t.name }}</span><span style="display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--text-secondary); text-wrap: pretty;">{{ t.desc }}</span></span></span></sc-for></span>
+              </button>
+              <a href="{{ item.ctaHref }}" data-mq="inlinecta" data-on="{{ item.onFlag }}" style="{{ item.ctaStyle }}"><span style="display: block;"><span style="display: block; font-family: var(--font-display); font-size: 14px; font-weight: 700; letter-spacing: -0.01em;">{{ item.ctaTitle }}</span><span style="display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; opacity: .85;">{{ item.ctaText }}</span></span><span style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; flex: 0 0 auto;">Open →</span></a>
+            </sc-for>
+          </div>
+        </div>
+
+        <div data-mq="stage" style="position: relative; aspect-ratio: 886 / 1920; max-height: 780px; margin: 0 auto; width: 100%;">
+          <sc-for list="{{ showItems }}" as="item" hint-placeholder-count="0">
+            <div role="img" aria-label="{{ item.alt }}" style="{{ item.imgStyle }}"></div>
+            <div style="{{ item.framesStyle }}"><sc-for list="{{ item.frames }}" as="fr" hint-placeholder-count="0"><div style="{{ fr.style }}"></div></sc-for></div>
+          </sc-for>
+          <sc-for list="{{ panePages }}" as="pane" hint-placeholder-count="0">
+            <div data-mq="tiles" style="{{ pane.style }}">
+              <sc-for list="{{ pane.tiles }}" as="t" hint-placeholder-count="0">
+                <div style="display: flex; gap: 8px; padding: 2px 0; min-width: 0;">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: 0 0 auto; margin-top: 3px;" aria-hidden="true">
+                    <path d="{{ t.icon }}"></path>
+                  </svg>
+                  <span style="display: block; min-width: 0;">
+                    <span style="display: block; font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: -0.01em; color: var(--text);">{{ t.name }}</span>
+                    <span style="display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.38; color: var(--text-secondary); text-wrap: pretty;">{{ t.desc }}</span>
+                  </span>
+                </div>
+              </sc-for>
+              <a href="{{ pane.ctaHref }}" style="{{ pane.ctaStyle }}"><span style="display: block;"><span style="display: block; font-family: var(--font-display); font-size: 14px; font-weight: 700; letter-spacing: -0.01em;">{{ pane.ctaTitle }}</span><span style="display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; opacity: .85;">{{ pane.ctaText }}</span></span><span style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; flex: 0 0 auto;">Open →</span></a>
+            </div>
+          </sc-for>
+        </div>
+
+      </div>
+    </section>
+
+
+
+
+
+
+  </main>
+  </sc-if>
+
+  <sc-if value="{{ isHA }}" hint-placeholder-val="{{ false }}">
+  <main>
+
+    <section style="border-bottom: 1px solid var(--border);">
+      <div style="max-width: 1120px; margin: 0 auto; padding: 64px 24px 40px;">
+        <div>
+          <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary);">Home Assistant Integration</div>
+          <h1 style="font-family: var(--font-display); font-size: clamp(38px, 4.6vw, 60px); font-weight: 800; letter-spacing: -0.035em; line-height: .98; margin: 18px 0 0; color: var(--text);">Connect Allarise to Home Assistant.</h1>
+        </div>
+      </div>
+      <div style="max-width: 1120px; margin: 0 auto; padding: 0 24px 26px;">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 22px;">
+        <a href="#home-assistant" style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; text-decoration: none;">Setup guide</a>
+        <a href="#ha-reference" style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; text-decoration: none;">Entity reference</a>
+        <a href="https://beta.allarise.app/mqtt-builder.html" style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; text-decoration: none;">MQTT builder</a>
+      </div>
+      </div>
+    </section>
+
+
+    <div style="max-width: var(--content-prose); margin: 0 auto; padding: 56px 24px 80px;">
+
+      <div style="margin-bottom: 56px;">
+        <x-import component-from-global-scope="Allarise.TableOfContents" groups="{{ tocSetup }}" hint-size="100%,220px"></x-import>
+      </div>
+
+      <div id="step-install" data-reveal>
+        <x-import component-from-global-scope="Allarise.StepBlock" step="1" title="Install the HACS integration" hint-size="100%,420px">
+          <p style="font-weight: 600; margin: 0 0 8px;">Via HACS (recommended)</p>
+          <ol style="margin: 0 0 20px; padding-left: 20px; line-height: 1.75; color: var(--text-secondary);">
+            <li>In Home Assistant, go to <strong>HACS → Integrations → ⋮ → Custom repositories</strong></li>
+            <li>Add <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">https://github.com/domoretechnet/allarise-hacs-beta</x-import> and select <strong>Integration</strong> as the category</li>
+            <li>Find <strong>Allarise</strong> in the HACS store and click <strong>Download</strong></li>
+            <li>Restart Home Assistant</li>
+          </ol>
+          <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,90px"><strong>Beta integration.</strong> This is the <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">allarise-hacs-beta</x-import> repository, which tracks the TestFlight build. If you already have the release integration installed from <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">allarise-hacs</x-import>, remove it first — HACS cannot install two integrations that share the <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">allarise</x-import> domain.</x-import>
+          <p style="font-weight: 600; margin: 24px 0 8px;">Manual install</p>
+          <ol style="margin: 0 0 20px; padding-left: 20px; line-height: 1.75; color: var(--text-secondary);">
+            <li>Copy <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">custom_components/allarise/</x-import> into your HA <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">config/custom_components/</x-import> directory</li>
+            <li>Restart Home Assistant</li>
+          </ol>
+          <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,72px">HACS must be installed in your Home Assistant instance. If you haven't set it up yet, visit <a href="https://hacs.xyz">hacs.xyz</a> for installation instructions.</x-import>
+        </x-import>
+      </div>
+
+      <div id="step-mqtt" data-reveal style="margin-top: 56px;">
+        <x-import component-from-global-scope="Allarise.StepBlock" step="2" title="Set up your MQTT broker" hint-size="100%,340px">
+          <p style="margin: 0 0 16px; color: var(--text-secondary); line-height: 1.65;">Create a dedicated MQTT user for the Allarise app and restrict it to only the topics it needs. This keeps the app isolated from the rest of your broker.</p>
+          <p style="font-weight: 600; margin: 0 0 8px;">Step 2a — Create a dedicated user</p>
+          <p style="margin: 0; color: var(--text-secondary); line-height: 1.65;">Open <strong>Settings → Add-ons → Mosquitto broker → Configuration</strong> and add a login under the <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">logins</x-import> key:</p>
+          <x-import component-from-global-scope="Allarise.CodeBlock" label="Mosquitto broker config" code="{{ codeMosquitto }}" hint-size="100%,160px"></x-import>
+          <p style="margin: 16px 0 0; color: var(--text-secondary); line-height: 1.65;">Save and <strong>restart the Mosquitto add-on</strong> after making this change.</p>
+        </x-import>
+      </div>
+
+      <div id="step-connect" data-reveal style="margin-top: 56px;">
+        <x-import component-from-global-scope="Allarise.StepBlock" step="3" title="Connect the Allarise app" hint-size="100%,700px">
+          <p style="margin: 0 0 24px; color: var(--text-secondary); line-height: 1.65;">In the Allarise iOS app, go to <strong>Settings → Home Assistant Integration</strong> and turn it on, then tap <strong>MQTT Settings</strong>. The app separates broker configuration into two sections — one for when you're on your home network, and one for when you're away.</p>
+          <h4 style="font-family: var(--font-display); font-size: 17px; margin: 0 0 12px;">MQTT Identity</h4>
+          <x-import component-from-global-scope="Allarise.DataTable" columns="{{ kvCols }}" rows="{{ identityRows }}" variant="bordered" hint-size="100%,120px"></x-import>
+          <div style="margin-top: 20px;">
+            <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,140px"><p style="margin: 0 0 10px;"><strong>Turn on Allow Inbound Commands.</strong> This is what makes the integration two-way. Without it, Allarise will publish state to Home Assistant but won't accept any inbound commands — no alarm creation, no alerts, no remote actions. Make sure this is enabled or you'll only get half the integration.</p></x-import>
+          </div>
+          <h4 style="font-family: var(--font-display); font-size: 17px; margin: 28px 0 6px;">Internal Broker — used on home WiFi</h4>
+          <p style="margin: 0 0 12px; color: var(--text-secondary); line-height: 1.65;">Your Mosquitto broker running locally on Home Assistant. Plain connection, no TLS, traffic stays on your LAN.</p>
+          <x-import component-from-global-scope="Allarise.DataTable" columns="{{ kvCols }}" rows="{{ internalRows }}" variant="bordered" hint-size="100%,110px"></x-import>
+          <h4 style="font-family: var(--font-display); font-size: 17px; margin: 28px 0 6px;">External Broker — used away from home</h4>
+          <p style="margin: 0 0 12px; color: var(--text-secondary); line-height: 1.65;">Used when not on a home WiFi network. The app always enforces TLS for external connections. You'll need port 8883 forwarded on your router and pointing to your Home Assistant machine.</p>
+          <x-import component-from-global-scope="Allarise.DataTable" columns="{{ kvCols }}" rows="{{ externalRows }}" variant="bordered" hint-size="100%,140px"></x-import>
+          <div style="margin-top: 20px;">
+            <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,60px">If you only use Allarise at home, you can leave the External Broker fields blank entirely.</x-import>
+          </div>
+          <h4 style="font-family: var(--font-display); font-size: 17px; margin: 28px 0 6px;">Authentication</h4>
+          <p style="margin: 0 0 12px; color: var(--text-secondary); line-height: 1.65;">The same username and password are used for both brokers.</p>
+          <x-import component-from-global-scope="Allarise.DataTable" columns="{{ kvCols }}" rows="{{ authRows }}" variant="bordered" hint-size="100%,110px"></x-import>
+          <h4 style="font-family: var(--font-display); font-size: 17px; margin: 28px 0 6px;">Home WiFi Networks</h4>
+          <p style="margin: 0 0 12px; color: var(--text-secondary); line-height: 1.65;">Add your home WiFi network name(s) so the app can decide when to use the internal broker instead of the external one. Broker selection is designed to switch automatically when you leave or return home, based on the network information available to iOS.</p>
+          <ol style="margin: 0 0 20px; padding-left: 20px; line-height: 1.75; color: var(--text-secondary);">
+            <li>Tap <strong>Add Network</strong></li>
+            <li>Type your network name exactly, or tap <strong>Use Current Network</strong> to fill it in automatically</li>
+            <li>Repeat for any additional home networks (e.g. separate 5 GHz and 2.4 GHz SSIDs)</li>
+          </ol>
+          <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,60px">WiFi name detection requires Location permission on iOS. This is only used to read the network name — the app does not track your location.</x-import>
+          <h4 style="font-family: var(--font-display); font-size: 17px; margin: 28px 0 6px;">Test your connection</h4>
+          <p style="margin: 0; color: var(--text-secondary); line-height: 1.65;">Once all fields are filled in, tap <strong>Test Connection</strong> in the Authentication section. A green "Connected!" indicates the app was able to reach your broker at the time of the test.</p>
+        </x-import>
+      </div>
+
+      <div id="step-configure" data-reveal style="margin-top: 56px;">
+        <x-import component-from-global-scope="Allarise.StepBlock" step="4" title="Add the integration in Home Assistant" hint-size="100%,260px">
+          <ol style="margin: 0 0 20px; padding-left: 20px; line-height: 1.75; color: var(--text-secondary);">
+            <li>Go to <strong>Settings → Devices &amp; Services → Add Integration</strong></li>
+            <li>Search for <strong>Allarise</strong> and select it</li>
+            <li>Enter the <strong>Device Name</strong> and <strong>MQTT Topic Prefix</strong> — these must exactly match what is set in the Allarise app</li>
+          </ol>
+          <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,72px"><strong>Defaults:</strong> Device Name = <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">iPhone</x-import> · Topic Prefix = <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">allarise</x-import>. You can add multiple devices by adding one integration entry per phone.</x-import>
+        </x-import>
+      </div>
+
+      <div data-reveal data-mq="cols" style="margin-top: 56px; margin-left: 46px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div style="background: var(--signal); color: var(--on-signal); border-radius: 12px; padding: 32px; display: flex; flex-direction: column;">
+          <h3 style="font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 10px;">Already connected?</h3>
+          <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6;">Every sensor, button, switch, service and MQTT topic the integration exposes is listed in the entity reference.</p>
+          <a href="#ha-reference" style="margin-top: auto; align-self: flex-start; font-family: var(--font-mono); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--on-signal); border-bottom: 2px solid var(--on-signal); padding-bottom: 3px;">Open entity reference →</a>
+        </div><div style="background: var(--signal); color: var(--on-signal); border-radius: 12px; padding: 32px; display: flex; flex-direction: column;">
+          <h3 style="font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 10px;">Ready to build payloads?</h3>
+          <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6;">Use the MQTT Payload Builder to generate and test commands before wiring up your automations. Covers every supported topic and action.</p>
+          <a href="https://beta.allarise.app/mqtt-builder.html" style="margin-top: auto; align-self: flex-start; font-family: var(--font-mono); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--on-signal); border-bottom: 2px solid var(--on-signal); padding-bottom: 3px;">Open MQTT Builder →</a>
+        </div>
+        
+      </div>
+
+
+    </div>
+
+  </main>
+  </sc-if>
+
+
+  <sc-if value="{{ isHARef }}" hint-placeholder-val="{{ false }}">
+  <main>
+    <section style="border-bottom: 1px solid var(--border);">
+      <div style="max-width: 1120px; margin: 0 auto; padding: 64px 24px 26px;">
+        <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary);">Home Assistant · Reference</div>
+        <h1 style="font-family: var(--font-display); font-size: clamp(38px, 4.6vw, 60px); font-weight: 800; letter-spacing: -0.035em; line-height: .98; margin: 18px 0 12px; color: var(--text);">Every entity, service and topic.</h1>
+        <p style="font-size: 16px; line-height: 1.65; color: var(--text-secondary); margin: 0; max-width: 62ch; text-wrap: pretty;">What the integration exposes once it is connected. If you have not set it up yet, start with the <a href="#home-assistant">setup guide</a>.</p>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 22px;">
+        <a href="#home-assistant" style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; text-decoration: none;">Setup guide</a>
+        <a href="#ha-reference" style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; text-decoration: none;">Entity reference</a>
+        <a href="https://beta.allarise.app/mqtt-builder.html" style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; text-decoration: none;">MQTT builder</a>
+      </div>
+      </div>
+    </section>
+
+    <div style="max-width: var(--content-prose); margin: 0 auto; padding: 40px 24px 80px;">
+
+      <div style="margin-bottom: 48px;">
+        <x-import component-from-global-scope="Allarise.TableOfContents" groups="{{ tocRef }}" hint-size="100%,180px"></x-import>
+      </div>
+
+      <div id="ref-state" data-reveal style="margin-top: 8px;">
+        <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 12px;">What Allarise publishes</h2>
+        <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Everything the app reports into Home Assistant: one dashboard device for the phone, plus a device per alarm.</p>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 6px;">Dashboard sensors</h3>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">These sensors appear on the main Allarise dashboard device in Home Assistant.</p>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ dashSensorRows }}" variant="rules" hint-size="100%,600px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Binary sensor</h3>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ binaryRows }}" variant="rules" hint-size="100%,80px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Per-alarm devices</h3>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">For each alarm you create in the app, a dedicated HA device is created containing Name, Enabled, State, Fire Time, Snooze Fire Time, Days, Mission, Missions, Mission Count, Tap Dismiss Mode, Sound, Snoozes, Volume, Vibrate, Fade In, Notes, Sort Order, Commands, the swipe-gesture commands, Morning Weather, Radio Station, and the dismiss and snooze app links.</p>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ perAlarmRows }}" variant="rules" hint-size="100%,400px"></x-import>
+        </div>
+      </div>
+
+      <div id="ref-control" data-reveal style="margin-top: 64px;">
+        <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 12px;">Controlling alarms</h2>
+        <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Act on an alarm from a dashboard, a tablet or an automation - immediate actions first, then the services that change how an alarm is configured.</p>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 6px;">Buttons</h3>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Dashboard buttons are intended to act on the currently active alarm. Per-alarm buttons appear on each alarm's device: Dismiss, Snooze, Skip, Unskip, Kill Snoozed, Delete.</p>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ actionCols }}" rows="{{ buttonRows }}" variant="rules" hint-size="100%,280px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Switches</h3>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ switchRows }}" variant="rules" hint-size="100%,240px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Selects</h3>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ selectRows }}" variant="rules" hint-size="100%,180px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Sliders</h3>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ numberRows }}" variant="rules" hint-size="100%,120px"></x-import>
+        <div style="margin-top: 20px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,110px"><strong>App Persistence gates remote control.</strong> With persistence off — or Dynamic while the app is asleep — MQTT commands wait until the app is next awake, radio-station alarms fall back to their tone, and the persistence switch itself reads unavailable. Alarms always fire either way; persistence only decides what the app can do around them.</x-import>
+        </div>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.dismiss · snooze · skip</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Dismiss the currently ringing or snoozed alarm, snooze the ringing alarm, or skip the next fire of the next upcoming alarm.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.dismiss" code="{{ codeDismiss }}" hint-size="100%,120px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.update_alarm</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Modify an alarm by index or name. All fields except device_name are optional — only the fields you include will be changed.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.update_alarm" code="{{ codeUpdateAlarm }}" hint-size="100%,300px"></x-import>
+        <h4 style="font-family: var(--font-display); font-size: 17px; margin: 28px 0 6px;">Missions</h4>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">An alarm can require up to five missions in sequence. Use missions to set the whole chain — each entry is either a type name or an object with its own settings:</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="Multi-mission alarm" code="{{ codeMissions }}" hint-size="100%,240px"></x-import>
+        <div style="margin-top: 20px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,110px"><strong>mission on its own clears the rest.</strong> Sending mission: math to an alarm that has three missions leaves it with math and nothing else — "set this alarm's mission" is taken literally, and it's what the Mission sensor reports back. To change one mission on a multi-mission alarm, send the full missions list.</x-import>
+        </div>
+        <h4 style="font-family: var(--font-display); font-size: 17px; margin: 28px 0 6px;">Notes page</h4>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">notes replaces the text on the after-alarm Notes page. append_notes adds a line instead — prefixed HA: and divider-separated — so a routine can build a briefing up over several steps without re-sending the whole note:</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="Append to the Notes page" code="{{ codeAppendNotes }}" hint-size="100%,160px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.create_alarm · delete_alarm</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Create a new alarm from an automation - only time is required, everything else follows the app defaults. Set ephemeral: true for a one-shot Quick Alarm that deletes itself after firing (it gets no per-alarm HA entities, but shows in the Quick Alarm dashboard sensors).</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.create_alarm" code="{{ codeCreateAlarm }}" hint-size="100%,240px"></x-import>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.delete_alarm" code="{{ codeDeleteAlarm }}" hint-size="100%,140px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.create_command · delete_command</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Create the custom command buttons the app shows on its home screen and alarm screens. Each command also appears in HA as a fired / idle status sensor, and arm_action can tie a command to your arm zones. Re-creating an existing name updates it in place; allarise.delete_command removes one by name.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.create_command" code="{{ codeCreateCommand }}" hint-size="100%,220px"></x-import>
+        </div>
+      </div>
+
+      <div id="ref-alerts" data-reveal style="margin-top: 64px;">
+        <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 12px;">Alerts on the phone</h2>
+        <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Three doors into the same in-app alert card: a media player entity, the standard notify action, and a service call.</p>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 6px;">Alert Media</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Exposes a media player entity that triggers a one-time in-app alert card on the phone — plays your chosen audio or TTS with a dismiss button. Supports play_media, media_announce and volume_set, alongside the Alert Vibrate and Alert Loop Media switches; the current level is reported by the Alert Volume sensor.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="Play TTS via media player" code="{{ codeTts }}" hint-size="100%,180px"></x-import>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="Set alert volume (0–100)" code="{{ codeVolume }}" hint-size="100%,160px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Notify</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Send an alert to the phone using the standard HA notify service. The data block also accepts image_url, video_url and link_url to attach media or a tappable link to the alert card:</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="Send an alert" code="{{ codeNotify }}" hint-size="100%,200px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.trigger_alert</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Request an alert alarm on the phone when app and iOS conditions permit.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.trigger_alert" code="{{ codeTriggerAlert }}" hint-size="100%,200px"></x-import>
+        </div>
+      </div>
+
+      <div id="ref-sleep" data-reveal style="margin-top: 64px;">
+        <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 12px;">Sleep sounds &amp; radio</h2>
+        <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
+        <p style="margin: 0 0 20px; color: var(--text-secondary); line-height: 1.65;">Sleep sounds (white noise, rain, fan, etc.) can be started, stopped, paused, resumed, and adjusted remotely from supported Home Assistant automations or scripts when app and iOS conditions allow. The current sound name and volume are published as sensors on the dashboard device and can also be surfaced in Home Assistant dashboards.</p>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ actionCols }}" rows="{{ sleepButtonRows }}" variant="rules" hint-size="100%,160px"></x-import>
+        <p style="margin: 20px 0 4px; color: var(--text-secondary); line-height: 1.65;">All sleep sound commands are sent via MQTT to the app's command topic. Available sounds: Brown_Noise, white_noise, Fan, Light_Rain, Summer_Rain, Sea_Waves, Mountain_Stream, Rainforest_Birds.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="Start a sleep sound" code="{{ codeSleepStart }}" hint-size="100%,220px"></x-import>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="Change sound without stopping" code="{{ codeSleepChange }}" hint-size="100%,120px"></x-import>
+        <div style="margin-top: 20px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="tip" icon="{{ iconBolt }}" hint-size="100%,72px">Use until_next_alarm: true in sleep_sound_start to have the app attempt to stop white noise when the next alarm fires, without requiring a separate automation.</x-import>
+        </div>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Internet radio</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">The radio has the same shape: an Audio: Radio Station select listing the stations favourited on the phone (pick one to start, none to stop), Audio: Radio Stop / Pause / Resume buttons, and Radio State, Radio Station and Radio Stations Available sensors on the dashboard device. Alarms can also wake to a station - set radio_station on create_alarm or update_alarm, and the per-alarm Radio Station sensor reports it. While the radio is playing, the Sleep Volume slider adjusts the radio.</p>
+        <div style="margin-top: 20px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,90px">Radio needs App Persistence. Live playback and radio wake-up alarms only work while the app is kept alive in the background - with persistence off (or Dynamic while the app is asleep) a radio alarm rings its backup tone instead.</x-import>
+        </div>
+        </div>
+      </div>
+
+      <div id="ref-automations" data-reveal style="margin-top: 64px;">
+        <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 20px;">Example automations</h2>
+        <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 6px;">Re-enable a work alarm on Sunday evening</h3>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="automation.yaml" code="{{ codeAutoSunday }}" hint-size="100%,260px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Alert phone when front door opens at night</h3>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="automation.yaml" code="{{ codeAutoDoor }}" hint-size="100%,300px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Turn on bedroom lights 5 minutes before alarm</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Every alarm's Fire Time sensor is a timestamp sensor, so Home Assistant's Time trigger can point straight at it with an offset. Home Assistant schedules a single callback at exactly the right moment and re-arms it automatically whenever you move the alarm — no polling, no template maths.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="automation.yaml" code="{{ codeAutoLights }}" hint-size="100%,300px"></x-import>
+        <div style="margin-top: 20px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="tip" icon="{{ iconBolt }}" hint-size="100%,100px">Use a per-alarm Fire Time (…_alarm_1_fire_time) to tie the automation to one specific alarm. The dashboard Alarm Fire Time sensor tracks whichever alarm is next, so it will follow you across alarms — handy for a general "pre-wake" routine, but it also means a nap alarm will trigger it.</x-import>
+        </div>
+        </div>
+      </div>
+
+      <div id="ref-topics" data-reveal style="margin-top: 64px;">
+        <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 12px;">MQTT topic structure</h2>
+        <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
+        <p style="margin: 0 0 20px; color: var(--text-secondary); line-height: 1.65;">All topics follow the pattern {prefix}/{device}/… With default settings, prefix is allarise and device is iphone.</p>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ topicCols }}" rows="{{ topicRows }}" variant="bordered" zebra="{{ true }}" hint-size="100%,300px"></x-import>
+        </div>
+      </div>
+
+      <div data-reveal style="margin-top: 56px; background: var(--signal); color: var(--on-signal); border-radius: 12px; padding: 32px; display: flex; flex-direction: column;">
+        <h3 style="font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 10px;">Ready to build payloads?</h3>
+        <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; max-width: 52ch;">Use the MQTT Payload Builder to generate and test commands before wiring up your automations. Covers every supported topic and action.</p>
+        <a href="https://beta.allarise.app/mqtt-builder.html" style="align-self: flex-start; font-family: var(--font-mono); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--on-signal); border-bottom: 2px solid var(--on-signal); padding-bottom: 3px;">Open MQTT Builder →</a>
+      </div>
+
+    </div>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{ isFAQ }}" hint-placeholder-val="{{ false }}">
+  <main>
+    <section style="border-bottom: 1px solid var(--border);">
+      <div style="max-width: var(--content-prose); margin: 0 auto; padding: 64px 24px 44px;">
+        <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary);">Support</div>
+        <h1 style="font-family: var(--font-display); font-size: clamp(38px, 4.6vw, 60px); font-weight: 800; letter-spacing: -0.035em; line-height: .98; margin: 18px 0 12px; color: var(--text);">Frequently Asked Questions</h1>
+        <p style="font-size: 17px; color: var(--text-secondary); margin: 0;">Answers to common questions about Allarise.</p>
+      </div>
+    </section>
+
+    <div style="max-width: var(--content-prose); margin: 0 auto; padding: 48px 24px 80px;">
+
+      <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 18px; color: var(--text);">General</h2>
+      <x-import component-from-global-scope="Allarise.Accordion" hint-size="100%,200px">
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="Do you have an Android app?" hint-size="100%,60px">
+          <p style="margin: 0;">Allarise is currently iOS only. We may consider expanding to Android in the future.</p>
+        </x-import>
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="Is Allarise affecting my battery life?" hint-size="100%,60px">
+          <p style="margin: 0 0 12px;">Allarise is designed to remain active in the background so your alarms can run reliably, respond to inbound MQTT commands, and play at your chosen volume independent of your ringer settings. Because of this, it may use more battery than a typical alarm app.</p>
+          <p style="margin: 0 0 12px;">You can reduce battery usage by turning off background persistence or setting it to dynamic mode in the app's settings. Keep in mind that doing so may limit features like custom alarm volume and Home Assistant integration.</p>
+          <p style="margin: 0;">For a full breakdown of what's affected, see the persistence setting inside the app.</p>
+        </x-import>
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="How do I restore a previous purchase?" hint-size="100%,60px">
+          <p style="margin: 0;">Open the app, go to <strong>Settings</strong>, and tap <strong>Purchase | Restore</strong>. Make sure you are signed in to the same Apple ID used for the original purchase.</p>
+        </x-import>
+      </x-import>
+
+      <div style="margin-top: 48px;">
+        <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 18px; color: var(--text);">Alarms</h2>
+      </div>
+      <x-import component-from-global-scope="Allarise.Accordion" hint-size="100%,260px">
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="Will the alarm fire if my phone is on silent?" hint-size="100%,60px">
+          <p style="margin: 0 0 12px;">Yes — Allarise is designed to play audio through the iOS media/playback channel, which is separate from the ringer switch. This means your alarm can still sound even if your phone is set to silent.</p>
+          <p style="margin: 0;">Actual behavior can still vary depending on your device's audio settings.</p>
+        </x-import>
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="Will the alarm fire during Do Not Disturb, Sleep or Focus modes?" hint-size="100%,60px">
+          <p style="margin: 0 0 12px;">Focus modes can silence notifications depending on how they're configured. In some cases, this may prevent alarms from sending notifications, but they should still be audible.</p>
+          <p style="margin: 0 0 8px;"><strong>To ensure your alarms show notifications, add Allarise as an allowed app in your Focus settings:</strong></p>
+          <ol style="margin: 0 0 12px; padding-left: 20px; line-height: 1.7;">
+            <li>Open <strong>Settings</strong> on your iPhone</li>
+            <li>Tap <strong>Focus</strong></li>
+            <li>Select the Focus mode you use overnight (e.g. Do Not Disturb or Sleep)</li>
+            <li>Tap <strong>Apps</strong> under "Allowed Notifications"</li>
+            <li>Tap <strong>Add App</strong></li>
+            <li>Select <strong>Allarise</strong></li>
+          </ol>
+          <p style="margin: 0;">This ensures your alarms are allowed to alert you even when Focus is active.</p>
+        </x-import>
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="Will the alarm fire if the app is closed or the phone is restarted?" hint-size="100%,60px">
+          <p style="margin: 0;">Allarise schedules a system-based AlarmKit backup alarm so your alarm can still fire even if the app isn't running. The backup experience may differ from the in-app alarm mode. For example, alarms will play at your ringer volume. For the full alarm experience — including custom volume, inbound MQTT actions, and more — keep the app running in the background.</p>
+        </x-import>
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="What are missions?" hint-size="100%,60px">
+          <p style="margin: 0;">Missions are tasks you must complete before the alarm can be dismissed - so you can't just tap dismiss half-awake and go back to sleep. Options include math problems, a phone shake challenge, clearing lines in Blocks, holding off the wave in Meteor, and handing the dismiss to Home Assistant. Chain up to five before the alarm will let go.</p>
+        </x-import>
+      </x-import>
+
+      <div style="margin-top: 48px;">
+        <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 18px; color: var(--text);">Home Assistant &amp; MQTT</h2>
+      </div>
+      <x-import component-from-global-scope="Allarise.Accordion" hint-size="100%,200px">
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="Do I need Home Assistant to use Allarise?" hint-size="100%,60px">
+          <p style="margin: 0;">No. Home Assistant and MQTT are completely optional. Allarise is designed to work as a standalone alarm app without any smart home setup.</p>
+        </x-import>
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="What MQTT broker does Allarise work with?" hint-size="100%,60px">
+          <p style="margin: 0;">Allarise is designed to work with standard MQTT brokers over TCP or TLS. Most users run the <strong>Mosquitto</strong> add-on inside Home Assistant. See the <a href="#home-assistant">Home Assistant setup guide</a> for step-by-step instructions.</p>
+        </x-import>
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="Can I control multiple phones from one Home Assistant instance?" hint-size="100%,60px">
+          <p style="margin: 0;">Yes. Each phone uses a unique <strong>Device Name</strong> as part of its MQTT topic, which helps keep devices separated in normal use. Add one integration entry in Home Assistant per device.</p>
+        </x-import>
+      </x-import>
+
+      <div style="margin-top: 48px;">
+        <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 18px; color: var(--text);">Sleep Sounds</h2>
+      </div>
+      <x-import component-from-global-scope="Allarise.Accordion" hint-size="100%,140px">
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="Will sleep sounds keep playing with the screen off?" hint-size="100%,60px">
+          <p style="margin: 0;">Usually, yes. Sleep sounds use the iOS media playback channel and are designed to continue when the screen locks. Lock screen and Control Center playback controls are typically available, subject to iOS behavior.</p>
+        </x-import>
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="Can I set sleep sounds to turn off automatically?" hint-size="100%,60px">
+          <p style="margin: 0;">Yes. When setting up sleep sounds you can choose a stop time — either a fixed time or when your next alarm is set to fire. The app will fade out and stop playback automatically at the selected time.</p>
+        </x-import>
+      </x-import>
+
+      <div style="margin-top: 56px;">
+        <x-import component-from-global-scope="Allarise.ContactBox" title="Still have a question?" hint-size="100%,150px">
+          <p style="margin: 0 0 12px; color: var(--text-secondary);">Reach out and we'll be happy to help.</p>
+          <a href="mailto:support@allarise.app">support@allarise.app</a>
+        </x-import>
+      </div>
+
+    </div>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{ isPrivacy }}" hint-placeholder-val="{{ false }}">
+  <main>
+    <section style="border-bottom: 1px solid var(--border);">
+      <div style="max-width: var(--content-prose); margin: 0 auto; padding: 64px 24px 44px;">
+        <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary);">Last updated July 2026 · Policy version 6</div>
+        <h1 style="font-family: var(--font-display); font-size: clamp(38px, 4.6vw, 60px); font-weight: 800; letter-spacing: -0.035em; line-height: .98; margin: 18px 0 0; color: var(--text);">Privacy Policy</h1>
+      </div>
+    </section>
+
+    <div style="max-width: var(--content-prose); margin: 0 auto; padding: 40px 24px 80px; line-height: 1.7; color: var(--text-secondary);">
+
+      <x-import component-from-global-scope="Allarise.Callout" tone="success" icon="{{ iconLockSm }}" hint-size="100%,180px"><strong>The short version:</strong> Allarise is a local-first app. Your alarms, settings and credentials stay on your device. There are no ads, no sign-in, no advertising identifiers, and we do not sell or share your data with anyone. Two things do leave your device, and <strong>only if you switch them on</strong>: anonymous usage and crash data, and product-update notifications — both off by default, both switchable off at any time in <strong>Settings → Allarise Pro</strong>. Everything else is limited to Apple services used by app features (WeatherKit, MapKit, the App Store) and — if <em>you</em> configure it — your own self-hosted Home Assistant / MQTT broker.</x-import>
+
+      <div style="margin-top: 16px;">
+        <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,120px"><strong>What changed in July 2026:</strong> the app is now published by DoMore Tech LLC rather than by an individual; optional anonymous usage data and crash reporting were added (see §2.3), along with optional product-update notifications (see §2.7); and the NWS Weather Alerts feature was removed from the app, along with everything this policy previously said about it.</x-import>
+      </div>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">1. Who We Are</h2>
+      <p style="margin: 0 0 14px;">Allarise ("the app") is developed and published by <strong>DoMore Tech LLC</strong>, a Michigan limited liability company ("we", "us", "our"). DoMore Tech LLC is the data controller for the limited information described in this policy. This policy describes how the app handles your information when you use it on your iPhone or iPad.</p>
+      <p style="margin: 0;">If you have questions, contact us at <a href="mailto:support@allarise.app">support@allarise.app</a>.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">2. Data We Collect &amp; Why</h2>
+
+      <h3 style="font-family: var(--font-display); color: var(--text); font-size: 18px; margin: 28px 0 10px;">2.1 Location (optional)</h3>
+      <p style="margin: 0 0 14px;">If you enable the weather widget, the app requests <strong>When In Use</strong> location access to fetch your local weather conditions. Your coordinates are sent directly to Apple's WeatherKit API — we never see them. Location is not stored on disk and is never sent to our servers.</p>
+      <p style="margin: 0 0 18px;">WiFi SSID detection (used to identify your home network for MQTT routing) also requires location permission on iOS. The SSID is stored locally on your device only and is never transmitted to us.</p>
+      <x-import component-from-global-scope="Allarise.DataTable" columns="{{ privLocCols }}" rows="{{ privLocRows }}" variant="bordered" hint-size="100%,180px"></x-import>
+
+      <h3 style="font-family: var(--font-display); color: var(--text); font-size: 18px; margin: 32px 0 10px;">2.2 Alarm &amp; App Settings</h3>
+      <p style="margin: 0 0 18px;">All your alarms, schedules, sounds, theme preferences, and app settings are stored <strong>only on your device</strong> using Apple system storage APIs. This data is not synced to iCloud and is never transmitted to our servers. Sensitive credentials (MQTT username &amp; password) are stored in the iOS <strong>Keychain</strong>, which is hardware-encrypted on modern devices.</p>
+      <x-import component-from-global-scope="Allarise.DataTable" columns="{{ privStoreCols }}" rows="{{ privStoreRows }}" variant="bordered" hint-size="100%,200px"></x-import>
+
+      <h3 style="font-family: var(--font-display); color: var(--text); font-size: 18px; margin: 32px 0 10px;">2.3 Anonymous Usage Data &amp; Crash Reports <x-import component-from-global-scope="Allarise.Badge" tone="optin" hint-size="auto,20px">Opt-in</x-import></h3>
+      <p style="margin: 0 0 14px;">Allarise can send us anonymous usage statistics and crash reports so we can find crashes we cannot reproduce and see which features are actually used. <strong>This is off by default.</strong> You are asked once, on a screen where nothing is pre-ticked, and you can change your answer at any time in <strong>Settings → Allarise Pro → Usage Data &amp; Crash Reports</strong>.</p>
+      <p style="margin: 0 0 14px;"><strong>Nothing is collected before you say yes.</strong> The analytics provider is not merely disabled until then — it is never started at all. If you turn the setting off later, collection stops <em>and</em> we instruct the provider to delete the data already gathered for your device.</p>
+      <p style="margin: 0 0 14px;">Crash reporting rides the same switch, deliberately: a crash report describes your device's state, so it is not treated as exempt from the choice you made.</p>
+      <p style="margin: 0 0 14px;"><strong>What an event may contain.</strong> Events carry counts, on/off flags, bucketed durations and a fixed list of feature names — nothing you typed. The app is built so that free-form text <em>cannot</em> reach an event: there is no field for it. In particular we never receive:</p>
+      <ul style="margin: 0 0 14px; padding-left: 20px;">
+        <li>alarm names or labels, or note text</li>
+        <li>custom sound, radio station or wallpaper names</li>
+        <li>Home Assistant entity IDs, zone names, topics or MQTT payloads</li>
+        <li>Shortcut names, locations, contacts, photos, or anything from other apps</li>
+      </ul>
+      <p style="margin: 0 0 14px;">A typical event is "an alarm fired and was dismissed after two snoozes", "a mission was completed", or "the paywall was opened from a locked theme". Alongside these we set a small number of device-level properties — whether MQTT is configured, whether the widget is in use, how many alarms exist — so a crash can be read in context.</p>
+      <p style="margin: 0 0 18px;">Analytics and crash data are processed on our behalf by <strong>Google (Firebase Analytics and Firebase Crashlytics)</strong> and are stored on Google's servers, which are located in the United States. Google acts as our processor. The data is keyed to a random, app-generated installation identifier that is reset when you turn the setting off or delete the app; it is not your Apple Account, your email, your phone number, or your device's advertising identifier.</p>
+      <x-import component-from-global-scope="Allarise.Callout" tone="danger" icon="{{ iconShieldSm }}" hint-size="100%,110px"><strong>This is not tracking.</strong> Advertising-identifier (IDFV/IDFA) collection and ad personalisation are switched off in the app's configuration, and this data is never linked with data from other companies' apps or websites, never used to build a profile of you, and never sold or shared for advertising. That is why Allarise does not show an App Tracking Transparency prompt — it does not do anything that Apple defines as tracking.</x-import>
+
+      <h3 style="font-family: var(--font-display); color: var(--text); font-size: 18px; margin: 32px 0 10px;">2.4 Home Assistant / MQTT Integration (optional)</h3>
+      <p style="margin: 0 0 14px;">If you configure MQTT, the app communicates directly with <strong>your own self-hosted broker</strong> (typically running inside your Home Assistant instance). We have no visibility into this communication. The data published includes alarm state changes (ringing, snoozed, dismissed), snooze counts, and availability status — nothing personally identifiable beyond what you explicitly configure.</p>
+      <p style="margin: 0 0 18px;">External connections (outside your home network) are enforced to use <strong>TLS encryption</strong>. Internal (LAN) connections may optionally skip TLS depending on your configuration.</p>
+      <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,90px">Your MQTT broker is a <strong>third-party service you control</strong>. Please review the privacy practices of your Home Assistant / MQTT provider. Allarise has no access to your broker's logs or data.</x-import>
+
+      <h3 style="font-family: var(--font-display); color: var(--text); font-size: 18px; margin: 32px 0 10px;">2.5 In-App Purchases</h3>
+      <p style="margin: 0;">Purchase and subscription management is handled entirely by <strong>Apple's StoreKit</strong>. We never see your payment details. We only receive a cryptographically verified token from Apple confirming whether a valid purchase exists. No purchase data is stored on our servers.</p>
+
+      <h3 style="font-family: var(--font-display); color: var(--text); font-size: 18px; margin: 32px 0 10px;">2.6 Diagnostic Logs</h3>
+      <p style="margin: 0;">The app writes diagnostic logs to a file on your device to help you troubleshoot issues. Logs are retained for a maximum of 7 days and are capped at ~10 MB. They are <strong>never automatically transmitted</strong> — you can optionally export them from Settings and share them with us for support. Before export, the app automatically redacts alarm names, MQTT command labels, and notification content.</p>
+
+      <h3 style="font-family: var(--font-display); color: var(--text); font-size: 18px; margin: 32px 0 10px;">2.7 Product Update Notifications <x-import component-from-global-scope="Allarise.Badge" tone="optin" hint-size="auto,20px">Opt-in</x-import></h3>
+      <p style="margin: 0 0 14px;">Allarise can send you occasional notifications about new features and important changes. <strong>This is off by default</strong>, it is separate from the analytics choice above, and it can be changed at any time in <strong>Settings → Allarise Pro → Product Updates</strong>. It is not marketing, and it has nothing to do with your alarms — alarm notifications are generated on your device and never involve our servers.</p>
+      <p style="margin: 0;">Turning it on registers your device with Apple's Push Notification service and with <strong>Firebase Cloud Messaging</strong> (Google), which issues a random push token for this installation and subscribes it to a single broadcast topic. We send to the topic, not to you: we have no list of who is subscribed, no way to send a message to one particular person, and we receive no email address, name, or contact details. Turning the setting off unsubscribes the device <em>and</em> deletes the push token, so withdrawal removes the identifier rather than just silencing the messages.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">3. What We Never Collect</h2>
+      <p style="margin: 0 0 18px;">These hold whether or not you opt in to anything. They are not settings — there is no configuration in which any of the following happens:</p>
+      <x-import component-from-global-scope="Allarise.CheckList" items="{{ neverItems }}" hint-size="100%,220px"></x-import>
+      <p style="margin: 18px 0 0;">Earlier versions of this policy said the app contained no analytics or crash-reporting SDK at all. That is no longer accurate, and we would rather say so plainly than leave it standing: the app now includes them, switched off, and they stay switched off unless you turn them on.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">4. Third-Party Services We Use</h2>
+      <p style="margin: 0 0 18px;">The app communicates with the following external services, all opt-in where noted:</p>
+      <x-import component-from-global-scope="Allarise.DataTable" columns="{{ thirdPartyCols }}" rows="{{ thirdPartyRows }}" variant="bordered" hint-size="100%,320px"></x-import>
+      <p style="margin: 18px 0 0;">There are no advertising networks in the app. The three Google services above are the only non-Apple SDKs that transmit anything, they are inert unless you opt in, and each can be switched back off in Settings.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">5. iOS Permissions</h2>
+      <x-import component-from-global-scope="Allarise.DataTable" columns="{{ permCols }}" rows="{{ permRows }}" variant="bordered" hint-size="100%,240px"></x-import>
+      <p style="margin: 18px 0 0;">You can revoke any permission at any time in <strong>Settings → Privacy &amp; Security</strong> on your device.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">6. Data Retention &amp; Deletion</h2>
+      <p style="margin: 0 0 14px;">Almost everything the app holds is on your device, where you are in full control:</p>
+      <ul style="margin: 0 0 18px; padding-left: 20px;">
+        <li><strong>Delete the app</strong> — removes all app data, settings, and alarms from your device.</li>
+        <li><strong>Diagnostic logs</strong> — auto-purge after 7 days. You can also clear them manually in Settings.</li>
+        <li><strong>Purchase records</strong> — managed by Apple's App Store; deleting the app does not affect your entitlements.</li>
+      </ul>
+      <p style="margin: 0 0 14px;">The two optional items are the only things held anywhere else:</p>
+      <ul style="margin: 0 0 18px; padding-left: 20px;">
+        <li><strong>Usage &amp; crash data</strong> (only if you opted in) — held by Google on our behalf under Firebase's retention settings; crash reports are retained for approximately 90 days and analytics events for no more than 14 months. Turning it off stops collection and instructs the provider to delete what was already gathered for your device.</li>
+        <li><strong>Push token</strong> (only if you opted in) — turning <strong>Product Updates</strong> off unsubscribes the device and deletes the token.</li>
+      </ul>
+      <p style="margin: 0;">If you never opted in to either, we hold nothing about you at all and there is nothing for us to delete. If you did and want it removed after the fact — including after deleting the app — email <a href="mailto:support@allarise.app">support@allarise.app</a> and we will action it; because the data is not tied to your identity, it helps if you can tell us roughly when and on what device you used the app.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">7. Children's Privacy</h2>
+      <p style="margin: 0;">Allarise is not directed at children under the age of 13, and we do not knowingly collect personal information from children. The app does not require an account, age verification, or any personal details to function. The optional usage data described in §2.3 is not used to build a profile of any user, child or adult, and is never used for advertising. If you believe a child has enabled the optional data settings and you want the associated data removed, contact us at <a href="mailto:support@allarise.app">support@allarise.app</a>.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">8. Changes to This Policy</h2>
+      <p style="margin: 0;">If we make material changes to this privacy policy, we will update the "Last updated" date at the top of this page and note the changes in the App Store release notes. Continued use of the app after changes constitutes acceptance of the updated policy.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">9. Your Rights</h2>
+      <p style="margin: 0 0 14px;">Depending on where you live, you may have rights including access to, correction of, or deletion of personal data, and the right to object to or restrict its processing. Because Allarise keeps almost everything on your device, the practical exercise of these rights is:</p>
+      <ul style="margin: 0 0 18px; padding-left: 20px;">
+        <li><strong>Access / Export:</strong> Your alarms, settings and diagnostic logs are on your device — export them directly from the app's Settings.</li>
+        <li><strong>Deletion:</strong> Delete the app to remove all local data, or use Settings to clear specific items. For the optional usage data and push token, see §6.</li>
+        <li><strong>Withdraw consent:</strong> Switch <strong>Usage Data &amp; Crash Reports</strong> or <strong>Product Updates</strong> off in Settings. Withdrawal takes effect immediately and does not affect any use of your data before you withdrew.</li>
+      </ul>
+      <h3 style="font-family: var(--font-display); color: var(--text); font-size: 18px; margin: 28px 0 10px;">9.1 EEA / UK</h3>
+      <p style="margin: 0 0 14px;">Our legal basis for the optional usage, crash and push data is your <strong>consent</strong> (GDPR Art. 6(1)(a)), obtained before any collection starts and withdrawable at any time as above. We rely on no other basis for it, and declining costs you no functionality. That data is transferred to and stored in the United States by Google acting as our processor, under the transfer mechanisms described in Google's own terms. You also have the right to lodge a complaint with your local supervisory authority.</p>
+      <h3 style="font-family: var(--font-display); color: var(--text); font-size: 18px; margin: 28px 0 10px;">9.2 California and other US states</h3>
+      <p style="margin: 0;">We do not sell your personal information and we do not share it for cross-context behavioural advertising, as those terms are defined under the CCPA/CPRA and comparable state laws. We have never done so. The optional usage data described in §2.3 is collected only with your prior opt-in and is used solely to improve the app.</p>
+
+      <div style="margin-top: 56px;">
+        <x-import component-from-global-scope="Allarise.ContactBox" title="Contact Us" hint-size="100%,180px">
+          <p style="margin: 0 0 12px; color: var(--text-secondary);">Questions about this policy or how your data is handled?</p>
+          <p style="margin: 0 0 4px; color: var(--text);"><strong>DoMore Tech LLC</strong></p>
+          <p style="margin: 0 0 8px; color: var(--text-secondary);">A Michigan limited liability company</p>
+          <a href="mailto:support@allarise.app">support@allarise.app</a>
+        </x-import>
+      </div>
+
+    </div>
+  </main>
+  </sc-if>
+
+  <x-import component-from-global-scope="Allarise.SiteFooter" links="{{ footerLinks }}" hint-size="100%,120px">
+    <div style="font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-tertiary); margin-top: 14px;">© 2026 Allarise</div>
+  </x-import>
+
 </div>
-<script>
-  var _navOpen = false;
-  function toggleNav() {
-    var d = document.getElementById('nav-dropdown');
-    var b = document.getElementById('nav-menu-btn');
-    _navOpen = !_navOpen;
-    d.style.display = _navOpen ? 'block' : 'none';
-    b.textContent = _navOpen ? '✕' : '☰';
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1280, &quot;height&quot;: 900}}">
+const NAV = [
+  { label: 'About', href: '#home', key: 'home' },
+  { label: 'Home Assistant', href: '#home-assistant', key: 'ha', also: ['haref'] },
+  { label: 'MQTT Builder', href: 'https://beta.allarise.app/mqtt-builder.html', key: 'mqtt' },
+  { label: 'FAQ', href: '#faq', key: 'faq' }
+];
+
+const SHOW = [
+  { title: 'Alarm Engine', desc: 'Alarms that mean business. Allarise plays at the volume you set, independent of your ringer and mute switch - or «hand the only dismiss button to Home Assistant». A dual alarm coordinator pairs every alarm with an AlarmKit backup, so one of them always fires.', img: 'shot-1.png', alt: 'Alarms that mean business - waiting for Home Assistant to dismiss' },
+  { title: 'Wake-Up Missions', desc: 'Solve math, shake the phone, clear lines in Blocks, hold off the wave in Meteor, or «make Home Assistant dismiss your alarm». Chain up to five missions before the alarm will let go.', img: 'shot-2.png', imgs: ['shot-2.png', 'uploads/11.png', 'uploads/12.png', 'uploads/13.png'], alt: 'Wake-up missions: Blocks, Meteor, shake and math' },
+  { title: 'Sleep Sounds & Radio', desc: 'Drift off to rain, ocean, white noise - or your favourite radio station. Fade-out, stop-at-next-alarm, and best of all this is «fully controllable from Home Assistant»!', img: 'shot-3.png', alt: 'Fall asleep to the radio or a sleep sound' },
+
+  { title: 'Critical Alerts', desc: '«Home Assistant can push an alert that takes over the screen» when it actually matters - a door opened, a leak, a camera tripped.', img: 'shot-5.png', alt: 'Security breach alert taking over the screen' },
+  { title: 'iOS Shortcuts', desc: 'A Shortcut for just about everything - skip the next alarm, start a station, stop sleep sounds. Wire them into automations, the Action button, or a widget.', img: 'shot-6.png', alt: 'The Allarise iOS Shortcuts list' },
+  { title: 'The Home Screen', desc: 'Skip tomorrow\'s alarm, «arm the alarm widget so Home Assistant can take action», and control what is playing - all from one screen.', img: 'shot-7.png', alt: 'The Allarise home screen' },
+  { title: 'After Alarm Actions', desc: "Start your day with something you'll love. Choose to add a Bible verse, notes, or launch a URL / Shortcut after your alarm.", img: 'uploads/10.png', imgs: ['uploads/10.png', 'uploads/14.png', 'uploads/15.png'], alt: 'Morning verse, notes and weather after the alarm' },
+  { title: 'Rich Home Assistant Features', desc: '', cta: { href: '#home-assistant', title: 'New to the integration?', text: 'Set it up with HACS in four steps' }, tiles: [
+    { name: 'Sensors', icon: 'M22 12h-4l-3 9L9 3l-3 9H2', desc: 'Alarm state, next fire time, snoozes left and what is playing. Fire times are real timestamps - run automations before the alarm.' },
+    { name: 'Per-Alarm Devices', icon: 'M12 2l9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 17l9 5 9-5', desc: 'Every alarm is its own HA device, with its own sensors, buttons and enable switch. Target one alarm directly.' },
+    { name: 'Buttons', icon: 'M9 9l5 12 1.8-5.2L21 14zM7.2 2.2L8 5.1M5.1 8l-2.9-.8M2.2 16.8L5.1 16M16.8 2.2L16 5.1', desc: 'Dismiss, snooze, skip or un-skip an alarm without touching the phone.' },
+    { name: 'Switches', icon: 'M8 6h8a6 6 0 010 12H8A6 6 0 018 6zM16 15a3 3 0 100-6 3 3 0 000 6z', desc: 'Enable or disable an alarm entirely, the same toggle as in the app.' },
+    { name: 'Create Alarms from HA', icon: 'M12 21a8 8 0 100-16 8 8 0 000 16zM12 9v4h3M5 3L2 6M19 3l3 3', desc: 'Services to create, update and delete alarms, plus one-shot Quick Alarms.' },
+    { name: 'Alarm Notes', icon: 'M4 4h11l5 5v11H4zM15 4v5h5M8 13h6M8 16h4', desc: 'Set notes on an alarm from Home Assistant - they greet you on screen when it goes off.' },
+    { name: 'Alerts', icon: 'M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0', desc: 'Any automation can push an alert to the phone - a message, a sound, TTS or your own audio.' },
+    { name: 'Sleep Sounds & Radio', icon: 'M2 10v4M6 7v10M10 4v16M14 7v10M18 10v4M22 9v6', desc: 'Start, stop or switch what the phone is playing - white noise, ambient sounds, or a favourite radio station.' },
+    { name: 'Alarm Widget', icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', desc: 'Arm or disarm a zone from the app home screen. The zone is a real HA entity automations can watch or flip.' },
+    { name: 'Commands', icon: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z', desc: 'Your own named triggers - "Lights Off", "Start Coffee" - each one an HA automation trigger. Assign them to the alarm widget, the home screen, or the notes commands section.' }
+  ] }
+];
+
+const PAGE_BY_HASH = {
+  '#home': 'home', '': 'home', '#': 'home',
+  '#home-assistant': 'ha',
+  '#ha-reference': 'haref',
+  '#faq': 'faq',
+  '#privacy': 'privacy'
+};
+
+function svgIcon(children, size) {
+  return React.createElement('svg', {
+    width: size || 22, height: size || 22, viewBox: '0 0 24 24', fill: 'none',
+    stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round',
+    style: { color: 'var(--accent)' }, 'aria-hidden': 'true'
+  }, children.map((d, i) => React.createElement('path', { key: i, d: d })));
+}
+
+const ICONS = {
+  alarm: ['M12 21a8 8 0 1 0 0-16 8 8 0 0 0 0 16z', 'M12 9v4l2.5 1.8', 'M5 4.2 2.6 6.6', 'M19 4.2l2.4 2.4'],
+  moon: ['M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z'],
+  mission: ['M3.5 12h5', 'M6 9.5v5', 'M14 9.5l6 5', 'M20 9.5l-6 5'],
+  wallpaper: ['M3.5 4.5h17v15h-17z', 'M3.5 15.5l4.5-4.5 3.5 3.5 3-3 6 6'],
+  weather: ['M8.5 4.2V2.6', 'M4.3 6.4 3.2 5.3', 'M12.7 6.4l1.1-1.1', 'M6.2 9.5a3.2 3.2 0 1 1 5 2.6', 'M17 20.5a3.8 3.8 0 0 0 0-7.6 5.3 5.3 0 0 0-9.9 1.5 3.3 3.3 0 0 0 .5 6.1z'],
+  lock: ['M4.8 10.5h14.4v9.7H4.8z', 'M8.4 10.5V7.2a3.6 3.6 0 0 1 7.2 0v3.3'],
+  home: ['M3.5 11 12 4.2l8.5 6.8v8.5h-5.9v-5.6H9.4v5.6H3.5z'],
+  tool: ['M14.5 3.5a4.5 4.5 0 0 0-5.8 5.6L3.5 14.3l2.6 2.6 5.2-5.2a4.5 4.5 0 0 0 5.6-5.8l-2.7 2.7-2.2-.5-.5-2.2z', 'M15.5 15.5l4.5 4.5'],
+  check: ['M4.5 12.6 9.5 17.5 19.5 6.5'],
+  sensors: ['M5 20v-6', 'M12 20V4.5', 'M19 20v-9.5'],
+  button: ['M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17z', 'M12 14.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z'],
+  toggle: ['M7 6.5h10a5.5 5.5 0 0 1 0 11H7a5.5 5.5 0 0 1 0-11z', 'M17 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4z'],
+  speaker: ['M4 9.2h3.8L13 4.8v14.4l-5.2-4.4H4z', 'M16.5 9.4a3.8 3.8 0 0 1 0 5.2'],
+  bell: ['M6 18.5h12l-1.8-2.8v-4.4a4.2 4.2 0 1 0-8.4 0v4.4z', 'M10.2 21.4h3.6'],
+  layers: ['M12 3.5 20.5 8 12 12.5 3.5 8z', 'M3.5 13 12 17.5 20.5 13'],
+  shield: ['M12 3.5 19.5 6v6c0 4.6-3.2 7.4-7.5 8.5C7.7 19.4 4.5 16.6 4.5 12V6z'],
+  bolt: ['M13.2 3.2 5.5 14.2h6l-1 6.6 7.9-11h-6z']
+};
+
+const kvCols = [{ key: 'k', header: 'Field' }, { key: 'v', header: 'Value' }];
+const sensorCols = [{ key: 'k', header: 'Entity' }, { key: 'v', header: 'Description' }];
+const actionCols = [{ key: 'k', header: 'Button' }, { key: 'v', header: 'Action' }];
+
+const DATA = {
+  kvCols: kvCols,
+  sensorCols: sensorCols,
+  actionCols: actionCols,
+  topicCols: [
+    { key: 'd', header: 'Direction' },
+    { key: 't', header: 'Topic pattern' },
+    { key: 'x', header: 'Description' }
+  ],
+  tocSetup: [
+    { title: 'Setup', numbered: true, entries: [
+      { label: 'Install the HACS integration', href: '#step-install' },
+      { label: 'Set up your MQTT broker', href: '#step-mqtt' },
+      { label: 'Connect the Allarise app', href: '#step-connect' },
+      { label: 'Add the integration in Home Assistant', href: '#step-configure' }
+    ] }
+  ],
+  tocRef: [
+    { title: 'Reference', entries: [
+      { label: 'What Allarise publishes', href: '#ref-state' },
+      { label: 'Controlling alarms', href: '#ref-control' },
+      { label: 'Alerts on the phone', href: '#ref-alerts' },
+      { label: 'Sleep sounds & radio', href: '#ref-sleep' },
+      { label: 'Example automations', href: '#ref-automations' },
+      { label: 'MQTT topic structure', href: '#ref-topics' }
+    ] }
+  ],
+  identityRows: [
+    { k: 'Topic Prefix', v: 'allarise (default) - the app and the Home Assistant integration must use the same prefix' },
+    { k: 'Device Name', v: 'iPhone (default) - change it to tell multiple phones apart; the integration must use the same name' }
+  ],
+  internalRows: [
+    { k: 'Host', v: 'Your HA local IP (e.g. 192.168.1.100) or hostname (e.g. homeassistant.local)' },
+    { k: 'Port', v: '1883' }
+  ],
+  externalRows: [
+    { k: 'Host', v: 'Your external hostname (e.g. mqtt.yourdomain.com) - must have a valid TLS certificate' },
+    { k: 'Port', v: '8883' },
+    { k: 'Always Use External', v: 'Optional - bypasses home network detection and always connects to the external broker' }
+  ],
+  authRows: [
+    { k: 'Username', v: 'The MQTT username you created in Step 2a (e.g. allarise)' },
+    { k: 'Password', v: 'The password you set in Step 2a' }
+  ],
+  dashSensorRows: [
+    { k: 'Alarm State', v: 'idle / ringing / snoozed / dismissed' },
+    { k: 'Alarm Name', v: 'Name of the currently ringing or next upcoming alarm' },
+    { k: 'Alarm Mission', v: 'First mission required to dismiss (none = Tap, shake, math, balance ball, block drop, meteor defense, home assistant)' },
+    { k: 'Alarm Fire Time', v: 'Scheduled fire time of the active or next alarm. Timestamp sensor - usable directly in a Time trigger. Carries a minutes_until attribute.' },
+    { k: 'Alarm Snooze Fire Time', v: 'When a snoozed alarm will re-fire. Timestamp sensor.' },
+    { k: 'Alarm Sound', v: 'Sound ID playing for the active alarm' },
+    { k: 'Alarm Volume', v: 'Volume % for the active alarm' },
+    { k: 'Alarm Vibrate', v: 'Whether vibration is enabled' },
+    { k: 'Alarm Fade In', v: 'Whether fade-in is active' },
+    { k: 'Alarm ID', v: 'MQTT index of the active alarm' },
+    { k: 'Alarm Snooze Count', v: 'Number of times the current alarm has been snoozed' },
+    { k: 'Snoozes Remaining', v: 'Snoozes left before alarm is force-dismissed' },
+    { k: 'Alarm Count', v: 'Number of active (enabled) alarms' },
+    { k: 'App Version', v: 'Allarise app version string' },
+    { k: 'Broker Connection', v: 'MQTT connection state reported by the app' },
+    { k: 'App Persistence', v: 'Whether the app is resident in the background right now - on / off. Under Dynamic mode this flips on its own as the app wakes and sleeps.' },
+    { k: 'Alert Volume', v: 'Volume used for HA-triggered alert alarms (%)' },
+    { k: 'Alert Sound', v: 'Default sound for HA alert alarms' },
+    { k: 'Alert Vibrate', v: 'Whether HA alert alarms vibrate' },
+    { k: 'Alert Loop Media', v: 'Whether media audio loops during HA alerts' },
+    { k: 'Alert Loop Delay', v: 'Seconds between media audio loops' },
+    { k: 'Quick Alarm', v: 'Active quick alarm state' },
+    { k: 'Quick Alarm Fire Time', v: 'When the quick alarm fires' },
+    { k: 'Quick Alarm Label', v: 'Label of the quick alarm' },
+    { k: 'Quick Alarm Count', v: 'Number of active quick alarms' },
+    { k: 'Sleep Sound', v: 'Currently playing sleep sound, or none' },
+    { k: 'Sleep Volume', v: 'Current sleep sounds volume (0–100)' },
+    { k: 'System Volume', v: "The device's hardware media volume (0–100)" },
+    { k: 'Radio State', v: 'playing / paused / stopped' },
+    { k: 'Radio Station', v: 'Current station name, or none' },
+    { k: 'Radio Stations Available', v: "JSON array of the device's favourited stations" },
+    { k: 'Last Command Fired', v: 'Name of the custom command most recently fired from the app' },
+    { k: '(one per custom command)', v: 'Every custom command you create also gets its own fired / idle status sensor, named after the command' }
+  ],
+  binaryRows: [
+    { k: 'App Online', v: 'on when the iOS app is connected to the broker' }
+  ],
+  perAlarmRows: [
+    { k: 'Fire Time / Snooze Fire Time', v: 'Timestamp sensors. Point a Time trigger at these with an offset to run something before an alarm. Each carries a minutes_until attribute.' },
+    { k: 'Fire Time (Display) / Snooze Fire Time (Display)', v: "The same times as the app's own short-format text, for dashboards and notification templates." },
+    { k: 'Mission', v: 'The first mission only. Kept unchanged so existing dashboards keep working.' },
+    { k: 'Missions', v: 'The full ordered sequence, comma-separated (e.g. math,shake,meteor). An alarm can require up to five. none when nothing gates dismissal.' },
+    { k: 'Mission Count', v: 'How many missions gate dismissal. 0 for a plain single-tap alarm.' },
+    { k: 'Tap Dismiss Mode', v: 'tap or hold. Published only when the first mission is Tap.' },
+    { k: 'Tap Count / Tap Hold Duration', v: 'How many taps, or how many seconds to hold, to dismiss.' },
+    { k: 'Notes', v: 'Text shown on the after-alarm Notes page. Publishes the literal None when empty.' },
+    { k: 'Commands', v: 'Names of the command buttons on the Notes page, comma-separated with no space - split on ",".' },
+    { k: 'Swipe Left / Right Command', v: 'The commands assigned to the alarm-screen swipe gestures, or None.' },
+    { k: 'Morning Weather', v: 'on when the Good Morning weather card shows after dismissing.' },
+    { k: 'Dismiss / Snooze App Link', v: 'URL opened after dismiss or snooze (e.g. a Shortcut), or None.' },
+    { k: 'Radio Station', v: "That alarm's wake-up station, or None." }
+  ],
+  buttonRows: [
+    { k: 'Dismiss Alarm', v: 'Dismiss the ringing or snoozed alarm' },
+    { k: 'Snooze Alarm', v: 'Snooze the ringing alarm' },
+    { k: 'Skip Alarm', v: 'Skip the next upcoming fire for the active alarm' },
+    { k: 'Unskip Alarm', v: 'Remove the skip flag from the next alarm' },
+    { k: 'Delete Next Alarm', v: 'Delete the next alarm in the queue' },
+    { k: 'Kill Snoozed Alarm', v: 'Immediately end a snoozed alarm session' },
+    { k: 'Dismiss / Delete Quick Alarm', v: 'End a ringing Quick Alarm, or remove a pending one' },
+    { k: 'Audio: Sleep Sound Stop / Pause / Resume', v: 'Control sleep sounds playback' },
+    { k: 'Audio: Radio Stop / Pause / Resume', v: 'Transport controls for the internet radio player' }
+  ],
+  switchRows: [
+    { k: '{Zone} Armed', v: 'One switch per arm zone configured in the integration. HA is the source of truth - always available, retained, and shared by every phone that uses the zone.' },
+    { k: 'Alarm N - Enabled', v: 'Enable or disable a specific alarm' },
+    { k: 'App Persistence', v: 'Background keep-alive on/off. Stays unavailable until the app reports its state - and once the app has fully suspended, nothing can switch it back on remotely.' },
+    { k: 'Alert Vibrate', v: 'Toggle vibration for HA alert alarms' },
+    { k: 'Alert Loop Media', v: 'Toggle media looping for HA alert alarms' }
+  ],
+  selectRows: [
+    { k: 'App Persistence Mode', v: 'on / off / dynamic - the mode you chose in the app. Dynamic keeps the app awake only while charging or near an alarm; the App Persistence switch reports the resulting live state.' },
+    { k: 'Audio: Sleep Sound', v: 'Pick a sleep sound to start it, none to stop. Options come from the sound list the app publishes.' },
+    { k: 'Audio: Radio Station', v: 'Pick a favourited station to start the radio, none to stop. Options are the stations favourited on the phone.' }
+  ],
+  numberRows: [
+    { k: 'Sleep Volume', v: 'Sleep sound volume, 0-100 slider. While the radio is playing it adjusts the radio instead.' },
+    { k: 'System Volume', v: "The device's hardware media volume, 0-100 slider." }
+  ],
+  sleepButtonRows: [
+    { k: 'Sleep Sound Stop', v: 'Fully stop playback and release the audio session' },
+    { k: 'Sleep Sound Pause', v: 'Mute audio while keeping the session alive (lock screen controls remain visible)' },
+    { k: 'Sleep Sound Resume', v: 'Unmute and resume from where it was paused' }
+  ],
+  topicRows: [
+    { d: 'App → HA', t: 'allarise/iphone/sensor/{key}', x: 'Dashboard sensor values' },
+    { d: 'App → HA', t: 'allarise/iphone/alarm/{n}/{key}', x: 'Per-alarm sensor values' },
+    { d: 'App → HA', t: 'allarise/iphone/availability', x: 'App online/offline (broker last-will)' },
+    { d: 'App → HA', t: 'allarise/iphone/command/{name}/status', x: 'Custom command fired / idle status' },
+    { d: 'HA → App', t: 'allarise/iphone/command/{cmd}', x: 'Dashboard commands' },
+    { d: 'HA → App', t: 'allarise/iphone/alarm/{n}/command/{cmd}', x: 'Per-alarm commands' },
+    { d: 'App → HA', t: 'allarise/alarm/{zone}/set', x: 'Arm change requested from the phone. No device segment - zones are shared between phones.' },
+    { d: 'HA → App', t: 'allarise/alarm/{zone}/state', x: 'Arm zone state, retained - HA is the source of truth' }
+  ],
+  privLocCols: [
+    { key: 'a', header: 'Data' }, { key: 'b', header: 'Why' },
+    { key: 'c', header: 'Storage' }, { key: 'd', header: 'Shared with' }
+  ],
+  privLocRows: [
+    { a: 'GPS coordinates', b: 'Fetch local weather', c: 'Memory only', d: 'Apple WeatherKit' },
+    { a: 'City / region name', b: 'Display in weather widget', c: 'Memory only', d: 'Apple MapKit (reverse geocode)' },
+    { a: 'WiFi SSID', b: 'Route MQTT to internal/external broker', c: 'Local device only', d: 'Nobody' }
+  ],
+  privStoreCols: [
+    { key: 'a', header: 'Data' }, { key: 'b', header: 'Storage' },
+    { key: 'c', header: 'Encrypted' }, { key: 'd', header: 'Shared with' }
+  ],
+  privStoreRows: [
+    { a: 'Alarm schedules & labels', b: 'Local device', c: 'No (UserDefaults)', d: 'Nobody' },
+    { a: 'App preferences & theme settings', b: 'Local device', c: 'No (UserDefaults)', d: 'Nobody' },
+    { a: 'MQTT username & password', b: 'iOS Keychain', c: 'Yes (Keychain)', d: 'Your MQTT broker only' },
+    { a: 'MQTT broker address & port', b: 'Local device', c: 'No (UserDefaults)', d: 'Nobody' }
+  ],
+  neverItems: [
+    'No advertising identifiers (IDFA / IDFV)',
+    'No ads or ad networks',
+    'No behavioral profiling',
+    'No cross-app or cross-site tracking',
+    'No email address required',
+    'No account or sign-in',
+    'No device fingerprinting',
+    'No alarm names, notes or other text you typed',
+    'No contacts, photos, calendars or health data',
+    'No precise location sent to us, ever',
+    'No data sold or shared for advertising',
+    'No data collected at all if you decline §2.3 and §2.7'
+  ],
+  thirdPartyCols: [
+    { key: 'a', header: 'Service' }, { key: 'b', header: 'Provider' }, { key: 'c', header: 'Data sent' }
+  ],
+  thirdPartyRows: [
+    { a: 'WeatherKit', b: 'Apple Inc.', c: 'GPS coordinates (when weather is enabled)' },
+    { a: 'MapKit (reverse geocoding)', b: 'Apple Inc.', c: "GPS coordinates (anonymised per Apple's policy)" },
+    { a: 'App Store / StoreKit', b: 'Apple Inc.', c: 'Purchase verification token' },
+    { a: 'MQTT Broker', b: 'Your self-hosted server', c: 'Alarm state events, snooze counts (user-configured)' },
+    { a: 'Firebase Analytics (opt-in)', b: 'Google LLC', c: 'Anonymous feature-usage events and device properties (§2.3). Nothing sent until you opt in.' },
+    { a: 'Firebase Crashlytics (opt-in)', b: 'Google LLC', c: 'Crash stack traces, OS/device model, app version. Nothing sent until you opt in.' },
+    { a: 'Firebase Cloud Messaging (opt-in)', b: 'Google LLC + Apple Inc. (APNs)', c: 'A random push token for this installation (§2.7). Nothing sent until you opt in.' }
+  ],
+  permCols: [
+    { key: 'a', header: 'Permission' }, { key: 'b', header: 'When requested' },
+    { key: 'c', header: 'Used for' }, { key: 'd', header: 'Required?' }
+  ],
+  permRows: [
+    { a: 'Location (When In Use)', b: 'First time you enable weather or MQTT network detection', c: 'Weather display (WeatherKit); WiFi SSID detection for MQTT routing', d: 'Optional' },
+    { a: 'Notifications', b: 'On first launch or when scheduling an alarm', c: 'Alarm alerts, snooze reminders, background refresh warnings - and, only if you opt in, product-update notifications (§2.7)', d: 'Optional (core feature)' },
+    { a: 'Background App Refresh', b: 'iOS setting (not a prompt)', c: 'Keeps MQTT connection alive; ensures alarms fire on time', d: 'Optional (recommended)' },
+    { a: 'AlarmKit', b: 'When you create your first alarm', c: 'Scheduling system-level alarms that fire reliably', d: 'Optional (core feature)' }
+  ],
+  codeMosquitto: 'logins:\n  - username: allarise\n    password: "your_secure_password"\ncustomize:\n  active: true\n  folder: mosquitto',
+  codeTts: 'service: media_player.play_media\ntarget:\n  entity_id: media_player.allarise_iphone\ndata:\n  media_content_id: media-source://tts/cloud?message=Good+morning\n  media_content_type: music',
+  codeVolume: 'service: media_player.volume_set\ntarget:\n  entity_id: media_player.allarise_iphone\ndata:\n  volume_level: 0.8',
+  codeNotify: 'service: notify.allarise_iphone\ndata:\n  title: "Door Alert"\n  message: "Front door opened"\n  data:\n    sound: "Perimeter_Breach"\n    volume: 0.8\n    media_url: "http://your-ha.local:8123/local/doorbell.mp3"',
+  codeSleepStart: 'topic: allarise/iphone/command/sleep_sound_start\npayload: |\n  {\n    "sound": "Brown_Noise",\n    "volume": 60,\n    "duration_minutes": 30,\n    "fade_out_minutes": 5\n  }',
+  codeSleepChange: 'topic: allarise/iphone/command/sleep_sound_change\npayload: {"sound": "Sea_Waves"}',
+  codeUpdateAlarm: 'service: allarise.update_alarm\ndata:\n  device_name: iPhone        # optional if only one device\n  index: 3                   # the MQTT alarm index (or target by name:)\n  time: "07:30"\n  enabled: true\n  days: [monday, tuesday, wednesday, thursday, friday]   # names or 1-7, 1=Sunday\n  sound: "Alarm_Clock"\n  volume: 80\n  snooze_interval: 9\n  snooze_limit: 3\n  notes: "Team meeting at 9am"\n  morning_weather: true\n  verse_of_day: true\n  radio_station: "Smooth Jazz 24/7"\n  dismiss_app_uri: "shortcuts://run-shortcut?name=Morning"',
+  codeCreateAlarm: 'service: allarise.create_alarm\ndata:\n  time: "06:45"              # the only required field\n  label: "Gym"\n  days: [monday, wednesday, friday]\n  sound: "Digital_Alarm_Clock"\n  volume: 70\n  after_alarm_actions: [verse, weather, notes]\n  ephemeral: false           # true = one-shot Quick Alarm, deleted after it fires',
+  codeDeleteAlarm: 'service: allarise.delete_alarm\ndata:\n  index: 3          # or target by name:\n  # name: "Gym"     # case-insensitive',
+  codeCreateCommand: 'service: allarise.create_command\ndata:\n  name: "Coffee"\n  icon: "cup.and.saucer.fill"   # any SF Symbol name\n  color_rgb: [255, 149, 0]      # or one of 36 preset color names\n  arm_action: none              # none | arm | disarm | toggle\n  show_in_list: true',
+  codeMissions: 'service: allarise.update_alarm\ndata:\n  index: 3\n  missions:\n    - mission: math\n      mission_config:\n        math_count: 3\n        math_difficulty: hard\n    - shake\n    - mission: meteor\n      mission_config:\n        meteor_difficulty: easy',
+  codeAppendNotes: 'service: allarise.update_alarm\ndata:\n  index: 1\n  append_notes: "Bins go out tonight"\n  alarm_screen_commands: ["Coffee", "Lights"]   # up to 4 buttons',
+  codeTriggerAlert: 'service: allarise.trigger_alert\ndata:\n  device_name: iPhone\n  title: "Motion Detected"\n  message: "Front camera triggered"\n  alert_id: front_door   # optional - resending replaces the pending alert\n  sound: "Perimeter_Breach"\n  volume: 90\n  media_url: "http://ha.local:8123/local/alert.mp3"',
+  codeDismiss: 'service: allarise.dismiss\ndata:\n  device_name: iPhone',
+  codeAutoSunday: 'automation:\n  alias: "Re-enable work alarm on Sunday"\n  trigger:\n    - platform: time\n      at: "20:00:00"\n  condition:\n    - condition: time\n      weekday: [sun]\n  action:\n    - service: allarise.update_alarm\n      data:\n        name: "Work Alarm"\n        enabled: true',
+  codeAutoDoor: 'automation:\n  alias: "Front door night alert"\n  trigger:\n    - platform: state\n      entity_id: binary_sensor.front_door\n      to: "on"\n  condition:\n    - condition: time\n      after: "22:00:00"\n      before: "06:00:00"\n  action:\n    - service: allarise.trigger_alert\n      data:\n        title: "Front Door"\n        message: "Front door opened"\n        sound: "Perimeter_Breach"\n        volume: 1.0',
+  codeAutoLights: 'automation:\n  triggers:\n    - trigger: time\n      at:\n        entity_id: sensor.allarise_YOUR_DEVICE_alarm_1_fire_time\n        offset: "-00:05:00"     # negative = before the alarm\n  actions:\n    - action: light.turn_on\n      target:\n        entity_id: light.YOUR_LIGHT\n      data:\n        brightness_pct: 40\n        transition: 300         # fade up over the 5 minutes\n  mode: single'
+};
+
+class Component extends DCLogic {
+  state = { page: 'home', slide: 0, showPaused: false, showLocked: false, seq: 0, frame: 0 };
+
+  componentDidMount() {
+    this._seqTimers = [
+      setTimeout(() => this.setState({ seq: 1 }), 1400),
+      setTimeout(() => this.setState({ seq: 2 }), 3100),
+      setTimeout(() => this.setState({ seq: 3 }), 3200),
+    ];
+    document.documentElement.setAttribute('data-theme', 'light');
+    this._frameTimer = setInterval(() => this.setState((st) => ({ frame: st.frame + 1 })), 4200);
+    this.startShow();
+    this.syncHash();
+    this._onHash = () => {
+      const known = this.syncHash();
+      const jump = () => { if (!this.jumpToAnchor() && known) window.scrollTo(0, 0); };
+      jump();
+      setTimeout(jump, 60);
+    };
+    window.addEventListener('hashchange', this._onHash);
+    this._onScroll = () => {
+      if (this._raf) return;
+      this._raf = requestAnimationFrame(() => {
+        this._raf = null;
+        if (this.state.page !== 'home') return;
+        let idx = -1;
+        if (window.innerWidth <= 700) {
+          const rows = document.querySelectorAll('[data-showrow]');
+          if (!rows.length) return;
+          const line = window.innerHeight * 0.34;
+          rows.forEach((r, k) => { if (r.getBoundingClientRect().top <= line) idx = k; });
+        } else {
+          const sec = document.querySelector('[data-showsection]');
+          if (!sec) return;
+          const r = sec.getBoundingClientRect();
+          const span = Math.max(1, r.height - window.innerHeight);
+          const p = (-r.top) / span;
+          if (p < -0.2 || p > 1.2) return;
+          idx = Math.max(0, Math.min(SHOW.length - 1, Math.floor(p * SHOW.length)));
+        }
+        if (idx >= 0 && idx !== this.state.slide) this.setState({ slide: idx, showLocked: false });
+      });
+    };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
   }
-  document.addEventListener('click', function(e) {
-    if (!_navOpen) return;
-    var d = document.getElementById('nav-dropdown');
-    var b = document.getElementById('nav-menu-btn');
-    if (!d.contains(e.target) && e.target !== b && !b.contains(e.target)) {
-      _navOpen = false;
-      d.style.display = 'none';
-      b.textContent = '☰';
-    }
-  });
-  // Force-hide dropdown on load (overrides any cached state)
-  document.getElementById('nav-dropdown').style.display = 'none';
+
+  componentWillUnmount() {
+    window.removeEventListener('hashchange', this._onHash);
+    window.removeEventListener('scroll', this._onScroll);
+    if (this._show) clearInterval(this._show);
+    if (this._frameTimer) clearInterval(this._frameTimer);
+  }
+
+  pageForHash() {
+    const h = window.location.hash;
+    if (Object.prototype.hasOwnProperty.call(PAGE_BY_HASH, h)) return PAGE_BY_HASH[h];
+    if (h.indexOf('#step-') === 0) return 'ha';
+    if (h.indexOf('#ref-') === 0) return 'haref';
+    return null;
+  }
+
+  syncHash() {
+    const page = this.pageForHash();
+    if (page && page !== this.state.page) this.setState({ page: page });
+    return page;
+  }
+
+  jumpToAnchor() {
+    const id = window.location.hash.slice(1);
+    if (!id) return false;
+    const el = document.getElementById(id);
+    if (!el) return false;
+    const top = el.getBoundingClientRect().top + window.scrollY - 78;
+    window.scrollTo(0, Math.max(0, top));
+    return true;
+  }
+
+  startShow() {
+    if (this._show) clearInterval(this._show);
+    this._show = setInterval(() => {
+      return;
+    }, 5200);
+  }
+
+  renderVals() {
+    const page = this.state.page;
+    const seq = this.state.seq;
+    const onBg = 'var(--yellow-bg)', onFg = 'var(--yellow)';
+    const offBg = 'rgba(139,132,113,.18)', offFg = 'var(--text-tertiary)';
+    const tile = (on, p) => ({
+      [p + 'Bg']: on ? onBg : offBg,
+      [p + 'Fg']: on ? onFg : offFg,
+      [p + 'Off']: on ? 0 : 1,
+      [p + 'On']: on ? 1 : 0,
+    });
+    const seqVals = Object.assign({}, tile(seq >= 1, 'c'), tile(seq >= 2, 'r'), tile(seq >= 3, 'l'), { dimW: seq >= 3 ? '40%' : '0%' });
+    const icon = (k, s) => svgIcon(ICONS[k], s);
+    return Object.assign({}, DATA, seqVals, {
+      pauseShow: () => this.setState({ showPaused: true }),
+      resumeShow: () => { this.setState({ showPaused: false }); if (!this.state.showLocked) this.startShow(); },
+      panePages: SHOW.map((it, i) => ({
+        key: 'pane-' + i,
+        tiles: it.tiles || [],
+        ctaTitle: it.cta ? it.cta.title : '',
+        ctaText: it.cta ? it.cta.text : '',
+        ctaHref: it.cta ? it.cta.href : '#',
+        ctaStyle: it.cta ? 'grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 10px; padding: 14px 16px; border-radius: 12px; background: var(--signal); color: var(--on-signal); text-decoration: none;' : 'display: none;',
+        style: 'position: absolute; inset: 0; display: ' + (it.tiles ? 'grid' : 'none') + '; display: grid; grid-template-columns: 1fr 1fr; align-content: ' + ((it.tiles || []).length > 5 ? 'space-between' : 'center') + '; gap: 2px 20px; overflow: hidden; padding: 16px 18px; background: var(--bg); border: 1px solid var(--border); border-radius: 22px; opacity: ' + (i === this.state.slide ? '1' : '0') + '; transform: scale(' + (i === this.state.slide ? '1' : '.97') + '); transition: opacity .45s ease, transform .45s ease; pointer-events: ' + (i === this.state.slide ? 'auto' : 'none') + ';'
+      })).filter((p) => p.tiles.length > 0),
+      showItems: SHOW.map((it, i) => {
+        const on = i === this.state.slide;
+        const buzz = (it.title === 'Alarm Engine' || it.title === 'Critical Alerts');
+        return {
+          num: String(i + 1).padStart(2, '0'),
+          title: it.title,
+          desc: String(it.desc || '').replace(/[«»]/g, ''),
+          parts: String(it.desc || '').split(/«([^»]+)»/).filter(Boolean).map((t, k) => ({ key: 'p' + k, t: t, style: (it.desc.indexOf('«' + t + '»') > -1) ? 'font-weight: 700; color: var(--text);' : '' })),
+          img: it.img,
+          tiles: it.tiles || [],
+          ctaTitle: it.cta ? it.cta.title : '',
+          ctaText: it.cta ? it.cta.text : '',
+          ctaHref: it.cta ? it.cta.href : '#',
+          onFlag: on ? '1' : '0',
+          ctaStyle: it.cta ? 'display: none; align-items: center; justify-content: space-between; gap: 14px; margin-top: 14px; padding: 14px 16px; border-radius: 12px; background: var(--signal); color: var(--on-signal); text-decoration: none;' : 'display: none;',
+          inlineStyle: 'display: none; overflow: hidden; padding-left: 32px; max-height: ' + (on ? '2400px' : '0px') + '; opacity: ' + (on ? '1' : '0') + '; margin-top: ' + (on ? '10px' : '0') + '; transition: opacity .25s ease;',
+          imgInlineStyle: (it.tiles || it.imgs) ? 'display: none;' : 'display: block; width: 100%; aspect-ratio: 886 / 1920; max-height: 540px; background-image: url("' + it.img + '"); background-size: contain; background-repeat: no-repeat; background-position: center;' + (buzz ? ' animation: ar-buzz 6.5s ease-in-out infinite; will-change: transform;' : ''),
+          alt: it.alt || it.title,
+          onClick: () => { if (this._show) clearInterval(this._show); this.setState({ slide: i, showLocked: true }); },
+          rowStyle: 'display: block; width: 100%; text-align: left; appearance: none; cursor: pointer; font: inherit; user-select: text; -webkit-user-select: text; border: none; border-left: 2px solid ' + (on ? 'var(--accent)' : 'transparent') + '; background: ' + (on ? 'var(--bg)' : 'transparent') + '; color: ' + (on ? 'var(--text)' : 'var(--text-secondary)') + '; padding: ' + (on ? '14px 18px 16px' : '11px 18px') + '; border-radius: 0 8px 8px 0; opacity: ' + (on ? '1' : (i < this.state.slide ? '.34' : '.55')) + '; transition: background .2s ease, padding .2s ease, color .2s ease, opacity .3s ease;',
+          descStyle: 'display: block; overflow: hidden; font-size: 15px; line-height: 1.6; color: var(--text-secondary); text-wrap: pretty; max-height: ' + (on ? '140px' : '0px') + '; opacity: ' + (on ? '1' : '0') + '; margin-top: ' + (on ? '8px' : '0') + '; padding-left: 32px; transition: max-height .3s ease, opacity .25s ease, margin-top .3s ease;',
+          frames: (it.imgs || []).map((src, k) => ({ key: 'fr' + k, style: 'position: absolute; inset: 0; background-image: url("' + src + '"); background-size: contain; background-repeat: no-repeat; background-position: center; opacity: ' + (k === (this.state.frame % it.imgs.length) ? '1' : '0') + '; transition: opacity 1.1s ease;' })),
+          framesStyle: it.imgs ? 'position: absolute; inset: 0; border-radius: 22px; pointer-events: none; opacity: ' + (on ? '1' : '0') + '; transform: scale(' + (on ? '1' : '.97') + '); transition: opacity .45s ease, transform .45s ease;' : 'display: none;',
+          framesInlineStyle: it.imgs ? 'display: block; position: relative; width: 100%; aspect-ratio: 886 / 1920; max-height: 540px;' : 'display: none;',
+          imgStyle: (it.tiles || it.imgs) ? 'display: none;' : 'position: absolute; inset: 0; background-image: url("' + it.img + '"); background-size: contain; background-repeat: no-repeat; background-position: center; border-radius: 22px; opacity: ' + (on ? '1' : '0') + '; transform: scale(' + (on ? '1' : '.97') + '); transition: opacity .45s ease, transform .45s ease; pointer-events: none;' + (buzz && on ? ' animation: ar-buzz 6.5s ease-in-out infinite; will-change: transform;' : '')
+        };
+      }),
+      isHome: page === 'home',
+      isHA: page === 'ha',
+      isHARef: page === 'haref',
+      isFAQ: page === 'faq',
+      isPrivacy: page === 'privacy',
+      navLinks: NAV.map((l) => ({ label: l.label, href: l.href, active: l.key === page || (l.also || []).indexOf(page) >= 0 })),
+      footerLinks: [
+        { label: 'Discord', href: 'https://discord.gg/wUxJKAD4dP' },
+        { label: 'support@allarise.app', href: 'mailto:support@allarise.app' },
+        { label: 'Privacy Policy', href: '#privacy' },
+        { label: 'Terms of Use', href: 'https://beta.allarise.app/terms.html' }
+      ],
+      iconAlarm: icon('alarm', 26),
+      iconMoon: icon('moon', 26),
+      iconMission: icon('mission', 26),
+      iconWallpaper: icon('wallpaper', 26),
+      iconWeather: icon('weather', 26),
+      iconLock: icon('lock', 26),
+      iconHome: icon('home', 30),
+      iconTool: icon('tool', 30),
+      iconCheck: svgIcon(ICONS.check, 22),
+      iconSensors: icon('sensors', 24),
+      iconButton: icon('button', 24),
+      iconToggle: icon('toggle', 24),
+      iconSpeaker: icon('speaker', 24),
+      iconBell: icon('bell', 24),
+      iconLayers: icon('layers', 24),
+      iconShield: icon('shield', 24),
+      iconBolt: icon('bolt', 24),
+      iconMoonSm: icon('moon', 24),
+      iconInfo: svgIcon(['M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17z', 'M12 11v5.5', 'M12 7.6v.1'], 20),
+      iconLockSm: icon('lock', 22),
+      iconShieldSm: icon('shield', 22)
+    });
+  }
+}
 </script>
-
-<!-- Hero -->
-<section class="hero">
-  <div class="icon-wrap">
-    <img src="app-icon.png" class="icon-light" alt="Allarise" />
-    <img src="app-icon-dark.png" class="icon-dark" alt="Allarise" />
-  </div>
-  <h1>Wake up smarter.</h1>
-  <p class="tagline">
-    Your alarms shouldn't just wake you up — they should wake up your whole house.
-  </p>
-  <p class="tagline" style="margin-top: -16px;">
-    Allarise syncs with Home Assistant so your lights, routines, and automations can respond when your alarm goes off. Wake up to a house that's already moving, and stay accountable with built-in missions like math and shake.
-  </p>
-  <p class="tagline" style="margin-top: -16px;">
-    With full two-way MQTT, your alarms trigger automations, and your automations control your alarms. If you run Home Assistant, Allarise is the alarm your setup has been missing.
-  </p>
-  <div class="cta-group">
-    <a href="https://testflight.apple.com/join/DYTMR1v2" class="btn btn-primary">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.925-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
-      Join the TestFlight Beta
-    </a>
-  </div>
-</section>
-
-<!-- Screenshots -->
-<section class="screenshots-section">
-  <div class="ss-scroll-row">
-    <img src="screenshots/preview-2.png" alt="Liquid Glass alarm list" />
-    <img src="screenshots/preview-3.png" alt="Solve to dismiss math mission" />
-    <img src="screenshots/preview-1.png" alt="Shake to dismiss alarm" />
-    <img src="screenshots/preview-4.png" alt="Alarms that mean business" />
-    <div style="display:flex;gap:12px;flex-shrink:0;height:480px;">
-      <img src="screenshots/preview-5.png" alt="Do More with home automations" style="height:100%;width:auto;flex-shrink:0;border-radius:24px;box-shadow:0 12px 40px rgba(0,0,0,0.18);" />
-      <img src="screenshots/preview-6.png" alt="Deep Home Assistant Integration" style="height:100%;width:auto;flex-shrink:0;border-radius:24px;box-shadow:0 12px 40px rgba(0,0,0,0.18);" />
-    </div>
-  </div>
-</section>
-
-<!-- App Features -->
-<section class="section alt-bg">
-  <div class="section-inner">
-    <div class="section-label">Features</div>
-    <h2 style="font-size:32px;font-weight:700;letter-spacing:-0.5px;margin-bottom:40px;">Everything you need to wake up.</h2>
-    <div class="features">
-      <div class="feature-card">
-        <span class="f-icon">⏰</span>
-        <h3>Alarm Engine <span class="pro-badge">Pro</span></h3>
-        <p>Alarms that mean business. Allarise plays at the volume you set, independent of your ringer and mute switch.</p>
-        <p style="font-size:12px; color:var(--secondary); margin-top:8px;">Free includes 2 alarms. Pro unlocks unlimited.</p>
-      </div>
-      <a href="home-assistant.html" class="feature-card" style="text-decoration:none; color:inherit;">
-        <span class="f-icon">🏠</span>
-        <h3>Home Assistant Integration</h3>
-        <p>Full two-way MQTT integration with Home Assistant. Your alarms publish state as sensors, buttons trigger automations, and HA can send commands right back — create alarms, control sleep sounds, arm zones, and much more.</p>
-      </a>
-      <div class="feature-card">
-        <span class="f-icon">🌙</span>
-        <h3>Sleep Sounds</h3>
-        <p>Fall asleep to rain, ocean waves, white noise, and more. Lock screen controls, sleep timers, and controllable remotely from Home Assistant.</p>
-      </div>
-      <div class="feature-card">
-        <span class="f-icon">🧩</span>
-        <h3>Wake-Up Missions</h3>
-        <p>Dismiss your alarm by solving a math problem, shaking your phone, or triggering a Home Assistant action. Built for people who actually need to wake up.</p>
-      </div>
-      <div class="feature-card">
-        <span class="f-icon">🎨</span>
-        <h3>Wallpaper Packs <span class="pro-badge">Pro</span></h3>
-        <p>Curated wallpaper packs that transform your home and alarm screens. Each pack includes light and dark variants designed to look great out of the box.</p>
-      </div>
-      <div class="feature-card">
-        <span class="f-icon">🌤</span>
-        <h3>Morning Weather</h3>
-        <p>See today's forecast the moment you wake up, powered by Apple WeatherKit. Weather can be enabled on up to two alarms.</p>
-      </div>
-      <div class="feature-card">
-        <span class="f-icon">🔒</span>
-        <h3>Privacy First</h3>
-        <p>No ads, no account required, no tracking. Your alarms and settings stay on your device, and MQTT credentials are stored in the iOS Keychain. Anonymous usage data, crash reports and product-update notifications are <strong>optional and off by default</strong> &mdash; nothing is collected unless you turn them on, and you can turn them back off at any time.</p>
-      </div>
-    </div>
-    <div class="tab-footer">
-      <a href="home-assistant.html" class="btn btn-secondary" style="display:inline-flex;">Home Assistant features →</a>
-    </div>
-  </div>
-</section>
-
-<!-- Pages / Tools -->
-<section class="section">
-  <div class="section-inner">
-    <h2>Everything in one place.</h2>
-
-    <div class="pages-grid">
-      <a href="home-assistant.html" class="page-card">
-        <div class="pc-icon">🏠</div>
-        <h3>Home Assistant</h3>
-        <p>See everything Allarise exposes to Home Assistant — sensors, buttons, switches, media player, per-alarm devices, sleep sounds, alarm zones, and more. Plus a step-by-step setup guide to get connected via MQTT and HACS.</p>
-        <span class="pc-link">View guide →</span>
-      </a>
-      <a href="mqtt-builder.html" class="page-card">
-        <div class="pc-icon">🛠</div>
-        <h3>MQTT Payload Builder</h3>
-        <p>Interactive tool for building and testing MQTT payloads for the Allarise Home Assistant integration.</p>
-        <span class="pc-link">Open builder →</span>
-      </a>
-    </div>
-
-    <div class="privacy-strip">
-      <span class="ps-icon">✅</span>
-      <div class="ps-body">
-        <strong>Nothing collected unless you say so.</strong> Allarise is built local-first. Your alarms and settings never leave your device. The app communicates with Apple's native services such as WeatherKit and the App Store, and with your own self-hosted Home Assistant MQTT broker if you enable integration. Anonymous usage data, crash reports and product-update notifications are <strong>optional, off by default</strong>, and switchable off at any time in Settings &mdash; decline them and the app sends us nothing at all.<br><br>
-        If you choose to contact support, you may optionally share a debug log directly from the app. Logs are generated locally, are not encrypted, and can be fully reviewed by you before sending.
-        <a href="privacy.html">Read the full privacy policy →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Footer -->
-<footer>
-  <div class="footer-links">
-    <a href="https://discord.gg/wUxJKAD4dP"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="18" height="18" style="vertical-align:-3px;margin-right:5px;fill:currentColor"><path d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"/></svg>Discord</a>
-    <a href="mailto:support@domoretech.net">✉️ support@domoretech.net</a>
-    <a href="privacy.html">Privacy Policy</a>
-    <a href="terms.html">Terms of Use</a>
-  </div>
-  <div>© 2026 Allarise</div>
-</footer>
-
-
 </body>
 </html>
