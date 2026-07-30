@@ -259,6 +259,9 @@
   .nav-submenu-box a { display: block; padding: 9px 16px; font-size: 14px; white-space: nowrap; color: var(--text2); }
   .nav-submenu-box a:hover { background: var(--surface2); color: var(--text); text-decoration: none; }
   .nav-dd-label { padding: 12px 24px 4px; font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); }
+  /* The HA sub-items read as one group: no dividers between them, one before FAQ. */
+  .nav-dropdown a.nav-dd-sub { padding-left: 38px; border-bottom: none; }
+  .nav-dropdown a.nav-dd-sub + a:not(.nav-dd-sub) { border-top: 1px solid var(--border); }
 
   /* Device Settings page: shared topic strip inside each command card. */
   .dev-topic { display: block; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-family: var(--mono); font-size: 11.5px; color: var(--green); margin-bottom: 10px; overflow: auto; white-space: nowrap; }
@@ -286,9 +289,9 @@
 <div class="nav-dropdown" id="nav-dropdown">
   <a href="index.html#home">Home</a>
   <div class="nav-dd-label">Home Assistant</div>
-  <a href="index.html#home-assistant" style="padding-left:38px">Setup guide</a>
-  <a href="index.html#ha-reference" style="padding-left:38px">Entity reference</a>
-  <a href="mqtt-builder.html" class="nav-active" style="padding-left:38px">MQTT Builder</a>
+  <a href="index.html#home-assistant" class="nav-dd-sub">Setup guide</a>
+  <a href="index.html#ha-reference" class="nav-dd-sub">Entity reference</a>
+  <a href="mqtt-builder.html" class="nav-active nav-dd-sub">MQTT Builder</a>
   <a href="index.html#faq">FAQ</a>
 </div>
 
