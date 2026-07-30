@@ -349,6 +349,20 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .nav-submenu-box a { display: block; padding: 9px 16px; font-size: 14px; white-space: nowrap; color: var(--text-secondary); }
 .nav-submenu-box a:hover { background: var(--surface); color: var(--text); text-decoration: none; }
 .nav-dd-label { padding: 12px 24px 4px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-tertiary); }
+/* Mobile-only floating install CTA pinned above the home-indicator area. */
+.install-beta-fab { display: none; }
+@media (max-width: 700px) {
+  .install-beta-fab {
+    display: block; position: fixed; left: 50%; transform: translateX(-50%);
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    z-index: 500; background: var(--accent); color: #fff !important;
+    border: 1px solid var(--accent); border-radius: 999px;
+    padding: 12px 28px; font-weight: 700; font-size: 15px; white-space: nowrap;
+    text-decoration: none !important;
+    box-shadow: 0 6px 18px -6px rgba(26,27,51,.45);
+  }
+  .install-beta-fab:active { background: var(--accent-2); border-color: var(--accent-2); }
+}
 /* Mobile showcase: pre-expand every row so the user scrolls the content
    itself. The scroll-driven one-row-at-a-time reveal is a desktop
    (sticky-stage) behaviour; on phones it left most of the list collapsed. */
@@ -383,6 +397,8 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 
 <div style="background: var(--bg); min-height: 100vh; overflow-x: clip; font-family: var(--font-sans);">
 
+  <a class="install-beta-fab" href="https://testflight.apple.com/join/DYTMR1v2">Install Beta</a>
+
   <div style="position: sticky; top: 0; z-index: 200;">
     <!-- Hand-rolled nav (same .site-nav classes as the DS component): the DS
          SiteNav has no submenu support, and the HA pages nest under one item. -->
@@ -391,7 +407,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <img class="icon-light" src="app-icon.png" alt="" />
         <span>Allarise</span>
       </a>
-      <a href="#home" data-navkey="home">About</a>
+      <a href="#home" data-navkey="home">Home</a>
       <div class="nav-ha-group">
         <a href="#home-assistant" data-navkey="ha">Home Assistant <span style="font-size: 9px; opacity: .7;">&#9660;</span></a>
         <div class="nav-submenu"><div class="nav-submenu-box">
@@ -403,7 +419,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
       <a href="#faq" data-navkey="faq">FAQ</a>
       <button type="button" class="nav-menu-btn" aria-label="Menu">&#9776;</button>
       <div class="nav-dropdown">
-        <a href="#home">About</a>
+        <a href="#home">Home</a>
         <div class="nav-dd-label">Home Assistant</div>
         <a href="#home-assistant" style="padding-left: 38px;">Setup guide</a>
         <a href="#ha-reference" style="padding-left: 38px;">Entity reference</a>
