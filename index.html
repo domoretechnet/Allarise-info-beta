@@ -699,12 +699,19 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
       <div id="ref-state" data-reveal style="margin-top: 8px;">
         <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 12px;">What Allarise publishes</h2>
         <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
-        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Everything the app reports into Home Assistant: one dashboard device for the phone, plus a device per alarm.</p>
-        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 6px;">Dashboard sensors</h3>
-        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">These sensors appear on the main Allarise dashboard device in Home Assistant.</p>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Everything the app reports into Home Assistant: one dashboard device for the phone, plus a device per alarm. The subsections below match the sections Home Assistant shows on the dashboard device's page.</p>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 6px;">Controls</h3>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">The switches, selects, sliders and the alert media player - everything Home Assistant lists under Controls on the device page.</p>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ controlRows }}" variant="rules" hint-size="100%,480px"></x-import>
+        <div style="margin-top: 20px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,110px"><strong>App Persistence gates remote control.</strong> With persistence off — or Dynamic while the app is asleep — MQTT commands wait until the app is next awake, radio-station alarms fall back to their tone, and the persistence switch itself reads unavailable. Alarms always fire either way; persistence only decides what the app can do around them.</x-import>
+        </div>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Sensors</h3>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Everything under Sensors on the dashboard device page, App Online included.</p>
         <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ dashSensorRows }}" variant="rules" hint-size="100%,600px"></x-import>
-        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Binary sensor</h3>
-        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ binaryRows }}" variant="rules" hint-size="100%,80px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Buttons</h3>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Home Assistant groups these under the device page's Configuration heading - they are all one-press buttons. Dashboard buttons act on the currently active alarm. Per-alarm buttons appear on each alarm's device: Dismiss, Snooze, Skip, Unskip, Kill Snoozed, Delete.</p>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ actionCols }}" rows="{{ buttonRows }}" variant="rules" hint-size="100%,280px"></x-import>
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Per-alarm devices</h3>
         <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">For each alarm you create in the app, a dedicated HA device is created containing Name, Enabled, State, Fire Time, Snooze Fire Time, Days, Mission, Missions, Mission Count, Tap Dismiss Mode, Sound, Snoozes, Volume, Vibrate, Fade In, Notes, Sort Order, Commands, the swipe-gesture commands, Morning Weather, Radio Station, and the dismiss and snooze app links.</p>
         <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ perAlarmRows }}" variant="rules" hint-size="100%,400px"></x-import>
@@ -714,20 +721,8 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
       <div id="ref-control" data-reveal style="margin-top: 64px;">
         <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 12px;">Controlling alarms</h2>
         <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
-        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Act on an alarm from a dashboard, a tablet or an automation - immediate actions first, then the services that change how an alarm is configured.</p>
-        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 6px;">Buttons</h3>
-        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Dashboard buttons are intended to act on the currently active alarm. Per-alarm buttons appear on each alarm's device: Dismiss, Snooze, Skip, Unskip, Kill Snoozed, Delete.</p>
-        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ actionCols }}" rows="{{ buttonRows }}" variant="rules" hint-size="100%,280px"></x-import>
-        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Switches</h3>
-        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ switchRows }}" variant="rules" hint-size="100%,240px"></x-import>
-        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Selects</h3>
-        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ selectRows }}" variant="rules" hint-size="100%,180px"></x-import>
-        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Sliders</h3>
-        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ numberRows }}" variant="rules" hint-size="100%,120px"></x-import>
-        <div style="margin-top: 20px;">
-          <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,110px"><strong>App Persistence gates remote control.</strong> With persistence off — or Dynamic while the app is asleep — MQTT commands wait until the app is next awake, radio-station alarms fall back to their tone, and the persistence switch itself reads unavailable. Alarms always fire either way; persistence only decides what the app can do around them.</x-import>
-        </div>
-        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.dismiss · snooze · skip</h3>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Act on an alarm from an automation or script. For one-tap dashboard actions, use the buttons and controls published above - these are the services behind them, plus the ones that change how an alarm is configured.</p>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 6px;">allarise.dismiss · snooze · skip</h3>
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Dismiss the currently ringing or snoozed alarm, snooze the ringing alarm, or skip the next fire of the next upcoming alarm.</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.dismiss" code="{{ codeDismiss }}" hint-size="100%,120px"></x-import>
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.update_alarm</h3>
@@ -1164,6 +1159,18 @@ const DATA = {
     { k: 'Username', v: 'The MQTT username you created in Step 2a (e.g. allarise)' },
     { k: 'Password', v: 'The password you set in Step 2a' }
   ],
+  controlRows: [
+    { k: 'Alert Loop Media', v: 'Toggle media looping for HA alert alarms' },
+    { k: 'Alert Media', v: 'The media player behind HA alert alarms - shows up with a volume slider attached, which sets the alert volume (media_player.volume_set). The Alert Volume sensor reports the level. Full details under Alerts on the phone.' },
+    { k: 'Alert Vibrate', v: 'Toggle vibration for HA alert alarms' },
+    { k: 'App Persistence', v: 'Background keep-alive on/off. Stays unavailable until the app reports its state - and once the app has fully suspended, nothing can switch it back on remotely.' },
+    { k: 'App Persistence Mode', v: 'on / off / dynamic - the mode you chose in the app. Dynamic keeps the app awake only while charging or near an alarm; the App Persistence switch reports the resulting live state.' },
+    { k: '{Zone} Armed', v: 'One switch per arm zone configured in the integration. HA is the source of truth - always available, retained, and shared by every phone that uses the zone.' },
+    { k: 'Audio: Radio Station', v: 'Pick a favourited station to start the radio, none to stop. Options are the stations favourited on the phone.' },
+    { k: 'Audio: Sleep Sound', v: 'Pick a sleep sound to start it, none to stop. Options come from the sound list the app publishes.' },
+    { k: 'Sleep Volume', v: 'Sleep sound volume, 0-100 slider. While the radio is playing it adjusts the radio instead.' },
+    { k: 'System Volume', v: "The device's hardware media volume, 0-100 slider." }
+  ],
   dashSensorRows: [
     { k: 'Alarm State', v: 'idle / ringing / snoozed / dismissed' },
     { k: 'Alarm Name', v: 'Name of the currently ringing or next upcoming alarm' },
@@ -1179,9 +1186,10 @@ const DATA = {
     { k: 'Snoozes Remaining', v: 'Snoozes left before alarm is force-dismissed' },
     { k: 'Alarm Count', v: 'Number of active (enabled) alarms' },
     { k: 'App Version', v: 'Allarise app version string' },
+    { k: 'App Online', v: 'Connected when the iOS app is reachable over the broker. (A binary sensor - Home Assistant lists it here in the Sensors section.)' },
     { k: 'Broker Connection', v: 'MQTT connection state reported by the app' },
     { k: 'App Persistence', v: 'Whether the app is resident in the background right now - on / off. Under Dynamic mode this flips on its own as the app wakes and sleeps.' },
-    { k: 'Alert Volume', v: 'Volume used for HA-triggered alert alarms (%)' },
+    { k: 'Alert Volume', v: 'Volume used for HA-triggered alert alarms (%) - the level set on the Alert Media player’s volume slider' },
     { k: 'Alert Sound', v: 'Default sound for HA alert alarms' },
     { k: 'Alert Vibrate', v: 'Whether HA alert alarms vibrate' },
     { k: 'Alert Loop Media', v: 'Whether media audio loops during HA alerts' },
@@ -1199,10 +1207,8 @@ const DATA = {
     { k: 'Last Command Fired', v: 'Name of the custom command most recently fired from the app' },
     { k: '(one per custom command)', v: 'Every custom command you create also gets its own fired / idle status sensor, named after the command' }
   ],
-  binaryRows: [
-    { k: 'App Online', v: 'on when the iOS app is connected to the broker' }
-  ],
   perAlarmRows: [
+    { k: 'Enabled', v: 'A switch - enable or disable that alarm from HA.' },
     { k: 'Fire Time / Snooze Fire Time', v: 'Timestamp sensors. Point a Time trigger at these with an offset to run something before an alarm. Each carries a minutes_until attribute.' },
     { k: 'Fire Time (Display) / Snooze Fire Time (Display)', v: "The same times as the app's own short-format text, for dashboards and notification templates." },
     { k: 'Mission', v: 'The first mission only. Kept unchanged so existing dashboards keep working.' },
@@ -1227,22 +1233,6 @@ const DATA = {
     { k: 'Dismiss / Delete Quick Alarm', v: 'End a ringing Quick Alarm, or remove a pending one' },
     { k: 'Audio: Sleep Sound Stop / Pause / Resume', v: 'Control sleep sounds playback' },
     { k: 'Audio: Radio Stop / Pause / Resume', v: 'Transport controls for the internet radio player' }
-  ],
-  switchRows: [
-    { k: '{Zone} Armed', v: 'One switch per arm zone configured in the integration. HA is the source of truth - always available, retained, and shared by every phone that uses the zone.' },
-    { k: 'Alarm N - Enabled', v: 'Enable or disable a specific alarm' },
-    { k: 'App Persistence', v: 'Background keep-alive on/off. Stays unavailable until the app reports its state - and once the app has fully suspended, nothing can switch it back on remotely.' },
-    { k: 'Alert Vibrate', v: 'Toggle vibration for HA alert alarms' },
-    { k: 'Alert Loop Media', v: 'Toggle media looping for HA alert alarms' }
-  ],
-  selectRows: [
-    { k: 'App Persistence Mode', v: 'on / off / dynamic - the mode you chose in the app. Dynamic keeps the app awake only while charging or near an alarm; the App Persistence switch reports the resulting live state.' },
-    { k: 'Audio: Sleep Sound', v: 'Pick a sleep sound to start it, none to stop. Options come from the sound list the app publishes.' },
-    { k: 'Audio: Radio Station', v: 'Pick a favourited station to start the radio, none to stop. Options are the stations favourited on the phone.' }
-  ],
-  numberRows: [
-    { k: 'Sleep Volume', v: 'Sleep sound volume, 0-100 slider. While the radio is playing it adjusts the radio instead.' },
-    { k: 'System Volume', v: "The device's hardware media volume, 0-100 slider." }
   ],
   sleepButtonRows: [
     { k: 'Sleep Sound Stop', v: 'Fully stop playback and release the audio session' },
