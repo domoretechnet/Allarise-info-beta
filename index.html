@@ -6,6 +6,17 @@
 <title>[BETA] Allarise — Smart alarms for Home Assistant</title>
 <link rel="icon" type="image/png" href="app-icon.png">
 <link rel="apple-touch-icon" href="app-icon.png">
+<script>
+// The site is a hash-routed SPA, so tapping a hamburger link never reloads
+// the page and the SiteNav component's menu stayed open over the new page.
+// Close it through the component's own state by clicking its toggle.
+document.addEventListener('click', function (e) {
+  var a = e.target && e.target.closest ? e.target.closest('.nav-dropdown.open a') : null;
+  if (!a) return;
+  var btn = document.querySelector('.nav-menu-btn');
+  if (btn) btn.click();
+}, true);
+</script>
 <script src="./support.js?v=20260730a"></script>
 </head>
 <body>

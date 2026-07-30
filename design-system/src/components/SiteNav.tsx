@@ -75,6 +75,7 @@ export function SiteNav({
             key={l.href}
             href={l.href}
             className={l.active ? 'nav-active' : undefined}
+            onClick={() => setOpen(false)}
           >
             {l.label}
           </a>
