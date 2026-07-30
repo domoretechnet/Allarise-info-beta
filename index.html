@@ -7,15 +7,29 @@
 <link rel="icon" type="image/png" href="app-icon.png">
 <link rel="apple-touch-icon" href="app-icon.png">
 <script>
-// The site is a hash-routed SPA, so tapping a hamburger link never reloads
-// the page and the SiteNav component's menu stayed open over the new page.
-// Close it through the component's own state by clicking its toggle.
+// Plain-DOM nav behaviour (the nav is hand-rolled, not the React SiteNav):
+// hamburger toggles the mobile dropdown, choosing a link closes it, and the
+// active top-level item follows the hash since the SPA never reloads.
 document.addEventListener('click', function (e) {
-  var a = e.target && e.target.closest ? e.target.closest('.nav-dropdown.open a') : null;
-  if (!a) return;
-  var btn = document.querySelector('.nav-menu-btn');
-  if (btn) btn.click();
+  var closest = function (sel) { return e.target && e.target.closest ? e.target.closest(sel) : null; };
+  var dd = document.querySelector('.nav-dropdown');
+  if (closest('.nav-menu-btn')) { if (dd) dd.classList.toggle('open'); return; }
+  if (closest('.nav-dropdown.open a') && dd) dd.classList.remove('open');
 }, true);
+function syncNavActive() {
+  var h = window.location.hash || '#home';
+  var key = 'home';
+  if (h.indexOf('#home-assistant') === 0 || h.indexOf('#step-') === 0 ||
+      h.indexOf('#ha-reference') === 0 || h.indexOf('#ref-') === 0) key = 'ha';
+  else if (h.indexOf('#faq') === 0) key = 'faq';
+  else if (h.indexOf('#privacy') === 0) key = '';
+  var links = document.querySelectorAll('[data-navkey]');
+  for (var i = 0; i < links.length; i++) {
+    links[i].classList.toggle('nav-active', links[i].getAttribute('data-navkey') === key);
+  }
+}
+window.addEventListener('hashchange', syncNavActive);
+document.addEventListener('DOMContentLoaded', syncNavActive);
 </script>
 <script src="./support.js?v=20260730a"></script>
 </head>
@@ -322,7 +336,19 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
    Re-show links that live in the dropdown. */
 @media (max-width: 600px) {
   .site-nav .nav-dropdown a { display: block !important; }
+  .nav-ha-group { display: none !important; }
 }
+/* Desktop submenu nesting the HA pages under one nav item. The outer layer
+   carries only the hover bridge so the pointer can travel from the link to
+   the box without the menu closing. */
+.nav-ha-group { position: relative; display: flex; align-items: center; }
+.nav-ha-group > a { display: flex; align-items: center; gap: 5px; }
+.nav-submenu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 10px; z-index: 300; }
+.nav-ha-group:hover .nav-submenu, .nav-ha-group:focus-within .nav-submenu { display: block; }
+.nav-submenu-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5); padding: 6px 0; min-width: 185px; }
+.nav-submenu-box a { display: block; padding: 9px 16px; font-size: 14px; white-space: nowrap; color: var(--text-secondary); }
+.nav-submenu-box a:hover { background: var(--surface); color: var(--text); text-decoration: none; }
+.nav-dd-label { padding: 12px 24px 4px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-tertiary); }
 /* Mobile showcase: pre-expand every row so the user scrolls the content
    itself. The scroll-driven one-row-at-a-time reveal is a desktop
    (sticky-stage) behaviour; on phones it left most of the list collapsed. */
@@ -358,7 +384,33 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 <div style="background: var(--bg); min-height: 100vh; overflow-x: clip; font-family: var(--font-sans);">
 
   <div style="position: sticky; top: 0; z-index: 200;">
-    <x-import component-from-global-scope="Allarise.SiteNav" brand="Allarise" icon-light="app-icon.png" home-href="#home" links="{{ navLinks }}" hint-size="100%,52px"></x-import>
+    <!-- Hand-rolled nav (same .site-nav classes as the DS component): the DS
+         SiteNav has no submenu support, and the HA pages nest under one item. -->
+    <nav class="site-nav">
+      <a class="nav-home" href="#home">
+        <img class="icon-light" src="app-icon.png" alt="" />
+        <span>Allarise</span>
+      </a>
+      <a href="#home" data-navkey="home">About</a>
+      <div class="nav-ha-group">
+        <a href="#home-assistant" data-navkey="ha">Home Assistant <span style="font-size: 9px; opacity: .7;">&#9660;</span></a>
+        <div class="nav-submenu"><div class="nav-submenu-box">
+          <a href="#home-assistant">Setup guide</a>
+          <a href="#ha-reference">Entity reference</a>
+          <a href="mqtt-builder.html">MQTT Builder</a>
+        </div></div>
+      </div>
+      <a href="#faq" data-navkey="faq">FAQ</a>
+      <button type="button" class="nav-menu-btn" aria-label="Menu">&#9776;</button>
+      <div class="nav-dropdown">
+        <a href="#home">About</a>
+        <div class="nav-dd-label">Home Assistant</div>
+        <a href="#home-assistant" style="padding-left: 38px;">Setup guide</a>
+        <a href="#ha-reference" style="padding-left: 38px;">Entity reference</a>
+        <a href="mqtt-builder.html" style="padding-left: 38px;">MQTT Builder</a>
+        <a href="#faq">FAQ</a>
+      </div>
+    </nav>
   </div>
 
   <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
@@ -496,13 +548,6 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <h1 style="font-family: var(--font-display); font-size: clamp(38px, 4.6vw, 60px); font-weight: 800; letter-spacing: -0.035em; line-height: .98; margin: 18px 0 0; color: var(--text);">Connect Allarise to Home Assistant.</h1>
         </div>
       </div>
-      <div style="max-width: 1120px; margin: 0 auto; padding: 0 24px 26px;">
-      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 22px;">
-        <a href="#home-assistant" style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; text-decoration: none;">Setup guide</a>
-        <a href="#ha-reference" style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; text-decoration: none;">Entity reference</a>
-        <a href="https://beta.allarise.app/mqtt-builder.html" style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; text-decoration: none;">MQTT builder</a>
-      </div>
-      </div>
     </section>
 
 
@@ -612,11 +657,6 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary);">Home Assistant · Reference</div>
         <h1 style="font-family: var(--font-display); font-size: clamp(38px, 4.6vw, 60px); font-weight: 800; letter-spacing: -0.035em; line-height: .98; margin: 18px 0 12px; color: var(--text);">Every entity, service and topic.</h1>
         <p style="font-size: 16px; line-height: 1.65; color: var(--text-secondary); margin: 0; max-width: 62ch; text-wrap: pretty;">What the integration exposes once it is connected. If you have not set it up yet, start with the <a href="#home-assistant">setup guide</a>.</p>
-      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 22px;">
-        <a href="#home-assistant" style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; text-decoration: none;">Setup guide</a>
-        <a href="#ha-reference" style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; text-decoration: none;">Entity reference</a>
-        <a href="https://beta.allarise.app/mqtt-builder.html" style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; text-decoration: none;">MQTT builder</a>
-      </div>
       </div>
     </section>
 
@@ -838,7 +878,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
       <div style="margin-top: 56px;">
         <x-import component-from-global-scope="Allarise.ContactBox" title="Still have a question?" hint-size="100%,150px">
           <p style="margin: 0 0 12px; color: var(--text-secondary);">Reach out and we'll be happy to help.</p>
-          <a href="mailto:support@allarise.app">support@allarise.app</a>
+          <a href="{{ supportMailto }}">{{ supportEmail }}</a>
         </x-import>
       </div>
 
@@ -865,7 +905,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 
       <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">1. Who We Are</h2>
       <p style="margin: 0 0 14px;">Allarise ("the app") is developed and published by <strong>DoMore Tech LLC</strong>, a Michigan limited liability company ("we", "us", "our"). DoMore Tech LLC is the data controller for the limited information described in this policy. This policy describes how the app handles your information when you use it on your iPhone or iPad.</p>
-      <p style="margin: 0;">If you have questions, contact us at <a href="mailto:support@allarise.app">support@allarise.app</a>.</p>
+      <p style="margin: 0;">If you have questions, contact us at <a href="{{ supportMailto }}">{{ supportEmail }}</a>.</p>
 
       <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">2. Data We Collect &amp; Why</h2>
 
@@ -934,10 +974,10 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <li><strong>Usage &amp; crash data</strong> (only if you opted in) — held by Google on our behalf under Firebase's retention settings; crash reports are retained for approximately 90 days and analytics events for no more than 14 months. Turning it off stops collection and instructs the provider to delete what was already gathered for your device.</li>
         <li><strong>Push token</strong> (only if you opted in) — turning <strong>Product Updates</strong> off unsubscribes the device and deletes the token.</li>
       </ul>
-      <p style="margin: 0;">If you never opted in to either, we hold nothing about you at all and there is nothing for us to delete. If you did and want it removed after the fact — including after deleting the app — email <a href="mailto:support@allarise.app">support@allarise.app</a> and we will action it; because the data is not tied to your identity, it helps if you can tell us roughly when and on what device you used the app.</p>
+      <p style="margin: 0;">If you never opted in to either, we hold nothing about you at all and there is nothing for us to delete. If you did and want it removed after the fact — including after deleting the app — email <a href="{{ supportMailto }}">{{ supportEmail }}</a> and we will action it; because the data is not tied to your identity, it helps if you can tell us roughly when and on what device you used the app.</p>
 
       <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">7. Children's Privacy</h2>
-      <p style="margin: 0;">Allarise is not directed at children under the age of 13, and we do not knowingly collect personal information from children. The app does not require an account, age verification, or any personal details to function. The optional usage data described in §2.3 is not used to build a profile of any user, child or adult, and is never used for advertising. If you believe a child has enabled the optional data settings and you want the associated data removed, contact us at <a href="mailto:support@allarise.app">support@allarise.app</a>.</p>
+      <p style="margin: 0;">Allarise is not directed at children under the age of 13, and we do not knowingly collect personal information from children. The app does not require an account, age verification, or any personal details to function. The optional usage data described in §2.3 is not used to build a profile of any user, child or adult, and is never used for advertising. If you believe a child has enabled the optional data settings and you want the associated data removed, contact us at <a href="{{ supportMailto }}">{{ supportEmail }}</a>.</p>
 
       <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">8. Changes to This Policy</h2>
       <p style="margin: 0;">If we make material changes to this privacy policy, we will update the "Last updated" date at the top of this page and note the changes in the App Store release notes. Continued use of the app after changes constitutes acceptance of the updated policy.</p>
@@ -959,7 +999,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <p style="margin: 0 0 12px; color: var(--text-secondary);">Questions about this policy or how your data is handled?</p>
           <p style="margin: 0 0 4px; color: var(--text);"><strong>DoMore Tech LLC</strong></p>
           <p style="margin: 0 0 8px; color: var(--text-secondary);">A Michigan limited liability company</p>
-          <a href="mailto:support@allarise.app">support@allarise.app</a>
+          <a href="{{ supportMailto }}">{{ supportEmail }}</a>
         </x-import>
       </div>
 
@@ -1004,6 +1044,10 @@ const SHOW = [
   ] }
 ];
 
+// Concatenated so Cloudflare email obfuscation never rewrites it into
+// an '[email protected]' placeholder the SPA re-render can't decode.
+const SUPPORT_EMAIL = 'support' + '@' + 'domoretech.net';
+
 const PAGE_BY_HASH = {
   '#home': 'home', '': 'home', '#': 'home',
   '#home-assistant': 'ha',
@@ -1045,6 +1089,8 @@ const sensorCols = [{ key: 'k', header: 'Entity' }, { key: 'v', header: 'Descrip
 const actionCols = [{ key: 'k', header: 'Button' }, { key: 'v', header: 'Action' }];
 
 const DATA = {
+  supportEmail: SUPPORT_EMAIL,
+  supportMailto: 'mailto:' + SUPPORT_EMAIL,
   kvCols: kvCols,
   sensorCols: sensorCols,
   actionCols: actionCols,
@@ -1404,7 +1450,7 @@ class Component extends DCLogic {
       navLinks: NAV.map((l) => ({ label: l.label, href: l.href, active: l.key === page || (l.also || []).indexOf(page) >= 0 })),
       footerLinks: [
         { label: 'Discord', href: 'https://discord.gg/wUxJKAD4dP' },
-        { label: 'support@allarise.app', href: 'mailto:support@allarise.app' },
+        { label: SUPPORT_EMAIL, href: 'mailto:' + SUPPORT_EMAIL },
         { label: 'Privacy Policy', href: '#privacy' },
         { label: 'Terms of Use', href: 'https://beta.allarise.app/terms.html' }
       ],
