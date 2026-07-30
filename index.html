@@ -310,6 +310,15 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 @media (max-width: 600px) {
   .site-nav .nav-dropdown a { display: block !important; }
 }
+/* Mobile showcase: pre-expand every row so the user scrolls the content
+   itself. The scroll-driven one-row-at-a-time reveal is a desktop
+   (sticky-stage) behaviour; on phones it left most of the list collapsed. */
+@media (max-width: 700px) {
+  [data-showrow] { opacity: 1 !important; color: var(--text) !important; border-left-color: var(--accent) !important; background: var(--bg) !important; padding: 14px 18px 16px !important; }
+  [data-showrow] > span:nth-of-type(2) { max-height: none !important; opacity: 1 !important; margin-top: 8px !important; }
+  [data-mq=inlinestage] { display: block !important; max-height: none !important; opacity: 1 !important; margin-top: 10px !important; }
+  [data-mq=inlinecta]:not([href="#"]) { display: flex !important; }
+}
 .ar-marquee:hover, [data-mq=marqwrap]:hover .ar-marquee { animation-play-state: paused !important; }
 .ar-marquee img { transition: transform .2s ease, border-color .2s ease; }
 .ar-marquee img:hover { transform: translateY(-4px); border-color: var(--text-tertiary); }
