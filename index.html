@@ -719,6 +719,23 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         </div>
       </div>
 
+      <div id="ref-offline" data-reveal style="margin-top: 64px;">
+        <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 12px;">Offline behavior</h2>
+        <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">With App Persistence set to Dynamic — the default — the phone's app is asleep for most of the day, so "offline" is the normal state between alarms rather than a fault. Home Assistant is built for that.</p>
+        <ul style="margin: 0 0 18px; padding-left: 20px; color: var(--text-secondary); line-height: 1.65;">
+          <li><strong>State sensors keep their last-known values.</strong> Alarm names, fire times, days, sounds, missions, enabled state and the dashboard sensors keep reporting what the phone last published instead of flipping to unavailable. A sensor that has never received a value stays unavailable — nothing is invented.</li>
+          <li><strong>App Online is the liveness signal.</strong> Trigger on the App Online binary sensor when an automation needs to know whether the phone can be reached right now.</li>
+          <li><strong>Actions go unavailable while the app is offline.</strong> Buttons, switches (including per-alarm Enabled and App Persistence), selects, numbers, the notify entity and the alert media player all need a phone that can hear the command, so they gate on liveness and return when it reconnects.</li>
+          <li><strong>A Home Assistant restart does not lose your alarms.</strong> Alarm devices and their data are rebuilt from retained MQTT, so restarting at 2pm still shows every alarm rather than blank entities until the phone next wakes.</li>
+          <li><strong>Reconnecting refreshes everything</strong> — states catch up within about a second of the app coming back.</li>
+        </ul>
+        <div style="margin-top: 20px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,110px"><strong>Never trigger on a sensor going unavailable.</strong> Because state sensors hold their values, "unavailable" no longer means the phone is asleep — an automation written that way will simply stop firing. Use the App Online binary sensor instead, as a trigger or as a condition in front of any action entity.</x-import>
+        </div>
+        </div>
+      </div>
+
       <div id="ref-control" data-reveal style="margin-top: 64px;">
         <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 12px;">Controlling alarms</h2>
         <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
@@ -1136,6 +1153,7 @@ const DATA = {
   tocRef: [
     { title: 'Reference', entries: [
       { label: 'What Allarise publishes', href: '#ref-state' },
+      { label: 'Offline behavior', href: '#ref-offline' },
       { label: 'Controlling alarms', href: '#ref-control' },
       { label: 'Alerts on the phone', href: '#ref-alerts' },
       { label: 'Sleep sounds & radio', href: '#ref-sleep' },
