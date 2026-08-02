@@ -271,6 +271,11 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   6%, 92% { opacity: 1; }
   98.5%, 100% { opacity: 0; }
 }
+@keyframes ar-dots-cycle {
+  0%, 8% { opacity: 0; }
+  14%, 50% { opacity: 1; }
+  55%, 100% { opacity: 0; }
+}
 @keyframes ar-wash-hold {
   0%, 16.3% { opacity: 0; }
   22% { opacity: .12; }
@@ -453,6 +458,14 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .ar-intro .ar-post { transition: opacity .9s ease, transform 1s cubic-bezier(.2,.7,.3,1); }
 .ar-intro #hero-lamp:not(.r2):not(.r3) .ar-post { opacity: 0 !important; transform: translateY(18px); }
 .ar-intro #hero-lamp:not(.r2):not(.r3) .ar-dots span { opacity: 0 !important; animation-play-state: paused !important; }
+/* The rising dots read as "alarm firing -> signal -> lamp", so they belong to
+   the ring/light part of the cycle only. Envelope the whole group's opacity on
+   the shared 19s clock (phase-locked via .r1): fade in as the ring appears, hold
+   through the light ramp, then fade out as the dismissed frame lands (~55%) and
+   stay gone through the idle/dismissed phase. The per-dot 3.4s pulse still plays
+   inside this window. */
+.ar-intro #hero-lamp .ar-dots { animation: ar-dots-cycle 19s linear infinite; }
+.ar-intro #hero-lamp:not(.r1) .ar-dots { animation-play-state: paused; }
 .ar-intro #hero-lamp:not(.r3) .ar-wash { opacity: 0 !important; animation-play-state: paused !important; }
 /* The phone showcase shares the lamp scene's 19s clock (ring at ~3s, dismiss at
    ~6s) but lives in the right column, outside #hero-lamp, so nothing gated it on
@@ -515,7 +528,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <div class="ar-post" style="position: absolute; left: 34px; top: 24px; width: 194px; height: 136px; opacity: .3; filter: blur(7px); clip-path: polygon(16.5% 0, 67% 0, 100% 100%, 0 100%); background: linear-gradient(172deg, rgba(226,196,148,.85) 0%, rgba(216,184,134,.7) 46%, rgba(202,172,126,.58) 100%); mix-blend-mode: multiply;"></div>
           <img class="ar-post" src="lamp-photo.png" alt="" style="display: block; position: relative; width: 262px; height: 682px; opacity: .44; filter: contrast(.96) brightness(1.02) saturate(.3) blur(.4px); -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 90%, rgba(0,0,0,.4) 100%); mask-image: linear-gradient(180deg, #000 0%, #000 90%, rgba(0,0,0,.4) 100%);">
 
-          <div class="ar-dots" style="display: contents;">
+          <div class="ar-dots" style="position: absolute; top: 0; left: 0;">
           <span style="position: absolute; left: 131px; top: 684px; width: 8.4px; height: 8.4px; margin: -4.2px 0 0 -4.2px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(1); animation: ar-dot 3.4s ease-in-out 0s infinite;"></span>
           <span style="position: absolute; left: 131px; top: 652px; width: 8.1px; height: 8.1px; margin: -4.05px 0 0 -4.05px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.94); animation: ar-dot 3.4s ease-in-out 0.13s infinite;"></span>
           <span style="position: absolute; left: 131px; top: 620px; width: 7.7px; height: 7.7px; margin: -3.85px 0 0 -3.85px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.87); animation: ar-dot 3.4s ease-in-out 0.26s infinite;"></span>
