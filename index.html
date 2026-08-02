@@ -1135,7 +1135,7 @@ const NAV = [
 ];
 
 const SHOW = [
-  { title: 'Alarm Engine', desc: 'Alarms that mean business. Allarise plays at the volume you set, independent of your ringer and mute switch - or «hand the only dismiss button to Home Assistant». A dual alarm coordinator pairs every alarm with an AlarmKit backup, so one of them always fires.', img: 'shot-1.png', imgs: ['shot-1.png', 'switch-press.svg', 'phone-3.png'], alt: 'Waiting for Home Assistant to dismiss, a switch press, then the alarm dismissed' },
+  { title: 'Alarm Engine', desc: 'Alarms that mean business. Allarise plays at the volume you set, independent of your ringer and mute switch - or «hand the only dismiss button to Home Assistant». A dual alarm coordinator pairs every alarm with an AlarmKit backup, so one of them always fires.', img: 'shot-1.png', imgs: ['shot-1.png', 'phone-3.png', 'switch-press.svg'], alt: 'Waiting for Home Assistant to dismiss, then the alarm dismissed, with a switch press in the corner' },
   { title: 'Wake-Up Missions', desc: 'Solve math, shake the phone, clear lines in Blocks, hold off the wave in Meteor, or «make Home Assistant dismiss your alarm». Chain up to five missions before the alarm will let go.', video: 'mission-mockup.mp4', alt: 'Wake-up missions demo: Blocks, Meteor and shake' },
   { title: 'Sleep Sounds & Radio', desc: 'Drift off to rain, ocean, white noise - or your favourite radio station. Fade-out, stop-at-next-alarm, and best of all this is «fully controllable from Home Assistant»!', img: 'shot-3.png', alt: 'Fall asleep to the radio or a sleep sound' },
 
@@ -1545,7 +1545,17 @@ class Component extends DCLogic {
           onClick: () => { if (this._show) clearInterval(this._show); this.setState({ slide: i, showLocked: true }); },
           rowStyle: 'display: block; width: 100%; text-align: left; appearance: none; cursor: pointer; font: inherit; user-select: text; -webkit-user-select: text; border: none; border-left: 2px solid ' + (on ? 'var(--accent)' : 'transparent') + '; background: ' + (on ? 'var(--bg)' : 'transparent') + '; color: ' + (on ? 'var(--text)' : 'var(--text-secondary)') + '; padding: ' + (on ? '14px 18px 16px' : '11px 18px') + '; border-radius: 0 8px 8px 0; opacity: ' + (on ? '1' : (i < this.state.slide ? '.34' : '.55')) + '; transition: background .2s ease, padding .2s ease, color .2s ease, opacity .3s ease;',
           descStyle: 'display: block; overflow: hidden; font-size: 15px; line-height: 1.6; color: var(--text-secondary); text-wrap: pretty; max-height: ' + (on ? '140px' : '0px') + '; opacity: ' + (on ? '1' : '0') + '; margin-top: ' + (on ? '8px' : '0') + '; padding-left: 32px; transition: max-height .3s ease, opacity .25s ease, margin-top .3s ease;',
-          frames: (it.imgs || []).map((src, k) => ({ key: 'fr' + k, style: 'position: absolute; inset: 0; background-image: url("' + src + '"); background-size: contain; background-repeat: no-repeat; background-position: center; opacity: ' + (k === (this.state.frame % it.imgs.length) ? '1' : '0') + '; transition: opacity 1.1s ease;' })),
+          frames: (it.imgs || []).map((src, k) => {
+            // The switch is an always-on corner overlay, not a cross-fade frame:
+            // the phone screens (shot-1 -> phone-3) alternate full-bleed underneath
+            // while the little switch presses in the bottom-right corner.
+            if (/switch-press\.svg$/.test(src)) {
+              return { key: 'fr' + k, style: 'position: absolute; right: 5%; bottom: 4%; width: 28%; aspect-ratio: 560 / 640; background-image: url("' + src + '"); background-size: contain; background-repeat: no-repeat; background-position: bottom right; opacity: 1; pointer-events: none; filter: drop-shadow(0 6px 12px rgba(24,18,10,.3));' };
+            }
+            const screens = it.imgs.filter((s) => !/switch-press\.svg$/.test(s));
+            const active = this.state.frame % screens.length;
+            return { key: 'fr' + k, style: 'position: absolute; inset: 0; background-image: url("' + src + '"); background-size: contain; background-repeat: no-repeat; background-position: center; opacity: ' + (screens.indexOf(src) === active ? '1' : '0') + '; transition: opacity 1.1s ease;' };
+          }),
           framesStyle: it.imgs ? 'position: absolute; inset: 0; border-radius: 22px; pointer-events: none; opacity: ' + (on ? '1' : '0') + '; transform: scale(' + (on ? '1' : '.97') + '); transition: opacity .45s ease, transform .45s ease;' : 'display: none;',
           framesInlineStyle: it.imgs ? 'display: block; position: relative; width: 100%; aspect-ratio: 886 / 1920; max-height: 540px;' : 'display: none;',
           videos: (it.video && on) ? [{ key: 'v0', src: it.video }] : [],
