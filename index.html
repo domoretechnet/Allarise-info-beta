@@ -262,18 +262,18 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   30.4% { transform: translate3d(1px,0,0) rotate(.24deg); }
   31.4%, 100% { transform: none; }
 }
-@keyframes ar-fr2 { 0%, 15.8% { opacity: 0; } 17.4%, 94.7% { opacity: 1; } 98.9%, 100% { opacity: 0; } }
-@keyframes ar-fr3 { 0%, 31.6% { opacity: 0; } 33.2%, 94.7% { opacity: 1; } 98.9%, 100% { opacity: 0; } }
+@keyframes ar-fr2 { 0%, 15.8% { opacity: 0; } 17.4%, 92% { opacity: 1; } 98.5%, 100% { opacity: 0; } }
+@keyframes ar-fr3 { 0%, 53% { opacity: 0; } 55%, 92% { opacity: 1; } 98.5%, 100% { opacity: 0; } }
 @keyframes ar-screen-home { 0%, 34% { opacity: 1; } 40%, 100% { opacity: 0; } }
 @keyframes ar-screen-ring { 0%, 34% { opacity: 0; } 40%, 100% { opacity: 1; } }
 @keyframes ar-wash-hold {
   0%, 16.3% { opacity: 0; }
-  19% { opacity: .12; }
-  21.5% { opacity: .3; }
-  24% { opacity: .52; }
-  27% { opacity: .74; }
-  31%, 94.7% { opacity: 1; }
-  98.9%, 100% { opacity: 0; }
+  22% { opacity: .12; }
+  28% { opacity: .34; }
+  34% { opacity: .6; }
+  38% { opacity: .82; }
+  42%, 92% { opacity: 1; }
+  98.5%, 100% { opacity: 0; }
 }
 @keyframes ar-wash {
   0%, 44% { opacity: 0; }
@@ -1604,8 +1604,8 @@ class Component extends DCLogic {
           var phone = document.querySelector('[data-hero-phone]');
           if (phone) phone.classList.add('ar-phone-live'); // phone loop starts now, so it rings after the caption
           lamp.classList.add('r1');                    // app icon shows up
+          lamp.classList.add('r3');                    // start the lamp-light clock now, phase-locked to the phone loop (the light itself still ramps in later via ar-wash-hold's built-in delay)
           setTimeout(function () { lamp.classList.add('r2'); }, 430);  // dot rises, post appears
-          setTimeout(function () { lamp.classList.add('r3'); }, 1180); // light kicks in
           return;
         }
         typed.textContent += full.charAt(i);
