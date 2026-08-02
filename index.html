@@ -264,44 +264,44 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 }
 @keyframes ar-fr2 { 0%, 15.8% { opacity: 0; } 17.4%, 87% { opacity: 1; } 93%, 100% { opacity: 0; } }
 @keyframes ar-fr3 { 0%, 53% { opacity: 0; } 55%, 87% { opacity: 1; } 93%, 100% { opacity: 0; } }
-/* Alarm Engine showcase — one shared 7s timeline. One button press per loop:
-   the finger arrives (~40%), presses (~45%), the status LED turns green and the
-   "Waiting for Home Assistant" screen cross-fades to the dismissed screen
-   (~45-50%), the finger leaves, the dismissed screen + green LED hold, then both
+/* Alarm Engine showcase — one shared 8s timeline. One button press per loop:
+   the finger arrives (~38%), presses (~44%), the status LED blips green (~46-52%),
+   then the "Waiting for Home Assistant" screen cross-fades to the dismissed screen
+   just after (~48-58%), the finger leaves, the dismissed screen holds, then both
    reset together (~90-96%). Screens and switch animate off this same document
    timeline so they stay locked. */
 .ae-seq .ae-wait, .ae-seq .ae-done { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
-.ae-seq .ae-wait { animation: ae-wait 7s ease-in-out infinite; }
-.ae-seq .ae-done { opacity: 0; animation: ae-done 7s ease-in-out infinite; }
+.ae-seq .ae-wait { animation: ae-wait 8s ease-in-out infinite; }
+.ae-seq .ae-done { opacity: 0; animation: ae-done 8s ease-in-out infinite; }
 .ae-switch { position: absolute; right: 11%; bottom: 4%; width: 31%; height: auto; filter: drop-shadow(0 6px 12px rgba(24,18,10,.3)); }
-.ae-switch .upper-paddle { transform-box: fill-box; transform-origin: 50% 100%; animation: ae-paddle 7s cubic-bezier(.22,.68,.25,1) infinite; }
-.ae-switch .finger { transform-box: fill-box; transform-origin: 12% 50%; opacity: 0; animation: ae-finger 7s cubic-bezier(.25,.67,.3,1) infinite; }
-.ae-switch .led-core { opacity: .08; animation: ae-led-core 7s ease-out infinite; }
-.ae-switch .led-glow { transform-box: fill-box; transform-origin: center; opacity: 0; animation: ae-led-glow 7s ease-out infinite; }
-@keyframes ae-wait { 0%, 44% { opacity: 1; } 50%, 90% { opacity: 0; } 96%, 100% { opacity: 1; } }
-@keyframes ae-done { 0%, 44% { opacity: 0; } 50%, 90% { opacity: 1; } 96%, 100% { opacity: 0; } }
+.ae-switch .upper-paddle { transform-box: fill-box; transform-origin: 50% 100%; animation: ae-paddle 8s cubic-bezier(.22,.68,.25,1) infinite; }
+.ae-switch .finger { transform-box: fill-box; transform-origin: 12% 50%; opacity: 0; animation: ae-finger 8s cubic-bezier(.25,.67,.3,1) infinite; }
+.ae-switch .led-core { opacity: .08; animation: ae-led-core 8s ease-out infinite; }
+.ae-switch .led-glow { transform-box: fill-box; transform-origin: center; opacity: 0; animation: ae-led-glow 8s ease-out infinite; }
+@keyframes ae-wait { 0%, 48% { opacity: 1; } 58%, 90% { opacity: 0; } 96%, 100% { opacity: 1; } }
+@keyframes ae-done { 0%, 48% { opacity: 0; } 58%, 90% { opacity: 1; } 96%, 100% { opacity: 0; } }
 @keyframes ae-paddle {
-  0%, 42% { transform: perspective(260px) rotateX(0deg) translateY(0); }
-  45.5% { transform: perspective(260px) rotateX(-2.8deg) translateY(3px); }
-  50%, 100% { transform: perspective(260px) rotateX(0deg) translateY(0); }
+  0%, 40% { transform: perspective(260px) rotateX(0deg) translateY(0); }
+  44% { transform: perspective(260px) rotateX(-2.8deg) translateY(3px); }
+  49%, 100% { transform: perspective(260px) rotateX(0deg) translateY(0); }
 }
 @keyframes ae-finger {
-  0%, 33% { transform: translate(360px, -28px); opacity: 0; }
-  40% { transform: translate(0, 7px); opacity: 1; }
-  45% { transform: translate(1px, 9px); opacity: 1; }
+  0%, 31% { transform: translate(360px, -28px); opacity: 0; }
+  38% { transform: translate(0, 7px); opacity: 1; }
+  44% { transform: translate(1px, 9px); opacity: 1; }
   50% { transform: translate(32px, -1px); opacity: 1; }
   58%, 100% { transform: translate(360px, -28px); opacity: 0; }
 }
 @keyframes ae-led-core {
-  0%, 44% { opacity: .08; }
-  47.5%, 90% { opacity: 1; }
-  93%, 100% { opacity: .08; }
+  0%, 43% { opacity: .08; }
+  46%, 52% { opacity: 1; }
+  58%, 100% { opacity: .08; }
 }
 @keyframes ae-led-glow {
-  0%, 45% { opacity: 0; transform: scale(.5); }
-  49% { opacity: .95; transform: scale(1.2); }
-  54%, 90% { opacity: .58; transform: scale(1); }
-  93%, 100% { opacity: 0; transform: scale(.5); }
+  0%, 44% { opacity: 0; transform: scale(.5); }
+  48% { opacity: .95; transform: scale(1.2); }
+  52% { opacity: .5; transform: scale(1); }
+  57%, 100% { opacity: 0; transform: scale(.5); }
 }
 @media (prefers-reduced-motion: reduce) {
   .ae-seq .ae-wait, .ae-seq .ae-done, .ae-switch .upper-paddle, .ae-switch .finger, .ae-switch .led-core, .ae-switch .led-glow { animation: none; }
@@ -438,8 +438,9 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   box-shadow: 0 -4px 16px -8px rgba(26,27,51,.5); }
 .install-beta-fab:active { background: var(--accent-2); }
 @media (max-width: 700px) {
-  .install-beta-fab.fab-visible { display: block; }
+  .install-beta-fab.fab-visible { display: flex; align-items: center; justify-content: center; gap: 8px; }
 }
+.install-beta-fab .apple-logo { width: 17px; height: 17px; flex: 0 0 auto; fill: currentColor; margin-top: -2px; }
 /* Mobile showcase: pre-expand every row so the user scrolls the content
    itself. The scroll-driven one-row-at-a-time reveal is a desktop
    (sticky-stage) behaviour; on phones it left most of the list collapsed. */
@@ -524,7 +525,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 
 <div style="background: var(--bg); min-height: 100vh; overflow-x: clip; font-family: var(--font-sans);">
 
-  <a class="install-beta-fab" href="https://testflight.apple.com/join/DYTMR1v2">Install Beta Now</a>
+  <a class="install-beta-fab" href="https://testflight.apple.com/join/DYTMR1v2"><svg class="apple-logo" viewBox="0 0 22.773 22.773" aria-hidden="true"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.28.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.332-1.26-3.428-2.8-1.287-1.82-2.323-4.63-2.323-7.28 0-4.28 2.797-6.55 5.552-6.55 1.448 0 2.675.95 3.6.95.865 0 2.222-1.01 3.902-1.01.613 0 2.886.06 4.374 2.19-.13.09-2.383 1.37-2.383 4.19 0 3.26 2.854 4.42 2.955 4.45z"/></svg>Install Beta Now</a>
 
   <div style="position: sticky; top: 0; z-index: 200;">
     <!-- Hand-rolled nav (same .site-nav classes as the DS component): the DS
