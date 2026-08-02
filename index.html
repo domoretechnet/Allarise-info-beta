@@ -266,6 +266,11 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 @keyframes ar-fr3 { 0%, 53% { opacity: 0; } 55%, 92% { opacity: 1; } 98.5%, 100% { opacity: 0; } }
 @keyframes ar-screen-home { 0%, 34% { opacity: 1; } 40%, 100% { opacity: 0; } }
 @keyframes ar-screen-ring { 0%, 34% { opacity: 0; } 40%, 100% { opacity: 1; } }
+@keyframes ar-lamp-cycle {
+  0% { opacity: 0; }
+  6%, 92% { opacity: 1; }
+  98.5%, 100% { opacity: 0; }
+}
 @keyframes ar-wash-hold {
   0%, 16.3% { opacity: 0; }
   22% { opacity: .12; }
@@ -435,8 +440,14 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   background: var(--text); margin-left: 2px; vertical-align: -3px;
   animation: ar-cursor 1s step-end infinite;
 }
-.ar-intro #hero-lamp { opacity: 0; transition: opacity .45s ease; }
-.ar-intro #hero-lamp.r1 { opacity: 1; }
+/* The whole lamp scene (post, app icon, dots, glow) loops as one unit with the
+   phone: fade in at the start of each 19s cycle, hold, fade out at the loop
+   boundary. Paused until .r1 (set at caption completion, same tick as the phone's
+   .ar-phone-live), so it stays phase-locked to the phone loop. The glow's own
+   ramp still plays inside this window; the one-time app-icon/post entrance
+   transitions below still give the first build its scale-in flourish. */
+.ar-intro #hero-lamp { opacity: 0; animation: ar-lamp-cycle 19s linear infinite; animation-play-state: paused; }
+.ar-intro #hero-lamp.r1 { animation-play-state: running; }
 .ar-intro #hero-appicon { transition: opacity .55s ease, transform .55s cubic-bezier(.2,.7,.3,1); }
 .ar-intro #hero-lamp:not(.r1) #hero-appicon { opacity: 0; transform: scale(.82) translateY(8px); }
 .ar-intro .ar-post { transition: opacity .9s ease, transform 1s cubic-bezier(.2,.7,.3,1); }
