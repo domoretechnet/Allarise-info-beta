@@ -264,6 +264,20 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 }
 @keyframes ar-fr2 { 0%, 15.8% { opacity: 0; } 17.4%, 87% { opacity: 1; } 93%, 100% { opacity: 0; } }
 @keyframes ar-fr3 { 0%, 53% { opacity: 0; } 55%, 87% { opacity: 1; } 93%, 100% { opacity: 0; } }
+/* Mission mockup "shake to dismiss" segment: shake the whole phone by animating
+   the .mm-wrap (which owns the rounded-corner clip), via the individual
+   translate/rotate properties so they compose with the desktop wrapper's
+   centering transform. A script toggles .mm-shake based on the video's
+   currentTime so it stays synced with the shake mission. */
+@keyframes mm-shake {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  20% { translate: -2.5px 1px; rotate: -0.7deg; }
+  40% { translate: 2.5px -1px; rotate: 0.7deg; }
+  60% { translate: -2px 1px; rotate: -0.5deg; }
+  80% { translate: 2px -1px; rotate: 0.5deg; }
+}
+.mm-wrap.mm-shake { animation: mm-shake .34s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .mm-wrap.mm-shake { animation: none; } }
 /* Alarm Engine showcase — one shared 8s timeline. One button press per loop:
    the finger arrives (~38%), presses (~44%), the status LED blips green (~46-52%),
    then the "Waiting for Home Assistant" screen cross-fades to the dismissed screen
@@ -666,7 +680,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
                   <span style="font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">{{ item.title }}</span>
                 </span>
                 <span style="{{ item.descStyle }}"><sc-for list="{{ item.parts }}" as="p" hint-placeholder-count="0"><span style="{{ p.style }}">{{ p.t }}</span></sc-for></span>
-                <span data-mq="inlinestage" style="{{ item.inlineStyle }}"><span style="{{ item.imgInlineStyle }}"></span><div class="ae-seq" style="{{ item.aeSeqInlineStyle }}"><img class="ae-wait" src="shot-1.png" alt="Waiting for Home Assistant to dismiss"><img class="ae-done" src="phone-3.png" alt="Alarm dismissed"><svg class="ae-switch" viewBox="0 0 560 640" aria-hidden="true"><g filter="url(#sw-deviceShadow)"><rect x="116" y="30" width="308" height="574" rx="22" fill="url(#sw-plate)" stroke="#c9c6bb" stroke-width="2"/><path d="M137 53H403" stroke="#fff" stroke-opacity=".58" stroke-width="2" stroke-linecap="round"/><g class="upper-paddle"><rect x="151" y="67" width="238" height="166" rx="3" fill="url(#sw-buttonPressed)" stroke="#aaa69b" stroke-width="2" filter="url(#sw-controlInset)"/><path d="M157 75H383" stroke="#fff" stroke-opacity=".72" stroke-width="2"/><g color="#8e8b82" opacity=".74" transform="translate(176 95)"><use href="#sw-bulb" width="34" height="42"/></g></g><g><rect x="151" y="243" width="238" height="217" rx="3" fill="url(#sw-button)" stroke="#aaa69b" stroke-width="2" filter="url(#sw-controlInset)"/><path d="M153 458 388 244M153 245H388V458" fill="none" stroke="#bab6aa" stroke-width="1.5"/><path d="m182 285 9-14 9 14Z" fill="none" stroke="#99968d" stroke-width="2.7" stroke-linejoin="round" opacity=".65"/><path d="m340 415 9 14 9-14Z" fill="none" stroke="#99968d" stroke-width="2.7" stroke-linejoin="round" opacity=".65"/><circle cx="270" cy="351" r="54" fill="url(#sw-dial)" stroke="#aaa69b" stroke-width="2.2" filter="url(#sw-controlInset)"/><path d="M238 321c20-20 52-21 71-3" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.2" stroke-linecap="round"/></g><g><rect x="151" y="470" width="238" height="105" rx="3" fill="url(#sw-button)" stroke="#aaa69b" stroke-width="2" filter="url(#sw-controlInset)"/><g color="#8e8b82" opacity=".68" transform="translate(177 490)"><use href="#sw-bulb" width="24" height="30"/></g></g><circle cx="137" cy="100" r="4.2" fill="#3c4037" opacity=".72"/><circle class="led-glow" cx="137" cy="100" r="13" fill="#b9ff31" filter="url(#sw-ledGlow)"/><circle class="led-core" cx="137" cy="100" r="6.2" fill="url(#sw-ledCore)"/></g><g class="finger" filter="url(#sw-fingerShadow)"><g transform="translate(0 -18)"><path d="M575 196C520 170 469 158 414 154l-124-9c-38-3-69 19-76 51-7 33 16 64 52 71l126 25c67 14 128 46 183 83Z" fill="url(#sw-skin)"/><path d="M575 204C517 181 468 171 414 168l-120-8c-27-2-49 10-59 31 8-29 36-47 70-44l110 8c55 4 106 16 160 41Z" fill="#efc6a7" opacity=".2"/><path d="M258 165c9-4 27-4 36 1 7 4 10 10 8 17-2 8-10 13-20 15-12 2-24 0-30-6-5-5-5-11-2-17 2-4 4-7 8-10Z" fill="url(#sw-nail)" opacity=".68"/><path d="M257 174c8-7 26-9 37-3" fill="none" stroke="#f1d4c2" stroke-width="2.4" stroke-linecap="round" opacity=".5"/><path d="M287 256c55 9 120 22 181 45" fill="none" stroke="#704c3a" stroke-width="2" stroke-linecap="round" opacity=".18"/></g></g></svg></div><span style="{{ item.framesInlineStyle }}"><sc-for list="{{ item.frames }}" as="fr" hint-placeholder-count="0"><span style="{{ fr.style }}"></span></sc-for></span><sc-for list="{{ item.inlineVideos }}" as="v" hint-placeholder-count="0"><video src="{{ v.src }}" muted="muted" autoplay="autoplay" loop="loop" playsinline="playsinline" aria-label="{{ item.alt }}" style="{{ item.videoInlineStyle }}"></video></sc-for><sc-for list="{{ item.tiles }}" as="t" hint-placeholder-count="0"><span style="display: flex; gap: 8px; padding: 5px 0; min-width: 0;"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: 0 0 auto; margin-top: 3px;" aria-hidden="true"><path d="{{ t.icon }}"></path></svg><span style="display: block; min-width: 0;"><span style="display: block; font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: -0.01em; color: var(--text);">{{ t.name }}</span><span style="display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--text-secondary); text-wrap: pretty;">{{ t.desc }}</span></span></span></sc-for></span>
+                <span data-mq="inlinestage" style="{{ item.inlineStyle }}"><span style="{{ item.imgInlineStyle }}"></span><div class="ae-seq" style="{{ item.aeSeqInlineStyle }}"><img class="ae-wait" src="shot-1.png" alt="Waiting for Home Assistant to dismiss"><img class="ae-done" src="phone-3.png" alt="Alarm dismissed"><svg class="ae-switch" viewBox="0 0 560 640" aria-hidden="true"><g filter="url(#sw-deviceShadow)"><rect x="116" y="30" width="308" height="574" rx="22" fill="url(#sw-plate)" stroke="#c9c6bb" stroke-width="2"/><path d="M137 53H403" stroke="#fff" stroke-opacity=".58" stroke-width="2" stroke-linecap="round"/><g class="upper-paddle"><rect x="151" y="67" width="238" height="166" rx="3" fill="url(#sw-buttonPressed)" stroke="#aaa69b" stroke-width="2" filter="url(#sw-controlInset)"/><path d="M157 75H383" stroke="#fff" stroke-opacity=".72" stroke-width="2"/><g color="#8e8b82" opacity=".74" transform="translate(176 95)"><use href="#sw-bulb" width="34" height="42"/></g></g><g><rect x="151" y="243" width="238" height="217" rx="3" fill="url(#sw-button)" stroke="#aaa69b" stroke-width="2" filter="url(#sw-controlInset)"/><path d="M153 458 388 244M153 245H388V458" fill="none" stroke="#bab6aa" stroke-width="1.5"/><path d="m182 285 9-14 9 14Z" fill="none" stroke="#99968d" stroke-width="2.7" stroke-linejoin="round" opacity=".65"/><path d="m340 415 9 14 9-14Z" fill="none" stroke="#99968d" stroke-width="2.7" stroke-linejoin="round" opacity=".65"/><circle cx="270" cy="351" r="54" fill="url(#sw-dial)" stroke="#aaa69b" stroke-width="2.2" filter="url(#sw-controlInset)"/><path d="M238 321c20-20 52-21 71-3" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.2" stroke-linecap="round"/></g><g><rect x="151" y="470" width="238" height="105" rx="3" fill="url(#sw-button)" stroke="#aaa69b" stroke-width="2" filter="url(#sw-controlInset)"/><g color="#8e8b82" opacity=".68" transform="translate(177 490)"><use href="#sw-bulb" width="24" height="30"/></g></g><circle cx="137" cy="100" r="4.2" fill="#3c4037" opacity=".72"/><circle class="led-glow" cx="137" cy="100" r="13" fill="#b9ff31" filter="url(#sw-ledGlow)"/><circle class="led-core" cx="137" cy="100" r="6.2" fill="url(#sw-ledCore)"/></g><g class="finger" filter="url(#sw-fingerShadow)"><g transform="translate(0 -18)"><path d="M575 196C520 170 469 158 414 154l-124-9c-38-3-69 19-76 51-7 33 16 64 52 71l126 25c67 14 128 46 183 83Z" fill="url(#sw-skin)"/><path d="M575 204C517 181 468 171 414 168l-120-8c-27-2-49 10-59 31 8-29 36-47 70-44l110 8c55 4 106 16 160 41Z" fill="#efc6a7" opacity=".2"/><path d="M258 165c9-4 27-4 36 1 7 4 10 10 8 17-2 8-10 13-20 15-12 2-24 0-30-6-5-5-5-11-2-17 2-4 4-7 8-10Z" fill="url(#sw-nail)" opacity=".68"/><path d="M257 174c8-7 26-9 37-3" fill="none" stroke="#f1d4c2" stroke-width="2.4" stroke-linecap="round" opacity=".5"/><path d="M287 256c55 9 120 22 181 45" fill="none" stroke="#704c3a" stroke-width="2" stroke-linecap="round" opacity=".18"/></g></g></svg></div><span style="{{ item.framesInlineStyle }}"><sc-for list="{{ item.frames }}" as="fr" hint-placeholder-count="0"><span style="{{ fr.style }}"></span></sc-for></span><sc-for list="{{ item.inlineVideos }}" as="v" hint-placeholder-count="0"><div class="mm-wrap" style="{{ item.videoInlineStyle }}"><video src="{{ v.src }}" muted="muted" autoplay="autoplay" loop="loop" playsinline="playsinline" aria-label="{{ item.alt }}" style="{{ item.videoInner }}"></video></div></sc-for><sc-for list="{{ item.tiles }}" as="t" hint-placeholder-count="0"><span style="display: flex; gap: 8px; padding: 5px 0; min-width: 0;"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: 0 0 auto; margin-top: 3px;" aria-hidden="true"><path d="{{ t.icon }}"></path></svg><span style="display: block; min-width: 0;"><span style="display: block; font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: -0.01em; color: var(--text);">{{ t.name }}</span><span style="display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--text-secondary); text-wrap: pretty;">{{ t.desc }}</span></span></span></sc-for></span>
               </button>
               <a href="{{ item.ctaHref }}" data-mq="inlinecta" data-on="{{ item.onFlag }}" style="{{ item.ctaStyle }}"><span style="display: block;"><span style="display: block; font-family: var(--font-display); font-size: 14px; font-weight: 700; letter-spacing: -0.01em;">{{ item.ctaTitle }}</span><span style="display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; opacity: .85;">{{ item.ctaText }}</span></span><span style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; flex: 0 0 auto;">Open →</span></a>
             </sc-for>
@@ -677,7 +691,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <sc-for list="{{ showItems }}" as="item" hint-placeholder-count="0">
             <div role="img" aria-label="{{ item.alt }}" style="{{ item.imgStyle }}"></div>
             <div style="{{ item.framesStyle }}"><sc-for list="{{ item.frames }}" as="fr" hint-placeholder-count="0"><div style="{{ fr.style }}"></div></sc-for></div>
-            <sc-for list="{{ item.videos }}" as="v" hint-placeholder-count="0"><video src="{{ v.src }}" muted="muted" autoplay="autoplay" loop="loop" playsinline="playsinline" aria-label="{{ item.alt }}" style="{{ item.videoStyle }}"></video></sc-for>
+            <sc-for list="{{ item.videos }}" as="v" hint-placeholder-count="0"><div class="mm-wrap" style="{{ item.videoStyle }}"><video src="{{ v.src }}" muted="muted" autoplay="autoplay" loop="loop" playsinline="playsinline" aria-label="{{ item.alt }}" style="{{ item.videoInner }}"></video></div></sc-for>
           </sc-for>
           <!-- Alarm Engine: one shared 7s timeline so the switch's green status
                LED turns on exactly as the "Waiting for Home Assistant" screen
@@ -1673,8 +1687,14 @@ class Component extends DCLogic {
           // is always present so the mobile inline stage always has its video;
           // on desktop the inline stage is display:none, so this costs nothing.
           inlineVideos: it.video ? [{ key: 'v0', src: it.video }] : [],
-          videoStyle: 'position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: 100%; max-height: 100%; border-radius: 15% / 7.3%; pointer-events: none;',
-          videoInlineStyle: 'display: block; margin: 0 auto; max-width: 100%; max-height: 540px; border-radius: 15% / 7.3%;',
+          // The video sits inside a .mm-wrap div that owns the rounded-corner clip
+          // and the positioning; the video fills it flat (no border-radius of its
+          // own). The mockup "shake" animates the wrapper, so the rounded frame and
+          // the video move together (animating a transform on a border-radius video
+          // makes Chrome mis-clip / "detach" the content).
+          videoStyle: 'position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); aspect-ratio: 780 / 1608; max-width: 100%; max-height: 100%; border-radius: 15% / 7.3%; overflow: hidden; pointer-events: none;',
+          videoInlineStyle: 'display: block; margin: 0 auto; aspect-ratio: 780 / 1608; max-width: 100%; max-height: 540px; border-radius: 15% / 7.3%; overflow: hidden;',
+          videoInner: 'display: block; width: 100%; height: 100%; object-fit: cover;',
           imgStyle: (it.tiles || it.imgs || it.video || it.aeSeq) ? 'display: none;' : 'position: absolute; inset: 0; background-image: url("' + it.img + '"); background-size: contain; background-repeat: no-repeat; background-position: center; border-radius: 22px; opacity: ' + (on ? '1' : '0') + '; transform: scale(' + (on ? '1' : '.97') + '); transition: opacity .45s ease, transform .45s ease; pointer-events: none;' + (buzz && on ? ' animation: ar-buzz 6.5s ease-in-out infinite; will-change: transform;' : '')
         };
       }),
@@ -1780,6 +1800,45 @@ class Component extends DCLogic {
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arm);
   else arm();
+})();
+</script>
+<script>
+// Shake the mission-mockup phone while its "Shake to dismiss" mission (~6.6–9.3s
+// of the 16s loop) is on screen. A timeupdate listener on each mission video
+// toggles .mm-shake on its .mm-wrap parent (the wrapper owns the rounded-corner
+// clip, so the frame and video shake together). A MutationObserver picks up the
+// desktop stage video, which the framework renders on demand.
+(function () {
+  var START = 6.6, END = 9.3;
+  function attach(v) {
+    if (v.__mmBound) return; v.__mmBound = true;
+    v.addEventListener('timeupdate', function () {
+      var w = v.parentElement; if (!w) return;
+      var t = v.currentTime;
+      w.classList.toggle('mm-shake', t >= START && t <= END);
+    });
+  }
+  function scan(root) {
+    if (root && root.querySelectorAll) root.querySelectorAll('video[src="mission-mockup.mp4"]').forEach(attach);
+  }
+  function init() {
+    scan(document);
+    try {
+      new MutationObserver(function (muts) {
+        for (var i = 0; i < muts.length; i++) {
+          var nodes = muts[i].addedNodes;
+          for (var j = 0; j < nodes.length; j++) {
+            var n = nodes[j];
+            if (n.nodeType !== 1) continue;
+            if (n.matches && n.matches('video[src="mission-mockup.mp4"]')) attach(n);
+            else scan(n);
+          }
+        }
+      }).observe(document.body, { childList: true, subtree: true });
+    } catch (e) {}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
 </script>
 </body>
