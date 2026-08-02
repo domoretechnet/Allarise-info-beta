@@ -7,6 +7,14 @@
 <link rel="icon" type="image/png" href="app-icon.png">
 <link rel="apple-touch-icon" href="app-icon.png">
 <script>
+// Opt the hero into its typed intro synchronously (before first paint) so the
+// intro CSS can hide the second clause + lamp scene with no flash. Skipped for
+// reduced-motion viewers, who then see the full static hero.
+try {
+  if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('ar-intro');
+  }
+} catch (e) {}
 // Plain-DOM nav behaviour (the nav is hand-rolled, not the React SiteNav):
 // hamburger toggles the mobile dropdown, choosing a link closes it, and the
 // active top-level item follows the hash since the SPA never reloads.
@@ -406,6 +414,35 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   [data-reveal] { animation: none !important; opacity: 1 !important; transform: none !important; }
   .ar-scene *, .ar-marquee, [data-shake], [data-mq=stage] > div, [data-mq=inlinestage] > span { animation: none !important; }
 }
+
+/* Hero intro sequence.
+   The <html>.ar-intro class is added synchronously by the head script only
+   when motion is allowed, so no-JS and prefers-reduced-motion viewers keep the
+   full, static hero (both text clauses and the whole lamp scene). When active,
+   the second clause and the lamp scene start hidden; a small script types out
+   "they should wake up your whole house." then reveals the scene bottom-to-top:
+   app icon, dots rising, lamp post, then the light. Because the scene layers
+   carry their final opacity as inline styles, the "hidden until stage N" rules
+   use :not() + !important so that once the stage class lands the override stops
+   matching and each layer returns to its own inline value / keyframe. */
+.ar-intro #hero-dash { opacity: 0; transition: opacity .5s ease; }
+/* Keep the second clause laid out (no reflow) but invisible until the script
+   empties it and starts typing. Only reached when JS is active (it added
+   .ar-intro), so no-JS / reduced-motion viewers keep it visible. */
+.ar-intro #hero-typed { visibility: hidden; }
+#hero-typed.ar-caret::after {
+  content: ''; display: inline-block; width: 2px; height: 1.05em;
+  background: var(--text); margin-left: 2px; vertical-align: -3px;
+  animation: ar-cursor 1s step-end infinite;
+}
+.ar-intro #hero-lamp { opacity: 0; transition: opacity .45s ease; }
+.ar-intro #hero-lamp.r1 { opacity: 1; }
+.ar-intro #hero-appicon { transition: opacity .55s ease, transform .55s cubic-bezier(.2,.7,.3,1); }
+.ar-intro #hero-lamp:not(.r1) #hero-appicon { opacity: 0; transform: scale(.82) translateY(8px); }
+.ar-intro .ar-post { transition: opacity .9s ease, transform 1s cubic-bezier(.2,.7,.3,1); }
+.ar-intro #hero-lamp:not(.r2):not(.r3) .ar-post { opacity: 0 !important; transform: translateY(18px); }
+.ar-intro #hero-lamp:not(.r2):not(.r3) .ar-dots span { opacity: 0 !important; animation-play-state: paused !important; }
+.ar-intro #hero-lamp:not(.r3) .ar-wash { opacity: 0 !important; animation-play-state: paused !important; }
 </style>
 </helmet>
 
@@ -447,19 +484,20 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   <main>
 
     <section data-mq="cols" data-hero style="position: relative; max-width: 1120px; margin: 0 auto; padding: 72px 24px 40px; display: grid; grid-template-columns: minmax(300px, 1fr) minmax(320px, 1.05fr); gap: 56px; align-items: start;">
-      <div aria-hidden="true" data-mq="lamp" style="--lx: 38%; --lsc: 1; position: absolute; left: 0; right: 0; top: -90px; bottom: -60px; pointer-events: none;">
-        <div style="position: absolute; left: -34vw; right: -14vw; top: 0; height: 62%; opacity: 0; filter: blur(52px); background: linear-gradient(180deg, rgba(255,206,124,.4) 0%, rgba(255,203,118,.35) 12%, rgba(255,199,108,.29) 26%, rgba(255,196,101,.23) 38%, rgba(255,192,94,.16) 50%, rgba(255,189,88,.1) 62%, rgba(255,186,84,.05) 74%, rgba(255,184,80,.02) 86%, rgba(255,182,76,0) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
+      <div aria-hidden="true" id="hero-lamp" data-mq="lamp" style="--lx: 38%; --lsc: 1; position: absolute; left: 0; right: 0; top: -90px; bottom: -60px; pointer-events: none;">
+        <div class="ar-wash" style="position: absolute; left: -34vw; right: -14vw; top: 0; height: 62%; opacity: 0; filter: blur(52px); background: linear-gradient(180deg, rgba(255,206,124,.4) 0%, rgba(255,203,118,.35) 12%, rgba(255,199,108,.29) 26%, rgba(255,196,101,.23) 38%, rgba(255,192,94,.16) 50%, rgba(255,189,88,.1) 62%, rgba(255,186,84,.05) 74%, rgba(255,184,80,.02) 86%, rgba(255,182,76,0) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
         <div style="position: absolute; left: var(--lx); top: 0; transform: scale(var(--lsc)) translateY(var(--lty, 0px)); transform-origin: top left;">
-          <div style="position: absolute; left: 131px; top: 92px; width: 1180px; height: 1180px; margin: -590px 0 0 -590px; opacity: 0; border-radius: 50%; will-change: opacity; transform: translateZ(0); filter: blur(46px); background: radial-gradient(50% 50% at 50% 50%, rgba(255,202,116,.26) 0%, rgba(255,194,98,.15) 20%, rgba(255,188,86,.07) 38%, rgba(255,182,74,.025) 56%, rgba(0,0,0,0) 72%); animation: ar-wash-hold 19s linear infinite;"></div>
+          <div class="ar-wash" style="position: absolute; left: 131px; top: 92px; width: 1180px; height: 1180px; margin: -590px 0 0 -590px; opacity: 0; border-radius: 50%; will-change: opacity; transform: translateZ(0); filter: blur(46px); background: radial-gradient(50% 50% at 50% 50%, rgba(255,202,116,.26) 0%, rgba(255,194,98,.15) 20%, rgba(255,188,86,.07) 38%, rgba(255,182,74,.025) 56%, rgba(0,0,0,0) 72%); animation: ar-wash-hold 19s linear infinite;"></div>
 
-          <div style="position: absolute; left: -40px; top: -300px; width: 340px; height: 330px; opacity: 0; filter: blur(20px); clip-path: polygon(30.5% 100%, 69.5% 100%, 100% 0, 0 0); background: linear-gradient(0deg, rgba(255,224,166,.56) 0%, rgba(255,217,148,.43) 16%, rgba(255,210,132,.32) 32%, rgba(255,205,120,.21) 48%, rgba(255,200,110,.13) 64%, rgba(255,196,100,.06) 80%, rgba(255,194,96,0) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
+          <div class="ar-wash" style="position: absolute; left: -40px; top: -300px; width: 340px; height: 330px; opacity: 0; filter: blur(20px); clip-path: polygon(30.5% 100%, 69.5% 100%, 100% 0, 0 0); background: linear-gradient(0deg, rgba(255,224,166,.56) 0%, rgba(255,217,148,.43) 16%, rgba(255,210,132,.32) 32%, rgba(255,205,120,.21) 48%, rgba(255,200,110,.13) 64%, rgba(255,196,100,.06) 80%, rgba(255,194,96,0) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
 
-          <div style="position: absolute; left: -84px; top: 158px; width: 428px; height: 500px; opacity: 0; filter: blur(16px); clip-path: polygon(27.6% 0, 73% 0, 100% 100%, 0 100%); background: linear-gradient(180deg, rgba(255,228,176,.64) 0%, rgba(255,221,158,.5) 11%, rgba(255,214,142,.4) 22%, rgba(255,209,130,.3) 34%, rgba(255,204,120,.22) 46%, rgba(255,200,110,.14) 59%, rgba(255,196,102,.085) 72%, rgba(255,193,96,.035) 86%, rgba(255,190,90,0) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
-          <div style="position: absolute; left: -30px; top: 160px; width: 320px; height: 400px; opacity: 0; filter: blur(11px); clip-path: polygon(35% 0, 66% 0, 88% 100%, 12% 100%); background: linear-gradient(180deg, rgba(255,236,196,.58) 0%, rgba(255,228,174,.43) 20%, rgba(255,220,154,.29) 40%, rgba(255,214,138,.18) 57%, rgba(255,208,126,.09) 74%, rgba(255,204,116,.04) 88%, rgba(255,202,112,0) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
+          <div class="ar-wash" style="position: absolute; left: -84px; top: 158px; width: 428px; height: 500px; opacity: 0; filter: blur(16px); clip-path: polygon(27.6% 0, 73% 0, 100% 100%, 0 100%); background: linear-gradient(180deg, rgba(255,228,176,.64) 0%, rgba(255,221,158,.5) 11%, rgba(255,214,142,.4) 22%, rgba(255,209,130,.3) 34%, rgba(255,204,120,.22) 46%, rgba(255,200,110,.14) 59%, rgba(255,196,102,.085) 72%, rgba(255,193,96,.035) 86%, rgba(255,190,90,0) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
+          <div class="ar-wash" style="position: absolute; left: -30px; top: 160px; width: 320px; height: 400px; opacity: 0; filter: blur(11px); clip-path: polygon(35% 0, 66% 0, 88% 100%, 12% 100%); background: linear-gradient(180deg, rgba(255,236,196,.58) 0%, rgba(255,228,174,.43) 20%, rgba(255,220,154,.29) 40%, rgba(255,214,138,.18) 57%, rgba(255,208,126,.09) 74%, rgba(255,204,116,.04) 88%, rgba(255,202,112,0) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
 
-          <div style="position: absolute; left: 34px; top: 24px; width: 194px; height: 136px; opacity: .3; filter: blur(7px); clip-path: polygon(16.5% 0, 67% 0, 100% 100%, 0 100%); background: linear-gradient(172deg, rgba(226,196,148,.85) 0%, rgba(216,184,134,.7) 46%, rgba(202,172,126,.58) 100%); mix-blend-mode: multiply;"></div>
-          <img src="lamp-photo.png" alt="" style="display: block; position: relative; width: 262px; height: 682px; opacity: .44; filter: contrast(.96) brightness(1.02) saturate(.3) blur(.4px); -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 90%, rgba(0,0,0,.4) 100%); mask-image: linear-gradient(180deg, #000 0%, #000 90%, rgba(0,0,0,.4) 100%);">
+          <div class="ar-post" style="position: absolute; left: 34px; top: 24px; width: 194px; height: 136px; opacity: .3; filter: blur(7px); clip-path: polygon(16.5% 0, 67% 0, 100% 100%, 0 100%); background: linear-gradient(172deg, rgba(226,196,148,.85) 0%, rgba(216,184,134,.7) 46%, rgba(202,172,126,.58) 100%); mix-blend-mode: multiply;"></div>
+          <img class="ar-post" src="lamp-photo.png" alt="" style="display: block; position: relative; width: 262px; height: 682px; opacity: .44; filter: contrast(.96) brightness(1.02) saturate(.3) blur(.4px); -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 90%, rgba(0,0,0,.4) 100%); mask-image: linear-gradient(180deg, #000 0%, #000 90%, rgba(0,0,0,.4) 100%);">
 
+          <div class="ar-dots" style="display: contents;">
           <span style="position: absolute; left: 131px; top: 684px; width: 8.4px; height: 8.4px; margin: -4.2px 0 0 -4.2px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(1); animation: ar-dot 3.4s ease-in-out 0s infinite;"></span>
           <span style="position: absolute; left: 131px; top: 652px; width: 8.1px; height: 8.1px; margin: -4.05px 0 0 -4.05px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.94); animation: ar-dot 3.4s ease-in-out 0.13s infinite;"></span>
           <span style="position: absolute; left: 131px; top: 620px; width: 7.7px; height: 7.7px; margin: -3.85px 0 0 -3.85px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.87); animation: ar-dot 3.4s ease-in-out 0.26s infinite;"></span>
@@ -476,10 +514,11 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <span style="position: absolute; left: 131px; top: 268px; width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.17); animation: ar-dot 3.4s ease-in-out 1.69s infinite;"></span>
           <span style="position: absolute; left: 131px; top: 236px; width: 3.6px; height: 3.6px; margin: -1.8px 0 0 -1.8px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.1); animation: ar-dot 3.4s ease-in-out 1.82s infinite;"></span>
           <span style="position: absolute; left: 131px; top: 204px; width: 3.3px; height: 3.3px; margin: -1.65px 0 0 -1.65px; border-radius: 50%; background: var(--accent); opacity: 0; filter: opacity(0.08); animation: ar-dot 3.4s ease-in-out 1.95s infinite;"></span>
-          <img src="app-house-icon.png" alt="" data-mq="appicon" style="position: absolute; left: 77px; top: 712px; width: 108px; height: 108px;">
-          <div style="position: absolute; left: 40px; top: 34px; width: 182px; height: 120px; opacity: 0; filter: blur(13px); clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%); background: linear-gradient(180deg, rgba(255,238,202,.66) 0%, rgba(255,230,180,.6) 23%, rgba(255,222,158,.55) 46%, rgba(255,216,146,.5) 73%, rgba(255,210,132,.45) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
-          <div style="position: absolute; left: 131px; top: 96px; width: 300px; height: 300px; margin: -150px 0 0 -150px; opacity: 0; border-radius: 50%; will-change: opacity; transform: translateZ(0); filter: blur(26px); background: radial-gradient(50% 50% at 50% 50%, rgba(255,224,168,.56) 0%, rgba(255,208,128,.28) 38%, rgba(255,196,102,.09) 62%, rgba(0,0,0,0) 80%); animation: ar-wash-hold 19s linear infinite;"></div>
-          <div style="position: absolute; left: 16px; top: 546px; width: 230px; height: 56px; opacity: 0; border-radius: 50%; will-change: opacity; transform: translateZ(0); filter: blur(15px); background: radial-gradient(50% 50% at 50% 50%, rgba(255,220,158,.46) 0%, rgba(255,206,124,.22) 42%, rgba(255,196,102,.07) 66%, rgba(0,0,0,0) 84%); animation: ar-wash-hold 19s linear infinite;"></div>
+          </div>
+          <img id="hero-appicon" src="app-house-icon.png" alt="" data-mq="appicon" style="position: absolute; left: 77px; top: 712px; width: 108px; height: 108px;">
+          <div class="ar-wash" style="position: absolute; left: 40px; top: 34px; width: 182px; height: 120px; opacity: 0; filter: blur(13px); clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%); background: linear-gradient(180deg, rgba(255,238,202,.66) 0%, rgba(255,230,180,.6) 23%, rgba(255,222,158,.55) 46%, rgba(255,216,146,.5) 73%, rgba(255,210,132,.45) 100%); will-change: opacity; transform: translateZ(0); backface-visibility: hidden; animation: ar-wash-hold 19s linear infinite;"></div>
+          <div class="ar-wash" style="position: absolute; left: 131px; top: 96px; width: 300px; height: 300px; margin: -150px 0 0 -150px; opacity: 0; border-radius: 50%; will-change: opacity; transform: translateZ(0); filter: blur(26px); background: radial-gradient(50% 50% at 50% 50%, rgba(255,224,168,.56) 0%, rgba(255,208,128,.28) 38%, rgba(255,196,102,.09) 62%, rgba(0,0,0,0) 80%); animation: ar-wash-hold 19s linear infinite;"></div>
+          <div class="ar-wash" style="position: absolute; left: 16px; top: 546px; width: 230px; height: 56px; opacity: 0; border-radius: 50%; will-change: opacity; transform: translateZ(0); filter: blur(15px); background: radial-gradient(50% 50% at 50% 50%, rgba(255,220,158,.46) 0%, rgba(255,206,124,.22) 42%, rgba(255,196,102,.07) 66%, rgba(0,0,0,0) 84%); animation: ar-wash-hold 19s linear infinite;"></div>
         </div>
       </div>
 
@@ -489,7 +528,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <span>iOS · Home Assistant · MQTT</span>
         </div>
         <h1 style="font-family: var(--font-display); font-size: clamp(46px, 6.4vw, 82px); font-weight: 800; letter-spacing: -0.035em; line-height: .95; margin: 22px 0 0; color: var(--text);">Wake up<br>smarter.</h1>
-        <p style="font-size: 21px; line-height: 1.4; color: var(--text); margin: 26px 0 0; max-width: 30ch; text-wrap: pretty;">Your alarms shouldn't just wake you up — they should wake up your whole house.</p>
+        <p id="hero-line" style="font-size: 21px; line-height: 1.4; color: var(--text); margin: 26px 0 0; max-width: 30ch; text-wrap: pretty;"><span>Your alarms shouldn't just wake you up</span><span id="hero-dash"> — </span><span id="hero-typed" data-text="they should wake up your whole house.">they should wake up your whole house.</span></p>
         <div data-mq="rule" style="height: 1px; background: var(--border); margin: 28px 0;"></div>
         <p style="font-size: 16px; line-height: 1.65; color: var(--text-secondary); margin: 0; max-width: 46ch; text-wrap: pretty;">Allarise syncs with Home Assistant so your lights, routines, and automations can respond when your alarm goes off. Wake up to a house that's already moving and an alarm that gets you out of bed. Stop oversleeping with built-in missions like math, shake and three other mission types even including games!</p>
         
@@ -1528,6 +1567,68 @@ class Component extends DCLogic {
     });
   }
 }
+</script>
+<script>
+// Hero typed intro. Runs only when the head script opted in (.ar-intro). Reads
+// the first clause first, gives ~2.2s to read it, fades in the em-dash, types
+// "they should wake up your whole house." one letter at a time, then reveals
+// the lamp scene bottom-to-top: app icon (r1), post + rising dots (r2), light
+// (r3). All hiding is CSS; this only advances the stage classes.
+(function () {
+  if (!document.documentElement.classList.contains('ar-intro')) return;
+  var started = false;
+  function start() {
+    if (started) return;
+    var lamp  = document.getElementById('hero-lamp');
+    var dash  = document.getElementById('hero-dash');
+    var typed = document.getElementById('hero-typed');
+    if (!lamp || !dash || !typed) return;
+    started = true;
+    var full = typed.getAttribute('data-text') || typed.textContent;
+    typed.textContent = '';
+    typed.style.visibility = 'visible';
+    typed.classList.add('ar-caret');
+    var READ = 2200, GAP = 650, TYPE = 55;
+    setTimeout(function () {
+      dash.style.opacity = '1';                       // em-dash appears
+      setTimeout(function typeChar(i) {
+        if (i >= full.length) {                       // period placed
+          typed.classList.remove('ar-caret');
+          lamp.classList.add('r1');                    // app icon shows up
+          setTimeout(function () { lamp.classList.add('r2'); }, 430);  // dot rises, post appears
+          setTimeout(function () { lamp.classList.add('r3'); }, 1180); // light kicks in
+          return;
+        }
+        typed.textContent += full.charAt(i);
+        setTimeout(function () { typeChar(i + 1); }, TYPE);
+      }, GAP, 0);
+    }, READ);
+  }
+  // The design-system bundle rewrites the light DOM after parse, discarding any
+  // mutation made too early, so wait until that render has settled: run after
+  // full load (framework renders on/before DOMContentLoaded) plus a frame, and
+  // keep a short MutationObserver as a backstop in case the DOM is still being
+  // rewritten right at load.
+  function trigger() {
+    requestAnimationFrame(function () { setTimeout(start, 80); });
+  }
+  function arm() {
+    if (document.readyState === 'complete') trigger();
+    else window.addEventListener('load', trigger);
+    try {
+      var timer = null;
+      var obs = new MutationObserver(function () {
+        if (started) { obs.disconnect(); return; }
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(start, 200);
+      });
+      obs.observe(document.body, { childList: true, subtree: true });
+      setTimeout(function () { obs.disconnect(); }, 6000);
+    } catch (e) {}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arm);
+  else arm();
+})();
 </script>
 </body>
 </html>
