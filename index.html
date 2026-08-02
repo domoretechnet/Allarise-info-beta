@@ -443,6 +443,13 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .ar-intro #hero-lamp:not(.r2):not(.r3) .ar-post { opacity: 0 !important; transform: translateY(18px); }
 .ar-intro #hero-lamp:not(.r2):not(.r3) .ar-dots span { opacity: 0 !important; animation-play-state: paused !important; }
 .ar-intro #hero-lamp:not(.r3) .ar-wash { opacity: 0 !important; animation-play-state: paused !important; }
+/* The phone showcase shares the lamp scene's 19s clock (ring at ~3s, dismiss at
+   ~6s) but lives in the right column, outside #hero-lamp, so nothing gated it on
+   the typed intro. It therefore rang before the hero line finished typing. Hold
+   its frame/shake loop paused until the script adds .ar-phone-live at typing
+   completion, so the authored "list → ring → lamp" order plays after the caption. */
+.ar-intro [data-hero-phone]:not(.ar-phone-live),
+.ar-intro [data-hero-phone]:not(.ar-phone-live) img { animation-play-state: paused !important; }
 </style>
 </helmet>
 
@@ -543,7 +550,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <div style="position: absolute; left: 50%; top: 46%; width: 118%; padding-bottom: 118%; margin-left: -59%; margin-top: -59%; opacity: .8; pointer-events: none; border-radius: 50%; will-change: opacity; transform: translateZ(0); filter: blur(26px); background: radial-gradient(50% 50% at 50% 50%, rgba(126,166,238,.22) 0%, rgba(126,166,238,.11) 34%, rgba(126,166,238,.04) 56%, rgba(0,0,0,0) 74%);"></div>
 
         <div style="position: relative; z-index: 1; display: flex; justify-content: center; padding: 26px 0 30px;">
-          <div data-shake style="position: relative; width: 292px; max-width: 82%; will-change: transform; animation: ar-shake 19s linear infinite; filter: drop-shadow(0 26px 34px rgba(24,18,10,.28)) drop-shadow(0 8px 14px rgba(24,18,10,.16));">
+          <div data-shake data-hero-phone style="position: relative; width: 292px; max-width: 82%; will-change: transform; animation: ar-shake 19s linear infinite; filter: drop-shadow(0 26px 34px rgba(24,18,10,.28)) drop-shadow(0 8px 14px rgba(24,18,10,.16));">
             <img src="phone-1.png" alt="Allarise alarm list, next alarm about to fire" style="display: block; position: relative; width: 100%; height: auto;">
             <img src="phone-2.png" alt="Allarise alarm ringing with snooze and dismiss" style="display: block; position: absolute; left: 0; top: 0; width: 100%; height: auto; opacity: 0; animation: ar-fr2 19s linear infinite;">
             <img src="phone-3.png" alt="Allarise alarm list after the alarm is dismissed" style="display: block; position: absolute; left: 0; top: 0; width: 100%; height: auto; opacity: 0; animation: ar-fr3 19s linear infinite;">
@@ -1594,6 +1601,8 @@ class Component extends DCLogic {
       setTimeout(function typeChar(i) {
         if (i >= full.length) {                       // period placed
           typed.classList.remove('ar-caret');
+          var phone = document.querySelector('[data-hero-phone]');
+          if (phone) phone.classList.add('ar-phone-live'); // phone loop starts now, so it rings after the caption
           lamp.classList.add('r1');                    // app icon shows up
           setTimeout(function () { lamp.classList.add('r2'); }, 430);  // dot rises, post appears
           setTimeout(function () { lamp.classList.add('r3'); }, 1180); // light kicks in
