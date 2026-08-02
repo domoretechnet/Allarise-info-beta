@@ -264,6 +264,19 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 }
 @keyframes ar-fr2 { 0%, 15.8% { opacity: 0; } 17.4%, 87% { opacity: 1; } 93%, 100% { opacity: 0; } }
 @keyframes ar-fr3 { 0%, 53% { opacity: 0; } 55%, 87% { opacity: 1; } 93%, 100% { opacity: 0; } }
+/* Mission mockup "shake to dismiss" segment: shake the whole phone (via the
+   individual translate/rotate properties, so they compose with the desktop
+   video's centering transform) while the shake mission is on screen. A script
+   toggles .mm-shake based on the video's currentTime so it stays synced. */
+@keyframes mm-shake {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  20% { translate: -2.5px 1px; rotate: -0.7deg; }
+  40% { translate: 2.5px -1px; rotate: 0.7deg; }
+  60% { translate: -2px 1px; rotate: -0.5deg; }
+  80% { translate: 2px -1px; rotate: 0.5deg; }
+}
+video[src="mission-mockup.mp4"].mm-shake { animation: mm-shake .34s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { video[src="mission-mockup.mp4"].mm-shake { animation: none; } }
 /* Alarm Engine showcase — one shared 8s timeline. One button press per loop:
    the finger arrives (~38%), presses (~44%), the status LED blips green (~46-52%),
    then the "Waiting for Home Assistant" screen cross-fades to the dismissed screen
@@ -1780,6 +1793,45 @@ class Component extends DCLogic {
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arm);
   else arm();
+})();
+</script>
+<script>
+// Shake the mission-mockup phone while its "Shake to dismiss" mission (~6.6–9.3s
+// of the 16s loop) is on screen. A timeupdate listener attached directly to each
+// mission video toggles .mm-shake based on the video's own currentTime, so it
+// stays synced across loops. A MutationObserver attaches to mission videos the
+// framework renders after load (the desktop stage video appears on demand).
+(function () {
+  var START = 6.6, END = 9.3;
+  function attach(v) {
+    if (v.__mmBound) return; v.__mmBound = true;
+    v.addEventListener('timeupdate', function () {
+      var t = v.currentTime;
+      v.classList.toggle('mm-shake', t >= START && t <= END);
+    });
+  }
+  function scan(root) {
+    if (!root || !root.querySelectorAll) return;
+    root.querySelectorAll('video[src="mission-mockup.mp4"]').forEach(attach);
+  }
+  function init() {
+    scan(document);
+    try {
+      new MutationObserver(function (muts) {
+        for (var i = 0; i < muts.length; i++) {
+          var nodes = muts[i].addedNodes;
+          for (var j = 0; j < nodes.length; j++) {
+            var n = nodes[j];
+            if (n.nodeType !== 1) continue;
+            if (n.matches && n.matches('video[src="mission-mockup.mp4"]')) attach(n);
+            else scan(n);
+          }
+        }
+      }).observe(document.body, { childList: true, subtree: true });
+    } catch (e) {}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
 </script>
 </body>
