@@ -262,14 +262,14 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   30.4% { transform: translate3d(1px,0,0) rotate(.24deg); }
   31.4%, 100% { transform: none; }
 }
-@keyframes ar-fr2 { 0%, 15.8% { opacity: 0; } 17.4%, 92% { opacity: 1; } 98.5%, 100% { opacity: 0; } }
-@keyframes ar-fr3 { 0%, 53% { opacity: 0; } 55%, 92% { opacity: 1; } 98.5%, 100% { opacity: 0; } }
+@keyframes ar-fr2 { 0%, 15.8% { opacity: 0; } 17.4%, 87% { opacity: 1; } 93%, 100% { opacity: 0; } }
+@keyframes ar-fr3 { 0%, 53% { opacity: 0; } 55%, 87% { opacity: 1; } 93%, 100% { opacity: 0; } }
 @keyframes ar-screen-home { 0%, 34% { opacity: 1; } 40%, 100% { opacity: 0; } }
 @keyframes ar-screen-ring { 0%, 34% { opacity: 0; } 40%, 100% { opacity: 1; } }
 @keyframes ar-lamp-cycle {
   0% { opacity: 0; }
-  6%, 92% { opacity: 1; }
-  98.5%, 100% { opacity: 0; }
+  6%, 87% { opacity: 1; }
+  93%, 100% { opacity: 0; }   /* clear by ~93% so the bare phone main screen sits ~1.3s before the loop resets */
 }
 @keyframes ar-dots-cycle {
   0%, 8% { opacity: 0; }
@@ -282,8 +282,8 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   28% { opacity: .34; }
   34% { opacity: .6; }
   38% { opacity: .82; }
-  42%, 92% { opacity: 1; }
-  98.5%, 100% { opacity: 0; }
+  42%, 87% { opacity: 1; }
+  93%, 100% { opacity: 0; }
 }
 @keyframes ar-wash {
   0%, 44% { opacity: 0; }
