@@ -228,6 +228,10 @@
   .mission-slot select {
     position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer;
   }
+  /* A filled tile no longer reopens the type chooser on click — the transparent
+     <select> stops capturing clicks, so the tile-body click just selects it
+     (to show its config) and the red X is the only way to change/clear it. */
+  .mission-slot.filled select { pointer-events:none }
   .slot-remove {
     position:absolute; top:-7px; right:-7px; z-index:2; width:20px; height:20px;
     border-radius:50%; border:none; background:#e5484d; color:#fff; font-size:13px;
@@ -322,6 +326,7 @@
 
   <div class="nav-group-label">Dashboard</div>
   <button class="nav-item" onclick="showPage('alert', this)">Trigger Alert</button>
+  <button class="nav-item" onclick="showPage('alert-settings', this)">Alert Settings</button>
   <button class="nav-item" onclick="showPage('dashboard', this)">Dashboard Actions</button>
   <button class="nav-item" onclick="showPage('per-alarm', this)">Per-Alarm Actions</button>
 
@@ -350,6 +355,7 @@
     </optgroup>
     <optgroup label="Dashboard">
       <option value="alert">Trigger Alert</option>
+      <option value="alert-settings">Alert Settings</option>
       <option value="dashboard">Dashboard Actions</option>
       <option value="per-alarm">Per-Alarm Actions</option>
     </optgroup>
@@ -758,18 +764,18 @@
             <div class="row-2">
               <div class="field-group">
                 <label>Dismiss Mode</label>
-                <select id="ca-tap-mode" onchange="updateCreateAlarm()">
+                <select id="ca-tap-mode" onchange="syncTapFields('ca');updateCreateAlarm()">
                   <option value="">— default —</option>
                   <option value="tap">Tap</option>
                   <option value="hold">Hold</option>
                 </select>
               </div>
-              <div class="field-group">
+              <div class="field-group" id="ca-tap-count-group">
                 <label>Tap Count</label>
                 <input type="number" id="ca-tap-count" placeholder="— default —" min="1" max="50" oninput="updateCreateAlarm()">
               </div>
             </div>
-            <div class="field-group">
+            <div class="field-group" id="ca-tap-hold-group">
               <label>Hold Duration (s)</label>
               <input type="number" id="ca-tap-hold" placeholder="— default —" min="1" max="10" oninput="updateCreateAlarm()">
             </div>
@@ -789,7 +795,7 @@
               </div>
               <div class="field-group">
                 <label>Fallback Mission</label>
-                <select id="ca-ha-fallback" onchange="updateCreateAlarm()">
+                <select id="ca-ha-fallback" onchange="syncFallbackDisplay('ca');updateCreateAlarm()">
                   <option value="">— no fallback —</option>
                   <option value="none">Tap to Dismiss</option>
                   <option value="shake">Shake</option>
@@ -2430,69 +2436,13 @@
   <!-- ══════════════════════════════════════════════════
        DEVICE SETTINGS
   ══════════════════════════════════════════════════ -->
-  <div id="page-device" class="page">
+  <div id="page-alert-settings" class="page">
     <div class="page-header">
-      <h1>Device Settings</h1>
-      <p>App-wide settings controllable over MQTT. Published to <code style="color:var(--green)">allarise/{device}/command/{cmd}</code> — none of these are tied to a specific alarm.</p>
+      <h1>Alert Settings</h1>
+      <p>App-wide settings for HA-triggered alert alarms. Published to <code style="color:var(--green)">allarise/{device}/command/{cmd}</code> — not tied to a specific alarm.</p>
     </div>
 
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px">
-
-      <div class="card">
-        <div class="card-title">⚡ App Persistence</div>
-        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">Background keep-alive mode. <strong>Dynamic</strong> keeps the app awake only while charging or near an alarm. The app reports the chosen mode on <code>sensor/app_persistence_mode</code> and the live on/off residency on <code>sensor/app_persistence</code>.</p>
-        <div class="field-group">
-          <label>Mode</label>
-          <select id="dev-persistence" onchange="updateDeviceCommands()">
-            <option value="ON">On — always resident</option>
-            <option value="DYNAMIC">Dynamic — awake while charging or near an alarm</option>
-            <option value="OFF">Off — background features disabled</option>
-          </select>
-        </div>
-        <code id="dev-persistence-topic" class="dev-topic"></code>
-        <div style="position:relative">
-          <pre style="font-size:11.5px" id="dev-persistence-yaml"></pre>
-          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dev-persistence-yaml',this)">Copy</button>
-        </div>
-        <div class="field-hint hint-warn" style="margin-top:8px">Once the app has fully suspended (Off, or Dynamic while asleep), it cannot hear the command to wake it — change modes while the app is reachable.</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">🎨 Appearance &amp; Theme</div>
-        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">Switch the app between light, dark and system appearance, and optionally select a theme by name.</p>
-        <div class="field-group">
-          <label>Appearance</label>
-          <select id="dev-appearance" onchange="updateDeviceCommands()">
-            <option value="">— leave unchanged —</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-            <option value="system">System</option>
-          </select>
-        </div>
-        <div class="field-group">
-          <label>Theme Name</label>
-          <input type="text" id="dev-theme" placeholder="exactly as shown in Settings → Theme" oninput="updateDeviceCommands()">
-        </div>
-        <code id="dev-theme-topic" class="dev-topic"></code>
-        <div style="position:relative">
-          <pre style="font-size:11.5px" id="dev-theme-yaml"></pre>
-          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dev-theme-yaml',this)">Copy</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">🔊 System Volume</div>
-        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">Sets the device's hardware media volume — the one the volume buttons control. Reported back on <code>sensor/system_volume</code>; the HACS integration exposes it as the System Volume slider.</p>
-        <div class="field-group">
-          <label>Volume (0–100)</label>
-          <input type="number" id="dev-system-volume" min="0" max="100" placeholder="60" oninput="updateDeviceCommands()">
-        </div>
-        <code id="dev-sysvol-topic" class="dev-topic"></code>
-        <div style="position:relative">
-          <pre style="font-size:11.5px" id="dev-sysvol-yaml"></pre>
-          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dev-sysvol-yaml',this)">Copy</button>
-        </div>
-      </div>
 
       <div class="card">
         <div class="card-title">🔔 Alert Volume</div>
@@ -2557,6 +2507,73 @@
       </div>
 
     </div>
+  </div><!-- /page-alert-settings -->
+
+  <div id="page-device" class="page">
+    <div class="page-header">
+      <h1>Device Settings</h1>
+      <p>App-wide settings controllable over MQTT. Published to <code style="color:var(--green)">allarise/{device}/command/{cmd}</code> — none of these are tied to a specific alarm.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px">
+
+      <div class="card">
+        <div class="card-title">⚡ App Persistence</div>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">Background keep-alive mode. <strong>Dynamic</strong> keeps the app awake only while charging or near an alarm. The app reports the chosen mode on <code>sensor/app_persistence_mode</code> and the live on/off residency on <code>sensor/app_persistence</code>.</p>
+        <div class="field-group">
+          <label>Mode</label>
+          <select id="dev-persistence" onchange="updateDeviceCommands()">
+            <option value="ON">On — always resident</option>
+            <option value="DYNAMIC">Dynamic — awake while charging or near an alarm</option>
+            <option value="OFF">Off — background features disabled</option>
+          </select>
+        </div>
+        <code id="dev-persistence-topic" class="dev-topic"></code>
+        <div style="position:relative">
+          <pre style="font-size:11.5px" id="dev-persistence-yaml"></pre>
+          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dev-persistence-yaml',this)">Copy</button>
+        </div>
+        <div class="field-hint hint-warn" style="margin-top:8px">Once the app has fully suspended (Off, or Dynamic while asleep), it cannot hear the command to wake it — change modes while the app is reachable.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🎨 Appearance &amp; Theme</div>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">Switch the app between light, dark and system appearance, and optionally select a theme by name.</p>
+        <div class="field-group">
+          <label>Appearance</label>
+          <select id="dev-appearance" onchange="updateDeviceCommands()">
+            <option value="">— leave unchanged —</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="system">System</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Theme Name</label>
+          <input type="text" id="dev-theme" placeholder="exactly as shown in Settings → Theme" oninput="updateDeviceCommands()">
+        </div>
+        <code id="dev-theme-topic" class="dev-topic"></code>
+        <div style="position:relative">
+          <pre style="font-size:11.5px" id="dev-theme-yaml"></pre>
+          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dev-theme-yaml',this)">Copy</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔊 System Volume</div>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:12px">Sets the device's hardware media volume — the one the volume buttons control. Reported back on <code>sensor/system_volume</code>; the HACS integration exposes it as the System Volume slider.</p>
+        <div class="field-group">
+          <label>Volume (0–100)</label>
+          <input type="number" id="dev-system-volume" min="0" max="100" placeholder="60" oninput="updateDeviceCommands()">
+        </div>
+        <code id="dev-sysvol-topic" class="dev-topic"></code>
+        <div style="position:relative">
+          <pre style="font-size:11.5px" id="dev-sysvol-yaml"></pre>
+          <button class="copy-btn" style="position:absolute;top:8px;right:8px" onclick="copyPayload('dev-sysvol-yaml',this)">Copy</button>
+        </div>
+      </div>
+
+    </div>
   </div><!-- /page-device -->
 
 </div><!-- /content -->
@@ -2604,6 +2621,7 @@ function updateAll() {
   ['ca','ua','ubn'].forEach(syncRadioBackupHint);
   ['ca','ua','ubn'].forEach(syncAaSlots);
   ['ca','ua','ubn'].forEach(syncShakeFields);
+  syncTapFields('ca');
   syncFbShakeFields('ca');
   updateRadioStart(); buildPerAlarmCards();
   updateDeviceCommands();
@@ -2628,7 +2646,8 @@ function showPageFromSelect(sel) {
 function pageToCmd(id) {
   const map = { 'create-alarm':'create_alarm','update-alarm':'update_alarm','delete-alarm':'delete_alarm',
     'create-command':'create_command','delete-command':'delete_command','alert':'alert','dashboard':'…',
-    'per-alarm':'alarm/{index}/command/…','sleep-sounds':'sleep_sound_start','radio':'radio_start','device':'app_persistence' };
+    'per-alarm':'alarm/{index}/command/…','sleep-sounds':'sleep_sound_start','radio':'radio_start',
+    'alert-settings':'set_media_alert_volume','device':'app_persistence' };
   return map[id] || id;
 }
 
@@ -2946,6 +2965,18 @@ function removeMissionSlot(prefix, i) {
   if (last) last.value = '';
   syncMissionSlots(prefix);
   runUpdate(prefix);
+}
+
+// Tap-dismiss runs on a tap count OR a hold — never both. Hold Duration is
+// meaningless in Tap mode and Tap Count is meaningless in Hold mode, so each is
+// hidden when the other mode is chosen. The default (no mode) shows both.
+function syncTapFields(prefix) {
+  const mode = v(prefix + '-tap-mode');
+  const cnt = document.getElementById(prefix + '-tap-count-group');
+  const hold = document.getElementById(prefix + '-tap-hold-group');
+  if (!cnt || !hold) return;
+  hold.style.display = (mode === 'tap') ? 'none' : '';
+  cnt.style.display = (mode === 'hold') ? 'none' : '';
 }
 
 // Shake runs on seconds OR shakes; only the field the chosen mode uses is shown.
@@ -3649,6 +3680,11 @@ updateAll();
       sel.addEventListener('focus', () => setActiveSlot(prefix, i));
       sel.addEventListener('change', () => setActiveSlot(prefix, i));
     }
+    // A filled tile's <select> no longer captures clicks (see CSS), so the tile
+    // body click selects it to reveal its config; empty tiles fall through to
+    // the select and open the type chooser as before.
+    const tile = document.getElementById(prefix + '-slot-' + i + '-tile');
+    if (tile) tile.addEventListener('click', () => { if (v(prefix + '-slot-' + i)) setActiveSlot(prefix, i); });
   }
   for (let i = 1; i <= 4; i++) {
     const sel = document.getElementById(prefix + '-aa-slot-' + i);
@@ -3656,6 +3692,8 @@ updateAll();
       sel.addEventListener('focus', () => setActiveAa(prefix, i));
       sel.addEventListener('change', () => setActiveAa(prefix, i));
     }
+    const tile = document.getElementById(prefix + '-aa-slot-' + i + '-tile');
+    if (tile) tile.addEventListener('click', () => { if (v(prefix + '-aa-slot-' + i)) setActiveAa(prefix, i); });
   }
 });
 </script>
