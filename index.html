@@ -360,9 +360,6 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 @keyframes ar-spill-warm {
   0%, 15% { opacity: 0; } 46%, 88% { opacity: .55; } 100% { opacity: 0; }
 }
-/* The "thinking" ellipsis: three dots that bounce/brighten in sequence while
-   the second clause is being composed, in place of a blinking cursor. */
-@keyframes ar-think { 0%, 70%, 100% { opacity: .3; transform: translateY(0); } 35% { opacity: 1; transform: translateY(-.22em); } }
 @media (min-width: 701px) {
   [data-showsection] { min-height: 210vh; padding-bottom: 0 !important; align-items: start !important; }
   [data-showsection] > div { position: sticky; top: 84px; }
@@ -497,20 +494,12 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 /* Keep the second sentence laid out (no reflow) but invisible until the script
    empties it and starts typing. */
 .ar-intro #hero-typed { visibility: hidden; }
-/* Thinking dots. They live in the source (so they reserve the second line from
-   the first paint — the layout reads as two lines the whole time, no jump) and
-   are hidden for no-JS / reduced-motion. #hero-dash fades the group in; the dots
-   ripple only while .ar-thinking is set, then the script clears the dash and the
-   second sentence types into its place. */
-.ar-tdot { display: none; }
+/* Thinking ellipsis. The second line is already reserved by #hero-typed (laid
+   out but visibility:hidden), so the dash can start empty; the script fades it in
+   and types three literal periods "..." one at a time, holds a beat, then clears
+   the dash and types the second sentence into its place. Hidden for no-JS /
+   reduced-motion (no .ar-intro), where both sentences just show statically. */
 .ar-intro #hero-dash { opacity: 0; transition: opacity .5s ease; white-space: nowrap; }
-.ar-intro #hero-dash .ar-tdot {
-  display: inline-block; width: .26em; height: .26em; margin: 0 .07em;
-  border-radius: 50%; background: currentColor; vertical-align: middle;
-}
-.ar-intro #hero-dash.ar-thinking .ar-tdot { animation: ar-think 1.2s ease-in-out infinite; }
-.ar-intro #hero-dash.ar-thinking .ar-tdot:nth-child(2) { animation-delay: .16s; }
-.ar-intro #hero-dash.ar-thinking .ar-tdot:nth-child(3) { animation-delay: .32s; }
 /* The whole lamp scene (post, app icon, dots, glow) loops as one unit with the
    phone: fade in at the start of each 19s cycle, hold, fade out at the loop
    boundary. Paused until .r1 (set at caption completion, same tick as the phone's
@@ -640,7 +629,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 
       <div style="position: relative;">
         <h1 style="font-family: var(--font-display); font-size: clamp(46px, 6.4vw, 82px); font-weight: 800; letter-spacing: -0.035em; line-height: .95; margin: 0; color: var(--text);">Wake up<br>smarter.</h1>
-        <p id="hero-line" style="font-size: 21px; line-height: 1.4; color: var(--text); margin: 26px 0 0; max-width: 30ch; text-wrap: pretty;"><span>Your alarms shouldn't just wake you up.</span><span id="hero-dash"> <span class="ar-tdot"></span><span class="ar-tdot"></span><span class="ar-tdot"></span></span><span id="hero-typed" data-text="They should wake up your whole house.">They should wake up your whole house.</span></p>
+        <p id="hero-line" style="font-size: 21px; line-height: 1.4; color: var(--text); margin: 26px 0 0; max-width: 30ch; text-wrap: pretty;"><span>Your alarms shouldn't just wake you up.</span><span id="hero-dash"></span><span id="hero-typed" data-text="They should wake up your whole house.">They should wake up your whole house.</span></p>
         <div data-mq="rule" style="height: 0; margin: 24px 0;"></div>
         <p style="font-size: 16px; line-height: 1.65; color: var(--text-secondary); margin: 0; max-width: 46ch; text-wrap: pretty;">Allarise syncs with Home Assistant so your lights, routines, and automations can respond when your alarm goes off. Wake up to a house that's already moving, with an alarm that makes sure you are too. Stop oversleeping with built-in missions like math and shake, or bring some fun to even the earliest mornings with interactive games.</p>
         <p style="font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text-secondary); margin: 14px 0 0; max-width: 46ch;">Allarise is free and ad-free. Because waking up shouldn’t start with ads.</p>
@@ -1862,8 +1851,8 @@ class Component extends DCLogic {
 </script>
 <script>
 // Hero typed intro. Runs only when the head script opted in (.ar-intro). Reads
-// the first clause first, gives ~2.2s to read it, fades in the em-dash, types
-// "they should wake up your whole house." one letter at a time, then reveals
+// the first clause first, gives ~2.2s to read it, types a literal "..." one dot
+// at a time, then "they should wake up your whole house." one letter at a time, then reveals
 // the lamp scene bottom-to-top: app icon (r1), post + rising dots (r2), light
 // (r3). All hiding is CSS; this only advances the stage classes.
 (function () {
@@ -1879,13 +1868,17 @@ class Component extends DCLogic {
     var full = typed.getAttribute('data-text') || typed.textContent;
     typed.textContent = '';
     typed.style.visibility = 'visible';
-    var READ = 2200, GAP = 2400, TYPE = 55;
+    var READ = 2200, DOT = 300, HOLD = 900, TYPE = 55;
     setTimeout(function () {
-      dash.classList.add('ar-thinking');              // the thought trails off as animated thinking dots
       dash.style.opacity = '1';
-      setTimeout(function typeChar(i) {
-        if (i === 0) {                                // dots give way to the second sentence (its period already sits on line one)
-          dash.classList.remove('ar-thinking');
+      (function typeDot(n) {                           // the thought trails off as three literal periods, typed one at a time
+        if (n < 3) {
+          dash.textContent += '.';
+          setTimeout(function () { typeDot(n + 1); }, DOT);
+          return;
+        }
+        setTimeout(function typeChar(i) {
+        if (i === 0) {                                // ellipsis gives way to the second sentence (its period already sits on line one)
           dash.textContent = '';
         }
         if (i >= full.length) {                       // period placed
@@ -1898,7 +1891,8 @@ class Component extends DCLogic {
         }
         typed.textContent += full.charAt(i);
         setTimeout(function () { typeChar(i + 1); }, TYPE);
-      }, GAP, 0);
+        }, HOLD, 0);                                  // brief pause after the "..." before the answer types
+      })(0);
     }, READ);
   }
   // The design-system bundle rewrites the light DOM after parse, discarding any
