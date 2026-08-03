@@ -31,6 +31,7 @@ function syncNavActive() {
       h.indexOf('#ha-reference') === 0 || h.indexOf('#ref-') === 0) key = 'ha';
   else if (h.indexOf('#faq') === 0) key = 'faq';
   else if (h.indexOf('#privacy') === 0) key = '';
+  else if (h.indexOf('#terms') === 0) key = '';
   var links = document.querySelectorAll('[data-navkey]');
   for (var i = 0; i < links.length; i++) {
     links[i].classList.toggle('nav-active', links[i].getAttribute('data-navkey') === key);
@@ -1133,7 +1134,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
       <x-import component-from-global-scope="Allarise.Callout" tone="success" icon="{{ iconLockSm }}" hint-size="100%,180px"><strong>The short version:</strong> Allarise is a local-first app. Your alarms, settings and credentials stay on your device. There are no ads, no sign-in, no advertising identifiers, and we do not sell or share your data with anyone. Two things do leave your device, and <strong>only if you switch them on</strong>: anonymous usage and crash data, and product-update notifications — both off by default, both switchable off at any time in <strong>Settings → Allarise Pro</strong>. Everything else is limited to Apple services used by app features (WeatherKit, MapKit, the App Store) and — if <em>you</em> configure it — your own self-hosted Home Assistant / MQTT broker.</x-import>
 
       <div style="margin-top: 16px;">
-        <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,120px"><strong>What changed in July 2026:</strong> the app is now published by DoMore Tech LLC rather than by an individual; optional anonymous usage data and crash reporting were added (see §2.3), along with optional product-update notifications (see §2.7); and the NWS Weather Alerts feature was removed from the app, along with everything this policy previously said about it.</x-import>
+        <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,120px"><strong>What changed in July 2026:</strong> the app is now published by DoMore Tech LLC rather than by an individual; optional anonymous usage data and crash reporting were added (see §2.3), along with optional product-update notifications (see §2.7); and the NWS Weather Alerts feature was removed from the current app. Because some users may still be running an older version that includes it, this policy still describes what that feature does with your data (see §2.1).</x-import>
       </div>
 
       <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">1. Who We Are</h2>
@@ -1144,6 +1145,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 
       <h3 style="font-family: var(--font-display); color: var(--text); font-size: 18px; margin: 28px 0 10px;">2.1 Location (optional)</h3>
       <p style="margin: 0 0 14px;">If you enable the weather widget, the app requests <strong>When In Use</strong> location access to fetch your local weather conditions. Your coordinates are sent directly to Apple's WeatherKit API — we never see them. Location is not stored on disk and is never sent to our servers.</p>
+      <p style="margin: 0 0 14px;"><strong>NWS Weather Alerts (older app versions only).</strong> This feature has been <strong>removed from the current version of Allarise</strong>. Some users may still be running an earlier version that includes it, so its data handling is documented here. In those versions, if you enable NWS weather alerts, your approximate location (coordinates or city / region) is sent to the United States National Weather Service public API (<code>api.weather.gov</code>) to retrieve weather alerts for your area. The NWS is a US government agency; no account is required, and we do not receive or store any data from this exchange. Where present, the feature is opt-in and can be disabled at any time in Settings.</p>
       <p style="margin: 0 0 18px;">WiFi SSID detection (used to identify your home network for MQTT routing) also requires location permission on iOS. The SSID is stored locally on your device only and is never transmitted to us.</p>
       <x-import component-from-global-scope="Allarise.DataTable" columns="{{ privLocCols }}" rows="{{ privLocRows }}" variant="bordered" hint-size="100%,180px"></x-import>
 
@@ -1240,6 +1242,123 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   </main>
   </sc-if>
 
+  <sc-if value="{{ isTerms }}" hint-placeholder-val="{{ false }}">
+  <main>
+    <section style="border-bottom: 1px solid var(--border);">
+      <div style="max-width: var(--content-prose); margin: 0 auto; padding: 64px 24px 44px;">
+        <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary);">Last updated July 2026 · Policy version 6</div>
+        <h1 style="font-family: var(--font-display); font-size: clamp(38px, 4.6vw, 60px); font-weight: 800; letter-spacing: -0.035em; line-height: .98; margin: 18px 0 0; color: var(--text);">Terms of Use</h1>
+      </div>
+    </section>
+
+    <div style="max-width: var(--content-prose); margin: 0 auto; padding: 40px 24px 80px; line-height: 1.7; color: var(--text-secondary);">
+
+      <x-import component-from-global-scope="Allarise.Callout" tone="success" icon="{{ iconLockSm }}" hint-size="100%,140px"><strong>The short version:</strong> These Terms govern your use of the Allarise app and website. Allarise is provided on an as-is and as-available basis, and alarm, notification, audio, and automation behaviour can be affected by iOS, device state, permissions, network conditions, and third-party systems.</x-import>
+
+      <div style="margin-top: 16px;">
+        <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,110px"><strong>Important:</strong> Allarise is not a life-safety, medical, or emergency alert system. You remain responsible for maintaining backup wake-up or reminder methods for important events.</x-import>
+      </div>
+
+      <div style="margin-top: 16px;">
+        <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,150px"><strong>What changed in July 2026 — please read before agreeing:</strong> the party you are contracting with is now <strong>DoMore Tech LLC</strong>, a Michigan limited liability company, rather than Bryan Scott Daniel as an individual (§1); two <strong>optional</strong> features were added — anonymous usage data and crash reports, and product-update notifications, both off unless you turn them on (§16, and §2.3 / §2.7 of the <a href="#privacy">Privacy Policy</a>); and the <strong>NWS Weather Alerts</strong> feature was removed from the current app. The section governing it (§18) is retained because older versions some users still run may include it.</x-import>
+      </div>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">1. Acceptance of Terms</h2>
+      <p style="margin: 0 0 14px;">These Terms of Use ("Terms") form an agreement between you and <strong>DoMore Tech LLC</strong>, a Michigan limited liability company ("we", "us", or "our"), regarding your use of the Allarise mobile application, related website pages, and any associated documentation or support materials (collectively, the "Service"). Allarise was previously published by Bryan Scott Daniel as an individual; DoMore Tech LLC is now the publisher and is the party to these Terms.</p>
+      <p style="margin: 0;">By downloading, accessing, or using the Service, you agree to be bound by these Terms. If you do not agree, do not use the Service.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">2. Eligibility and Permitted Use</h2>
+      <p style="margin: 0;">You may use the Service only in compliance with applicable law and only for lawful purposes. You may not use the Service in a way that interferes with its operation, attempts unauthorized access, or misuses any Home Assistant, MQTT, Apple, or other third-party systems connected to it.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">3. App Store and Purchases</h2>
+      <p style="margin: 0 0 14px;">The Allarise app may offer paid features, subscriptions, free trials, and one-time purchases through the Apple App Store. Billing, renewals, cancellations, refunds, and payment processing for App Store purchases are handled by Apple and are also subject to Apple's terms and policies.</p>
+      <p style="margin: 0 0 14px;">Pricing, free trial availability, and purchase options may change over time and may vary by region. Current pricing and purchase details are shown in the App Store before you complete a purchase.</p>
+      <p style="margin: 0 0 14px;">Allarise is licensed, not sold, to you for use on Apple devices under the <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">Apple Licensed Application End User License Agreement</a> (the "Apple EULA"). These Terms are in addition to, and supplement, the Apple EULA. If there is any conflict between these Terms and the Apple EULA solely with respect to your App Store license to use Allarise on Apple devices, the Apple EULA controls as to that license; in all other respects, these Terms govern your use of Allarise and our services.</p>
+      <p style="margin: 0;">You acknowledge that these Terms are entered into between you and DoMore Tech LLC only, and not with Apple, and that DoMore Tech LLC — not Apple — is solely responsible for Allarise and its content. Apple and Apple's subsidiaries are third-party beneficiaries of these Terms, and upon your acceptance of these Terms, Apple will have the right (and will be deemed to have accepted the right) to enforce these Terms against you as a third-party beneficiary.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">4. Alarm, Notification, and Integration Disclaimer</h2>
+      <p style="margin: 0 0 14px;">Allarise is designed to help you schedule alarms, play audio, present notifications, and optionally exchange alarm state and commands with Home Assistant or MQTT systems. However, these features depend on factors outside our control, including:</p>
+      <ul style="margin: 0 0 14px; padding-left: 20px;">
+        <li>iOS behaviour and future operating system changes</li>
+        <li>notification permissions, Focus modes, mute and audio settings, and background execution policies</li>
+        <li>device power state, storage, connectivity, and hardware or software faults</li>
+        <li>your Home Assistant setup, MQTT broker, network, router, DNS, certificates, and other third-party systems</li>
+      </ul>
+      <p style="margin: 0 0 14px;">We do not guarantee that alarms, backup notifications, sleep sounds, media playback, MQTT commands, automations, or integrations will always occur on time, without interruption, or in every device state.</p>
+      <p style="margin: 0 0 14px;">You are solely responsible for using appropriate backup methods for any important wake-up, reminder, scheduling, or time-sensitive use case.</p>
+      <p style="margin: 0;"><strong>Not for medical, health, life-safety, or emergency use.</strong> Allarise is a general-purpose consumer alarm, reminder, and audio app. It is <strong>not a medical device</strong>, is not FDA-cleared or approved, and is not designed, intended, tested, or warranted for medical, health, clinical, life-safety, emergency, or other safety-critical purposes. You must <strong>not</strong> rely on Allarise for medication reminders, medical treatment or monitoring, caregiving, operation of vehicles or equipment, or any other purpose where a missed, delayed, silent, early, or incorrect alarm, sound, or notification could contribute to personal injury, death, or property, financial, or other loss. For any such purpose you must use a dedicated, purpose-built system and always maintain independent, redundant backup methods (such as a separate physical alarm clock). To the maximum extent permitted by applicable law, you knowingly and voluntarily assume all risk arising from any use of Allarise for these purposes.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">5. Third-Party Services</h2>
+      <p style="margin: 0;">The Service may rely on or interact with third-party services and platforms, including Apple services, Google Firebase (only where you have opted in to the features described in Section 16), Home Assistant, MQTT brokers, GitHub, and other linked websites or tools. We do not control and are not responsible for the availability, content, policies, security, or performance of third-party services.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">6. Privacy</h2>
+      <p style="margin: 0;">Your use of the Service is also subject to our <a href="#privacy">Privacy Policy</a>, which describes how the app handles information and device-stored data.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">7. Intellectual Property</h2>
+      <p style="margin: 0;">The Service, including its software, design, text, graphics, trademarks, and other content provided by us, is owned by DoMore Tech LLC or its licensors and is protected by applicable intellectual property laws. These Terms do not transfer ownership of any intellectual property rights to you.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">8. Feedback</h2>
+      <p style="margin: 0;">If you choose to send us feedback, suggestions, ideas, or feature requests, you grant us the right to use that feedback without restriction or compensation to you, except where prohibited by law.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">9. Termination</h2>
+      <p style="margin: 0;">We may suspend, limit, or terminate access to any website portion, support channel, or hosted feature of the Service if reasonably necessary for maintenance, security, legal compliance, abuse prevention, or breach of these Terms. Sections that by their nature should survive termination will continue to apply.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">10. Disclaimer of Warranties</h2>
+      <p style="margin: 0 0 14px;">To the maximum extent permitted by applicable law, the Service is provided <strong>"AS IS"</strong> and <strong>"AS AVAILABLE"</strong>, with all faults and without warranties of any kind, whether express, implied, statutory, or otherwise.</p>
+      <p style="margin: 0;">We disclaim all implied warranties, including merchantability, fitness for a particular purpose, non-infringement, and any warranties arising from course of dealing or usage of trade. We do not warrant that the Service will meet your requirements, achieve any intended result, operate uninterrupted, remain available, be error-free, or be compatible with any particular device, operating system version, app, automation, broker, or third-party service.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">11. Limitation of Liability</h2>
+      <p style="margin: 0 0 14px;">To the maximum extent permitted by applicable law, DoMore Tech LLC and its suppliers will not be liable for any indirect, incidental, special, consequential, exemplary, or punitive damages, or for any loss of profits, revenue, data, business, goodwill, opportunity, or use, arising out of or related to the Service.</p>
+      <p style="margin: 0 0 14px;">This includes, without limitation, claims relating to missed alarms, delayed alerts, failed notifications, failed Home Assistant or MQTT automations, sleep sound interruptions, device misconfiguration, or third-party service failures.</p>
+      <p style="margin: 0;">To the extent liability cannot be excluded, our total liability for all claims arising from or related to the Service will be limited to the greater of (a) the total amount you paid for Allarise in the twelve months before the event giving rise to the claim, or (b) USD $20.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">12. Governing Law and Venue</h2>
+      <p style="margin: 0 0 14px;">These Terms are governed by the laws of the State of Michigan, United States, without regard to conflict of law rules, except to the extent consumer protection laws in your place of residence apply and cannot be waived.</p>
+      <p style="margin: 0;">To the fullest extent permitted by applicable law, any legal action or proceeding arising out of or relating to these Terms or the Service shall be brought exclusively in the state or federal courts located in the State of Michigan. You consent to the personal jurisdiction of, and venue in, those courts and waive any objection based on inconvenient forum, except where applicable law gives you a non-waivable right to bring or defend a claim in the courts of your place of residence.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">13. Dispute Resolution</h2>
+      <p style="margin: 0;"><strong>Informal resolution first.</strong> If you have a concern or dispute regarding the Service, you agree to first contact us at <a href="{{ supportMailto }}">{{ supportEmail }}</a> and work with us in good faith to resolve it informally. Many disputes can be resolved this way. If the dispute is not resolved within 30 days, either party may pursue formal legal action, subject to the governing law and exclusive Michigan venue set out in Section 12.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">14. Changes to These Terms</h2>
+      <p style="margin: 0;">We may update these Terms from time to time. If we make a material change, we will update the "Last updated" date on this page and may provide additional notice where appropriate. By continuing to use the Service after revised Terms become effective, you agree to the updated Terms.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">15. Severability and Waiver</h2>
+      <p style="margin: 0;">If any part of these Terms is found unenforceable, the remaining provisions will remain in full force and effect. Our failure to enforce any provision of these Terms is not a waiver of that provision or any other provision.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">16. Optional Data Collection and Product Update Notifications</h2>
+      <p style="margin: 0 0 14px;">Allarise offers two optional features that involve data leaving your device: <strong>anonymous usage data and crash reports</strong>, and <strong>product update notifications</strong>. Both are off by default, both are presented to you without a pre-selected answer, and both can be switched off at any time in Settings. Declining either does not limit any other functionality of the Service and is not a condition of using it.</p>
+      <p style="margin: 0 0 14px;">What each collects, who processes it, how long it is kept, and how to have it deleted are described in our <a href="#privacy">Privacy Policy</a>, which forms part of these Terms.</p>
+      <p style="margin: 0;">You agree not to submit through these features, or through any support channel, information you do not wish us to receive. The usage-data feature is designed so that text you author in the app (alarm names, notes, station and entity names) cannot be transmitted; you should nevertheless avoid placing sensitive information in fields you then export or send to us for support.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">17. Changes to Features</h2>
+      <p style="margin: 0;">Allarise is under active development and features may be added, changed, or removed between versions. In particular, the <strong>NWS Weather Alerts</strong> feature described in earlier versions of these Terms <strong>has been removed from the current app</strong> and is no longer offered in it. Because older versions that some users continue to run may still include it, the section governing that feature — including its disclaimers — is retained as <strong>Section 18</strong> and continues to apply to those versions. Nothing in these Terms obliges us to provide, maintain, or continue any particular feature, and no feature removal entitles you to a refund except as required by applicable law or Apple's App Store policies.</p>
+
+      <h2 style="font-family: var(--font-display); color: var(--text); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 48px 0 12px;">18. NWS Weather Alerts Feature (Legacy Versions)</h2>
+      <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,110px"><strong>Applies to older app versions only.</strong> The NWS Weather Alerts feature has been removed from the current version of Allarise. The following governs its use in earlier versions that some users may still be running.</x-import>
+      <p style="margin: 18px 0 14px;">Where present, Allarise's NWS Weather Alerts feature polls the United States National Weather Service (NWS) public API (<a href="https://www.weather.gov">weather.gov</a>) for active severe weather alerts near locations you configure. This feature is available only to users in the United States.</p>
+      <p style="margin: 0 0 14px;"><strong>This feature is provided strictly on an experimental, as-is basis</strong> and is subject to all disclaimers and limitations in these Terms, including Section 10 (Disclaimer of Warranties) and Section 11 (Limitation of Liability).</p>
+      <p style="margin: 0 0 14px;">In addition, you expressly acknowledge and agree that:</p>
+      <ul style="margin: 0 0 14px; padding-left: 20px;">
+        <li>The NWS API is a third-party United States government service. DoMore Tech LLC does not operate, maintain, or have any control over the NWS API and is not responsible for its availability, accuracy, or content.</li>
+        <li>Alert delivery depends on NWS API availability, polling frequency, internet connectivity, device state, app execution state, and other factors outside our control. Alerts may be delayed, missed, duplicated, or incorrect.</li>
+        <li>This feature <strong>must not be used as your sole or primary source of emergency weather information.</strong> You must always rely on official government emergency alert systems, Wireless Emergency Alerts (WEA), NOAA Weather Radio, broadcast media, and other authoritative sources for emergency preparedness and response.</li>
+        <li>DoMore Tech LLC will not be held liable for any harm, loss, injury, or damages of any kind resulting from your reliance on, or failure to receive, NWS alerts delivered through this feature.</li>
+      </ul>
+      <p style="margin: 0;">In the versions that include it, use of this feature requires your in-app agreement to these terms via the disclaimer toggle in Settings before the feature can be enabled.</p>
+
+      <div style="margin-top: 56px;">
+        <x-import component-from-global-scope="Allarise.ContactBox" title="Contact Us" hint-size="100%,180px">
+          <p style="margin: 0 0 12px; color: var(--text-secondary);">Questions about these Terms?</p>
+          <p style="margin: 0 0 4px; color: var(--text);"><strong>DoMore Tech LLC</strong></p>
+          <p style="margin: 0 0 8px; color: var(--text-secondary);">A Michigan limited liability company</p>
+          <a href="{{ supportMailto }}">{{ supportEmail }}</a>
+        </x-import>
+      </div>
+
+    </div>
+  </main>
+  </sc-if>
+
   <x-import component-from-global-scope="Allarise.SiteFooter" links="{{ footerLinks }}" hint-size="100%,120px">
     <div style="font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-tertiary); margin-top: 14px;">© 2026 Allarise</div>
   </x-import>
@@ -1286,7 +1405,8 @@ const PAGE_BY_HASH = {
   '#home-assistant': 'ha',
   '#ha-reference': 'haref',
   '#faq': 'faq',
-  '#privacy': 'privacy'
+  '#privacy': 'privacy',
+  '#terms': 'terms'
 };
 
 function svgIcon(children, size) {
@@ -1465,6 +1585,7 @@ const DATA = {
   privLocRows: [
     { a: 'GPS coordinates', b: 'Fetch local weather', c: 'Memory only', d: 'Apple WeatherKit' },
     { a: 'City / region name', b: 'Display in weather widget', c: 'Memory only', d: 'Apple MapKit (reverse geocode)' },
+    { a: 'GPS coordinates / city', b: 'Fetch NWS weather alerts (older app versions, if enabled)', c: 'Memory only', d: 'NWS api.weather.gov (opt-in)' },
     { a: 'WiFi SSID', b: 'Route MQTT to internal/external broker', c: 'Local device only', d: 'Nobody' }
   ],
   privStoreCols: [
@@ -1694,12 +1815,13 @@ class Component extends DCLogic {
       isHARef: page === 'haref',
       isFAQ: page === 'faq',
       isPrivacy: page === 'privacy',
+      isTerms: page === 'terms',
       navLinks: NAV.map((l) => ({ label: l.label, href: l.href, active: l.key === page || (l.also || []).indexOf(page) >= 0 })),
       footerLinks: [
         { label: 'Discord', href: 'https://discord.gg/wUxJKAD4dP' },
         { label: SUPPORT_EMAIL, href: 'mailto:' + SUPPORT_EMAIL },
         { label: 'Privacy Policy', href: '#privacy' },
-        { label: 'Terms of Use', href: 'https://beta.allarise.app/terms.html' }
+        { label: 'Terms of Use', href: '#terms' }
       ],
       iconAlarm: icon('alarm', 26),
       iconMoon: icon('moon', 26),
