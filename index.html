@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>[BETA] Allarise — Smart alarms for Home Assistant</title>
+<title>[BETA] Allarise: smart alarms for Home Assistant</title>
 <link rel="icon" type="image/png" href="app-icon.png">
 <link rel="apple-touch-icon" href="app-icon.png">
 <script>
@@ -623,14 +623,10 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
       </div>
 
       <div style="position: relative;">
-        <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary); display: flex; gap: 10px; align-items: center;">
-          <span style="width: 22px; height: 1px; background: var(--text-tertiary); display: block;"></span>
-          <span>iOS · Home Assistant · MQTT</span>
-        </div>
-        <h1 style="font-family: var(--font-display); font-size: clamp(46px, 6.4vw, 82px); font-weight: 800; letter-spacing: -0.035em; line-height: .95; margin: 22px 0 0; color: var(--text);">Wake up<br>smarter.</h1>
-        <p id="hero-line" style="font-size: 21px; line-height: 1.4; color: var(--text); margin: 26px 0 0; max-width: 30ch; text-wrap: pretty;"><span>Your alarms shouldn't just wake you up</span><span id="hero-dash"> — </span><span id="hero-typed" data-text="they should wake up your whole house.">they should wake up your whole house.</span></p>
+        <h1 style="font-family: var(--font-display); font-size: clamp(46px, 6.4vw, 82px); font-weight: 800; letter-spacing: -0.035em; line-height: .95; margin: 0; color: var(--text);">Wake up<br>smarter.</h1>
+        <p id="hero-line" style="font-size: 21px; line-height: 1.4; color: var(--text); margin: 26px 0 0; max-width: 30ch; text-wrap: pretty;"><span>Your alarms shouldn't just wake you up.</span><span id="hero-dash"> </span><span id="hero-typed" data-text="They should wake up your whole house.">They should wake up your whole house.</span></p>
         <div data-mq="rule" style="height: 0; margin: 24px 0;"></div>
-        <p style="font-size: 16px; line-height: 1.65; color: var(--text-secondary); margin: 0; max-width: 46ch; text-wrap: pretty;">Allarise syncs with Home Assistant so your lights, routines, and automations can respond when your alarm goes off. Wake up to a house that's already moving&mdash;and an alarm that makes sure you are too. Stop oversleeping with built-in missions like math and shake, or bring some fun to even the earliest mornings with interactive games.</p>
+        <p style="font-size: 16px; line-height: 1.65; color: var(--text-secondary); margin: 0; max-width: 46ch; text-wrap: pretty;">Allarise syncs with Home Assistant so your lights, routines, and automations can respond when your alarm goes off. Wake up to a house that's already moving, with an alarm that makes sure you are too. Stop oversleeping with built-in missions like math and shake, or bring some fun to even the earliest mornings with interactive games.</p>
         <p style="font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text); margin: 14px 0 0; max-width: 46ch;">No in-app ads, and best of all, Allarise is free!</p>
         
         <div data-hero-cta style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px;">
@@ -1870,7 +1866,7 @@ class Component extends DCLogic {
     typed.classList.add('ar-caret');
     var READ = 2200, GAP = 650, TYPE = 55;
     setTimeout(function () {
-      dash.style.opacity = '1';                       // em-dash appears
+      dash.style.opacity = '1';                       // beat before the second line types
       setTimeout(function typeChar(i) {
         if (i >= full.length) {                       // period placed
           typed.classList.remove('ar-caret');
