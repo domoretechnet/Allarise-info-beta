@@ -495,6 +495,15 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 /* Keep the second sentence laid out (no reflow) but invisible until the script
    empties it and starts typing. */
 .ar-intro #hero-typed { visibility: hidden; }
+/* Once the intro finishes, the second sentence joins the lamp scene's 19s loop:
+   it fades out exactly as the app icon and lamp fade out (87-93%) and fades back
+   in as the scene resets, so the caption breathes with the scene instead of
+   sitting static. Phase-locked by adding .ar-typed-loop on the same tick the
+   lamp's .r1 unpauses its cycle (both animations then start at 0% together). The
+   0% = opacity 1 keyframe leaves the just-typed sentence untouched on the first
+   pass — the fade only kicks in at the first loop boundary, never at load. */
+@keyframes ar-typed-cycle { 0%, 87% { opacity: 1; } 93%, 96% { opacity: 0; } 100% { opacity: 1; } }
+.ar-intro #hero-typed.ar-typed-loop { animation: ar-typed-cycle 19s linear infinite; }
 /* Trailing ellipsis. The dash starts empty and invisible; the script fades it in
    and types three literal periods "..." one at a time onto the end of the first
    line, holds a beat, then types the second sentence onto line two. The "..."
@@ -1883,6 +1892,7 @@ class Component extends DCLogic {
           var phone = document.querySelector('[data-hero-phone]');
           if (phone) phone.classList.add('ar-phone-live'); // phone loop starts now, so it rings after the caption
           lamp.classList.add('r1');                    // app icon shows up
+          typed.classList.add('ar-typed-loop');        // second sentence now breathes with the lamp's 19s loop (phase-locked to r1)
           lamp.classList.add('r3');                    // start the lamp-light clock now, phase-locked to the phone loop (the light itself still ramps in later via ar-wash-hold's built-in delay)
           setTimeout(function () { lamp.classList.add('r2'); }, 430);  // dot rises, post appears
           return;
