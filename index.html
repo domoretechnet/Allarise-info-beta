@@ -790,9 +790,17 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
       </div>
 
       <div id="step-mqtt" data-reveal style="margin-top: 56px;">
-        <x-import component-from-global-scope="Allarise.StepBlock" step="2" title="Set up your MQTT broker" hint-size="100%,340px">
-          <p style="margin: 0 0 16px; color: var(--text-secondary); line-height: 1.65;">Create a dedicated MQTT user for the Allarise app and restrict it to only the topics it needs. This keeps the app isolated from the rest of your broker.</p>
-          <p style="font-weight: 600; margin: 0 0 8px;">Step 2a — Create a dedicated user</p>
+        <x-import component-from-global-scope="Allarise.StepBlock" step="2" title="Set up your MQTT broker" hint-size="100%,620px">
+          <p style="margin: 0 0 16px; color: var(--text-secondary); line-height: 1.65;">Allarise talks to Home Assistant through an MQTT broker. If you don't have one yet, install Mosquitto first, then create a dedicated user for the app so it's restricted to only the topics it needs.</p>
+          <p style="font-weight: 600; margin: 0 0 8px;">Step 2a — Install the Mosquitto broker</p>
+          <p style="margin: 0 0 8px; color: var(--text-secondary); line-height: 1.65;">Already have an MQTT broker running? Skip to Step 2b. Otherwise, install the Mosquitto broker app (formerly known as an add-on):</p>
+          <ol style="margin: 0 0 12px; padding-left: 20px; line-height: 1.75; color: var(--text-secondary);">
+            <li>In Home Assistant, go to <strong>Settings → Apps → Install app</strong></li>
+            <li>Find the <strong>Mosquitto broker</strong> app and click it</li>
+            <li>Click <strong>INSTALL</strong>, then follow the instructions in the app's settings to finish setting up the broker</li>
+          </ol>
+          <p style="margin: 0 0 20px; color: var(--text-secondary); line-height: 1.65;">Stuck on MQTT? The <a href="https://www.home-assistant.io/join-chat/">Home Assistant Discord</a> is a great place to get help setting it up.</p>
+          <p style="font-weight: 600; margin: 0 0 8px;">Step 2b — Create a dedicated user</p>
           <p style="margin: 0; color: var(--text-secondary); line-height: 1.65;">Open <strong>Settings → Add-ons → Mosquitto broker → Configuration</strong> and add a login under the <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">logins</x-import> key:</p>
           <x-import component-from-global-scope="Allarise.CodeBlock" label="Mosquitto broker config" code="{{ codeMosquitto }}" hint-size="100%,160px"></x-import>
           <p style="margin: 16px 0 0; color: var(--text-secondary); line-height: 1.65;">Save and <strong>restart the Mosquitto add-on</strong> after making this change.</p>

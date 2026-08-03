@@ -213,6 +213,7 @@
   }
   .mission-slot:hover { border-color:var(--accent) }
   .mission-slot.filled { background:var(--surface2); border-color:var(--accent); color:var(--text) }
+  .mission-slot.active { box-shadow:0 0 0 2px var(--accent) }
   .mission-slot.empty { border-style:dashed }
   .mission-slot .slot-num {
     position:absolute; top:5px; left:7px; font-size:10px; font-weight:700;
@@ -999,11 +1000,11 @@
                 <input type="text" id="ca-dismiss-uri" placeholder="shortcuts://run-shortcut?name=Good%20Morning" oninput="updateCreateAlarm()">
                 <div class="field-hint">Opened after the alarm is dismissed — a Shortcut, another app, a URL. A non-empty link surfaces the Open App step on its own.</div>
               </div>
-            </div>
-            <div class="field-group">
-              <label>Snooze Link</label>
-              <input type="text" id="ca-snooze-uri" placeholder="myapp://snoozed" oninput="updateCreateAlarm()">
-              <div class="field-hint">Opened each time the alarm is snoozed. Not an after-alarm step — it works with or without the slots above.</div>
+              <div class="field-group">
+                <label>Snooze Link</label>
+                <input type="text" id="ca-snooze-uri" placeholder="myapp://snoozed" oninput="updateCreateAlarm()">
+                <div class="field-hint">Opened each time the alarm is snoozed — fires on snooze, with or without a Dismiss Link.</div>
+              </div>
             </div>
           </div>
 
@@ -2778,28 +2779,93 @@ const SLOT_PARAMS = {
   none:           [{ id:'count',      label:'Taps',      min:1,  max:50,  key:'tap_count' }],
 };
 
-// Renders the settings row under slots 2–5 for whatever type each holds.
-// Slot 1 is untouched — it already has the full panels above, including the
-// Home Assistant fallback controls.
+// ── Accordion: only the selected slot's config is shown ──────────────────────
+// Multiple filled slots used to render every config at once — slot 1's panels
+// PLUS each of slots 2–5, and after-alarm steps the same way — which testers
+// found confusing. Now one "active" slot is revealed at a time; focusing or
+// changing a slot makes it active and the others collapse. Values persist in the
+// DOM while hidden, so the payload still carries every slot's settings
+// regardless of which one is currently on screen.
+const ACTIVE_SLOT = { ca: 1, ua: 1, ubn: 1 };
+const ACTIVE_AA = { ca: 1, ua: 1, ubn: 1 };
+
+function setActiveSlot(prefix, i) {
+  ACTIVE_SLOT[prefix] = i;
+  showMissionConfig(prefix);
+}
+
+// Toggles which slot's config is visible WITHOUT rebuilding any controls, so
+// entered values survive switching between slots.
+function showMissionConfig(prefix) {
+  let active = ACTIVE_SLOT[prefix] || 1;
+  // An active slot of 2–5 that is now empty falls back to slot 1, so a stale
+  // selection never leaves the config area blank.
+  if (active > 1 && !v(prefix + '-slot-' + active)) { active = 1; ACTIVE_SLOT[prefix] = 1; }
+  for (let i = 2; i <= 5; i++) {
+    const host = document.getElementById(prefix + '-slot-' + i + '-params');
+    if (host) host.style.display = (host.dataset.renderedType && i === active) ? '' : 'none';
+  }
+  for (let i = 1; i <= 5; i++) {
+    const tile = document.getElementById(prefix + '-slot-' + i + '-tile');
+    if (tile) tile.classList.toggle('active', i === active);
+  }
+  syncMissionDisplay(prefix);  // slot 1's panels obey the same active rule
+}
+
+function setActiveAa(prefix, i) {
+  ACTIVE_AA[prefix] = i;
+  showAaConfig(prefix);
+}
+
+// After-alarm steps: same accordion, keyed on the step's type rather than a
+// numbered params host. Only the active step's config block is shown. Update
+// Alarm / Update-by-Name have no wrapper divs yet, so getElementById returns
+// null there and this safely leaves their always-visible fields untouched.
+function showAaConfig(prefix) {
+  let active = ACTIVE_AA[prefix] || 1;
+  if (!v(prefix + '-aa-slot-' + active)) {
+    for (let i = 1; i <= 4; i++) { if (v(prefix + '-aa-slot-' + i)) { active = i; break; } }
+    ACTIVE_AA[prefix] = active;
+  }
+  const activeVal = v(prefix + '-aa-slot-' + active) || '';
+  const notesCfg = document.getElementById(prefix + '-aa-notes-config');
+  if (notesCfg) notesCfg.style.display = (activeVal === 'notes') ? '' : 'none';
+  const linkCfg = document.getElementById(prefix + '-aa-applink-config');
+  if (linkCfg) linkCfg.style.display = (activeVal === 'appLink') ? '' : 'none';
+  for (let i = 1; i <= 4; i++) {
+    const tile = document.getElementById(prefix + '-aa-slot-' + i + '-tile');
+    if (tile) tile.classList.toggle('active', i === active);
+  }
+}
+
+// Renders the settings row under slots 2–5 for whatever type each holds, then
+// hands off to showMissionConfig to reveal only the active one. Slot 1 keeps its
+// full panels above, including the Home Assistant fallback controls.
 function renderSlotParams(prefix) {
   for (let i = 2; i <= 5; i++) {
     const host = document.getElementById(prefix + '-slot-' + i + '-params');
     if (!host) continue;
     const type = v(prefix + '-slot-' + i);
     const spec = SLOT_PARAMS[type];
-    if (!type || !spec) { host.innerHTML = ''; host.style.display = 'none'; continue; }
-    host.style.display = '';
-    host.innerHTML = '<div class="slot-params-label">Slot ' + i + ' — ' +
-      (MISSION_META[type] || {}).label + '</div><div class="row-2">' +
-      spec.map(f => {
-        const id = `${prefix}-slot-${i}-${f.id}`;
-        const ctl = f.opts
-          ? `<select id="${id}" onchange="${prefix === 'ca' ? 'updateCreateAlarm' : prefix === 'ua' ? 'updateUpdateAlarm' : 'updateByName'}()">` +
-            f.opts.map(o => `<option value="${o}">${o === '' ? '— default —' : o.replace(/_/g,' ')}</option>`).join('') + '</select>'
-          : `<input type="number" id="${id}" min="${f.min}" max="${f.max}" placeholder="— default —" oninput="${prefix === 'ca' ? 'updateCreateAlarm' : prefix === 'ua' ? 'updateUpdateAlarm' : 'updateByName'}()">`;
-        return `<div class="field-group"><label>${f.label}</label>${ctl}</div>`;
-      }).join('') + '</div>';
+    if (!type || !spec) { host.innerHTML = ''; host.dataset.renderedType = ''; host.style.display = 'none'; continue; }
+    // Rebuild ONLY when the type actually changed. syncMissionSlots runs on every
+    // slot edit, so an unconditional rebuild would wipe a slot's entered values
+    // whenever any sibling slot changed.
+    if (host.dataset.renderedType !== type) {
+      host.innerHTML = '<div class="slot-params-label">Slot ' + i + ' — ' +
+        (MISSION_META[type] || {}).label + '</div><div class="row-2">' +
+        spec.map(f => {
+          const id = `${prefix}-slot-${i}-${f.id}`;
+          const ctl = f.opts
+            ? `<select id="${id}" onchange="${prefix === 'ca' ? 'updateCreateAlarm' : prefix === 'ua' ? 'updateUpdateAlarm' : 'updateByName'}()">` +
+              f.opts.map(o => `<option value="${o}">${o === '' ? '— default —' : o.replace(/_/g,' ')}</option>`).join('') + '</select>'
+            : `<input type="number" id="${id}" min="${f.min}" max="${f.max}" placeholder="— default —" oninput="${prefix === 'ca' ? 'updateCreateAlarm' : prefix === 'ua' ? 'updateUpdateAlarm' : 'updateByName'}()">`;
+          return `<div class="field-group"><label>${f.label}</label>${ctl}</div>`;
+        }).join('') + '</div>';
+      host.dataset.renderedType = type;
+    }
   }
+  showMissionConfig(prefix);
 }
 
 // The mission_config for slots 2..5, read back off the rendered controls.
@@ -2941,11 +3007,7 @@ function syncAaSlots(prefix) {
       ensureRemoveButton(tile, 'Remove after-alarm step ' + i, () => removeAaSlot(prefix, i));
     }
   }
-  const steps = aaSlots(prefix);
-  const notesCfg = document.getElementById(prefix + '-aa-notes-config');
-  if (notesCfg) notesCfg.style.display = steps.includes('notes') ? '' : 'none';
-  const linkCfg = document.getElementById(prefix + '-aa-applink-config');
-  if (linkCfg) linkCfg.style.display = steps.includes('appLink') ? '' : 'none';
+  showAaConfig(prefix);
 }
 
 function removeAaSlot(prefix, i) {
@@ -2995,10 +3057,12 @@ const FALLBACK_PANELS = {
 };
 
 function syncMissionDisplay(prefix) {
+  // Slot 1's panels show only when slot 1 is the active (selected) slot.
+  const showSlot1 = (ACTIVE_SLOT[prefix] || 1) === 1;
   const mission = v(prefix + '-slot-1');
   Object.entries(MISSION_PANELS).forEach(([suffix, type]) => {
     const el = document.getElementById(prefix + '-mc-' + suffix);
-    if (el) el.style.display = (mission === type) ? '' : 'none';
+    if (el) el.style.display = (showSlot1 && mission === type) ? '' : 'none';
   });
   syncFallbackDisplay(prefix);
 }
@@ -3574,6 +3638,26 @@ function updateDeviceCommands() {
 
 // ─── Init ────────────────────────────────────────────────
 updateAll();
+
+// Wire the accordion once: focusing or changing a mission slot or after-alarm
+// step makes it the active (visible) one. Registered after the first render so
+// the inline onchange handlers have already run.
+['ca', 'ua', 'ubn'].forEach(prefix => {
+  for (let i = 1; i <= 5; i++) {
+    const sel = document.getElementById(prefix + '-slot-' + i);
+    if (sel) {
+      sel.addEventListener('focus', () => setActiveSlot(prefix, i));
+      sel.addEventListener('change', () => setActiveSlot(prefix, i));
+    }
+  }
+  for (let i = 1; i <= 4; i++) {
+    const sel = document.getElementById(prefix + '-aa-slot-' + i);
+    if (sel) {
+      sel.addEventListener('focus', () => setActiveAa(prefix, i));
+      sel.addEventListener('change', () => setActiveAa(prefix, i));
+    }
+  }
+});
 </script>
 </body>
 </html>
