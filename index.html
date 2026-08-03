@@ -487,26 +487,28 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
    carry their final opacity as inline styles, the "hidden until stage N" rules
    use :not() + !important so that once the stage class lands the override stops
    matching and each layer returns to its own inline value / keyframe. */
-/* During the intro, give the first clause its own line so the dots (and then the
-   typed clause) always live on the line below it. Without this the dots widen the
-   dash inline and tip the first clause from one line to two — a jarring reflow the
-   moment they appear. The second line is held open before the dots by the dash's
-   (invisible) ". " content, so the layout reads as two lines the whole time. Not
-   applied for no-JS / reduced-motion viewers (they never get .ar-intro). */
+/* During the intro, give the first sentence (its period now lives in the source
+   text, glued to "up") its own line, so the thinking dots and then the typed
+   second sentence live on the line below it. Without this the dots widen the line
+   inline and tip the first sentence from one line to two — a jarring reflow the
+   moment they appear. Not applied for no-JS / reduced-motion viewers (no .ar-intro),
+   who keep the natural inline sentence flow. */
 .ar-intro #hero-line > span:first-child { display: block; }
-.ar-intro #hero-dash { opacity: 0; transition: opacity .5s ease; }
-/* Keep the second clause laid out (no reflow) but invisible until the script
-   empties it and starts typing. Only reached when JS is active (it added
-   .ar-intro), so no-JS / reduced-motion viewers keep it visible. */
+/* Keep the second sentence laid out (no reflow) but invisible until the script
+   empties it and starts typing. */
 .ar-intro #hero-typed { visibility: hidden; }
-/* Thinking dots rendered inside #hero-dash while the thought trails off. Each
-   dot is a small inline circle; staggered ar-think delays make them ripple. */
-.ar-intro #hero-dash.ar-thinking { white-space: nowrap; }
-.ar-intro #hero-dash.ar-thinking .ar-tdot {
+/* Thinking dots. They live in the source (so they reserve the second line from
+   the first paint — the layout reads as two lines the whole time, no jump) and
+   are hidden for no-JS / reduced-motion. #hero-dash fades the group in; the dots
+   ripple only while .ar-thinking is set, then the script clears the dash and the
+   second sentence types into its place. */
+.ar-tdot { display: none; }
+.ar-intro #hero-dash { opacity: 0; transition: opacity .5s ease; white-space: nowrap; }
+.ar-intro #hero-dash .ar-tdot {
   display: inline-block; width: .26em; height: .26em; margin: 0 .07em;
   border-radius: 50%; background: currentColor; vertical-align: middle;
-  animation: ar-think 1.2s ease-in-out infinite;
 }
+.ar-intro #hero-dash.ar-thinking .ar-tdot { animation: ar-think 1.2s ease-in-out infinite; }
 .ar-intro #hero-dash.ar-thinking .ar-tdot:nth-child(2) { animation-delay: .16s; }
 .ar-intro #hero-dash.ar-thinking .ar-tdot:nth-child(3) { animation-delay: .32s; }
 /* The whole lamp scene (post, app icon, dots, glow) loops as one unit with the
@@ -638,7 +640,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 
       <div style="position: relative;">
         <h1 style="font-family: var(--font-display); font-size: clamp(46px, 6.4vw, 82px); font-weight: 800; letter-spacing: -0.035em; line-height: .95; margin: 0; color: var(--text);">Wake up<br>smarter.</h1>
-        <p id="hero-line" style="font-size: 21px; line-height: 1.4; color: var(--text); margin: 26px 0 0; max-width: 30ch; text-wrap: pretty;"><span>Your alarms shouldn't just wake you up</span><span id="hero-dash">. </span><span id="hero-typed" data-text="They should wake up your whole house.">They should wake up your whole house.</span></p>
+        <p id="hero-line" style="font-size: 21px; line-height: 1.4; color: var(--text); margin: 26px 0 0; max-width: 30ch; text-wrap: pretty;"><span>Your alarms shouldn't just wake you up.</span><span id="hero-dash"> <span class="ar-tdot"></span><span class="ar-tdot"></span><span class="ar-tdot"></span></span><span id="hero-typed" data-text="They should wake up your whole house.">They should wake up your whole house.</span></p>
         <div data-mq="rule" style="height: 0; margin: 24px 0;"></div>
         <p style="font-size: 16px; line-height: 1.65; color: var(--text-secondary); margin: 0; max-width: 46ch; text-wrap: pretty;">Allarise syncs with Home Assistant so your lights, routines, and automations can respond when your alarm goes off. Wake up to a house that's already moving, with an alarm that makes sure you are too. Stop oversleeping with built-in missions like math and shake, or bring some fun to even the earliest mornings with interactive games.</p>
         <p style="font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text-secondary); margin: 14px 0 0; max-width: 46ch;">Allarise is free and ad-free. Because waking up shouldn’t start with ads.</p>
@@ -1879,13 +1881,12 @@ class Component extends DCLogic {
     typed.style.visibility = 'visible';
     var READ = 2200, GAP = 2400, TYPE = 55;
     setTimeout(function () {
-      dash.innerHTML = '<span class="ar-tdot"></span><span class="ar-tdot"></span><span class="ar-tdot"></span>';
       dash.classList.add('ar-thinking');              // the thought trails off as animated thinking dots
       dash.style.opacity = '1';
       setTimeout(function typeChar(i) {
-        if (i === 0) {                                // dots collapse to a period as the line continues
+        if (i === 0) {                                // dots give way to the second sentence (its period already sits on line one)
           dash.classList.remove('ar-thinking');
-          dash.textContent = '. ';
+          dash.textContent = '';
         }
         if (i >= full.length) {                       // period placed
           var phone = document.querySelector('[data-hero-phone]');
