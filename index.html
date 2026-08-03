@@ -484,21 +484,22 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
    carry their final opacity as inline styles, the "hidden until stage N" rules
    use :not() + !important so that once the stage class lands the override stops
    matching and each layer returns to its own inline value / keyframe. */
-/* During the intro, give the first sentence (its period now lives in the source
-   text, glued to "up") its own line, so the thinking dots and then the typed
-   second sentence live on the line below it. Without this the dots widen the line
-   inline and tip the first sentence from one line to two — a jarring reflow the
-   moment they appear. Not applied for no-JS / reduced-motion viewers (no .ar-intro),
-   who keep the natural inline sentence flow. */
+/* During the intro, give the first sentence its own line so the typed second
+   sentence sits on the line below it. The ellipsis trails the first sentence on
+   line one (hanging off "up"), so we swap the static period out for it: hide the
+   #hero-stop period while animating, and the script types "..." in its place.
+   Not applied for no-JS / reduced-motion viewers (no .ar-intro), who keep the
+   natural inline sentence flow with the real period and both sentences static. */
 .ar-intro #hero-line > span:first-child { display: block; }
+.ar-intro #hero-stop { display: none; }
 /* Keep the second sentence laid out (no reflow) but invisible until the script
    empties it and starts typing. */
 .ar-intro #hero-typed { visibility: hidden; }
-/* Thinking ellipsis. The second line is already reserved by #hero-typed (laid
-   out but visibility:hidden), so the dash can start empty; the script fades it in
-   and types three literal periods "..." one at a time, holds a beat, then clears
-   the dash and types the second sentence into its place. Hidden for no-JS /
-   reduced-motion (no .ar-intro), where both sentences just show statically. */
+/* Trailing ellipsis. The dash starts empty and invisible; the script fades it in
+   and types three literal periods "..." one at a time onto the end of the first
+   line, holds a beat, then types the second sentence onto line two. The "..."
+   stays put. Hidden for no-JS / reduced-motion (no .ar-intro), where both
+   sentences just show statically with the real period. */
 .ar-intro #hero-dash { opacity: 0; transition: opacity .5s ease; white-space: nowrap; }
 /* The whole lamp scene (post, app icon, dots, glow) loops as one unit with the
    phone: fade in at the start of each 19s cycle, hold, fade out at the loop
@@ -629,7 +630,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 
       <div style="position: relative;">
         <h1 style="font-family: var(--font-display); font-size: clamp(46px, 6.4vw, 82px); font-weight: 800; letter-spacing: -0.035em; line-height: .95; margin: 0; color: var(--text);">Wake up<br>smarter.</h1>
-        <p id="hero-line" style="font-size: 21px; line-height: 1.4; color: var(--text); margin: 26px 0 0; max-width: 30ch; text-wrap: pretty;"><span>Your alarms shouldn't just wake you up.</span><span id="hero-dash"></span><span id="hero-typed" data-text="They should wake up your whole house.">They should wake up your whole house.</span></p>
+        <p id="hero-line" style="font-size: 21px; line-height: 1.4; color: var(--text); margin: 26px 0 0; max-width: 30ch; text-wrap: pretty;"><span id="hero-first">Your alarms shouldn't just wake you up<span id="hero-stop">.</span><span id="hero-dash"></span></span> <span id="hero-typed" data-text="They should wake up your whole house.">They should wake up your whole house.</span></p>
         <div data-mq="rule" style="height: 0; margin: 24px 0;"></div>
         <p style="font-size: 16px; line-height: 1.65; color: var(--text-secondary); margin: 0; max-width: 46ch; text-wrap: pretty;">Allarise syncs with Home Assistant so your lights, routines, and automations can respond when your alarm goes off. Wake up to a house that's already moving, with an alarm that makes sure you are too. Stop oversleeping with built-in missions like math and shake, or bring some fun to even the earliest mornings with interactive games.</p>
         <p style="font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text-secondary); margin: 14px 0 0; max-width: 46ch;">Allarise is free and ad-free. Because waking up shouldn’t start with ads.</p>
@@ -1877,10 +1878,7 @@ class Component extends DCLogic {
           setTimeout(function () { typeDot(n + 1); }, DOT);
           return;
         }
-        setTimeout(function typeChar(i) {
-        if (i === 0) {                                // ellipsis gives way to the second sentence (its period already sits on line one)
-          dash.textContent = '';
-        }
+        setTimeout(function typeChar(i) {             // the "..." stays put on line one; the answer types onto line two
         if (i >= full.length) {                       // period placed
           var phone = document.querySelector('[data-hero-phone]');
           if (phone) phone.classList.add('ar-phone-live'); // phone loop starts now, so it rings after the caption
