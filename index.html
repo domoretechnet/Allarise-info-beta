@@ -624,10 +624,10 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 
       <div style="position: relative;">
         <h1 style="font-family: var(--font-display); font-size: clamp(46px, 6.4vw, 82px); font-weight: 800; letter-spacing: -0.035em; line-height: .95; margin: 0; color: var(--text);">Wake up<br>smarter.</h1>
-        <p id="hero-line" style="font-size: 21px; line-height: 1.4; color: var(--text); margin: 26px 0 0; max-width: 30ch; text-wrap: pretty;"><span>Your alarms shouldn't just wake you up.</span><span id="hero-dash"> </span><span id="hero-typed" data-text="They should wake up your whole house.">They should wake up your whole house.</span></p>
+        <p id="hero-line" style="font-size: 21px; line-height: 1.4; color: var(--text); margin: 26px 0 0; max-width: 30ch; text-wrap: pretty;"><span>Your alarms shouldn't just wake you up</span><span id="hero-dash">. </span><span id="hero-typed" data-text="They should wake up your whole house.">They should wake up your whole house.</span></p>
         <div data-mq="rule" style="height: 0; margin: 24px 0;"></div>
         <p style="font-size: 16px; line-height: 1.65; color: var(--text-secondary); margin: 0; max-width: 46ch; text-wrap: pretty;">Allarise syncs with Home Assistant so your lights, routines, and automations can respond when your alarm goes off. Wake up to a house that's already moving, with an alarm that makes sure you are too. Stop oversleeping with built-in missions like math and shake, or bring some fun to even the earliest mornings with interactive games.</p>
-        <p style="font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text); margin: 14px 0 0; max-width: 46ch;">No in-app ads, and best of all, Allarise is free!</p>
+        <p style="font-size: 16px; font-weight: 700; line-height: 1.5; color: var(--text-secondary); margin: 14px 0 0; max-width: 46ch;">No in-app ads, and best of all, Allarise is free!</p>
         
         <div data-hero-cta style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px;">
           <x-import component-from-global-scope="Allarise.Button" href="https://testflight.apple.com/join/DYTMR1v2" variant="primary" hint-size="auto,40px"><svg viewBox="0 0 22.773 22.773" aria-hidden="true" style="width: 16px; height: 16px; fill: currentColor; vertical-align: -3px; margin-right: 7px;"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.28.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.332-1.26-3.428-2.8-1.287-1.82-2.323-4.63-2.323-7.28 0-4.28 2.797-6.55 5.552-6.55 1.448 0 2.675.95 3.6.95.865 0 2.222-1.01 3.902-1.01.613 0 2.886.06 4.374 2.19-.13.09-2.383 1.37-2.383 4.19 0 3.26 2.854 4.42 2.955 4.45z"/></svg>Join the TestFlight Beta</x-import>
@@ -1864,10 +1864,12 @@ class Component extends DCLogic {
     typed.textContent = '';
     typed.style.visibility = 'visible';
     typed.classList.add('ar-caret');
-    var READ = 2200, GAP = 650, TYPE = 55;
+    var READ = 2200, GAP = 900, TYPE = 55;
     setTimeout(function () {
-      dash.style.opacity = '1';                       // beat before the second line types
+      dash.textContent = '...';                       // the thought trails off
+      dash.style.opacity = '1';
       setTimeout(function typeChar(i) {
+        if (i === 0) dash.textContent = '. ';         // ellipsis collapses to a period as the line continues
         if (i >= full.length) {                       // period placed
           typed.classList.remove('ar-caret');
           var phone = document.querySelector('[data-hero-phone]');
