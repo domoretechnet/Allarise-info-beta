@@ -360,7 +360,9 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 @keyframes ar-spill-warm {
   0%, 15% { opacity: 0; } 46%, 88% { opacity: .55; } 100% { opacity: 0; }
 }
-@keyframes ar-cursor { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+/* The "thinking" ellipsis: three dots that bounce/brighten in sequence while
+   the second clause is being composed, in place of a blinking cursor. */
+@keyframes ar-think { 0%, 70%, 100% { opacity: .3; transform: translateY(0); } 35% { opacity: 1; transform: translateY(-.22em); } }
 @media (min-width: 701px) {
   [data-showsection] { min-height: 210vh; padding-bottom: 0 !important; align-items: start !important; }
   [data-showsection] > div { position: sticky; top: 84px; }
@@ -490,11 +492,16 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
    empties it and starts typing. Only reached when JS is active (it added
    .ar-intro), so no-JS / reduced-motion viewers keep it visible. */
 .ar-intro #hero-typed { visibility: hidden; }
-#hero-typed.ar-caret::after {
-  content: ''; display: inline-block; width: 2px; height: 1.05em;
-  background: var(--text); margin-left: 2px; vertical-align: -3px;
-  animation: ar-cursor 1s step-end infinite;
+/* Thinking dots rendered inside #hero-dash while the thought trails off. Each
+   dot is a small inline circle; staggered ar-think delays make them ripple. */
+.ar-intro #hero-dash.ar-thinking { white-space: nowrap; }
+.ar-intro #hero-dash.ar-thinking .ar-tdot {
+  display: inline-block; width: .26em; height: .26em; margin: 0 .07em;
+  border-radius: 50%; background: currentColor; vertical-align: middle;
+  animation: ar-think 1.2s ease-in-out infinite;
 }
+.ar-intro #hero-dash.ar-thinking .ar-tdot:nth-child(2) { animation-delay: .16s; }
+.ar-intro #hero-dash.ar-thinking .ar-tdot:nth-child(3) { animation-delay: .32s; }
 /* The whole lamp scene (post, app icon, dots, glow) loops as one unit with the
    phone: fade in at the start of each 19s cycle, hold, fade out at the loop
    boundary. Paused until .r1 (set at caption completion, same tick as the phone's
@@ -1863,15 +1870,17 @@ class Component extends DCLogic {
     var full = typed.getAttribute('data-text') || typed.textContent;
     typed.textContent = '';
     typed.style.visibility = 'visible';
-    typed.classList.add('ar-caret');
-    var READ = 2200, GAP = 900, TYPE = 55;
+    var READ = 2200, GAP = 1200, TYPE = 55;
     setTimeout(function () {
-      dash.textContent = '...';                       // the thought trails off
+      dash.innerHTML = '<span class="ar-tdot"></span><span class="ar-tdot"></span><span class="ar-tdot"></span>';
+      dash.classList.add('ar-thinking');              // the thought trails off as animated thinking dots
       dash.style.opacity = '1';
       setTimeout(function typeChar(i) {
-        if (i === 0) dash.textContent = '. ';         // ellipsis collapses to a period as the line continues
+        if (i === 0) {                                // dots collapse to a period as the line continues
+          dash.classList.remove('ar-thinking');
+          dash.textContent = '. ';
+        }
         if (i >= full.length) {                       // period placed
-          typed.classList.remove('ar-caret');
           var phone = document.querySelector('[data-hero-phone]');
           if (phone) phone.classList.add('ar-phone-live'); // phone loop starts now, so it rings after the caption
           lamp.classList.add('r1');                    // app icon shows up
