@@ -556,7 +556,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 @keyframes cc-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 .cc-carousel { position: relative; width: 100%; max-width: 760px; margin: 26px auto 0; }
-.cc-stage { position: relative; height: var(--cc-h); overflow: hidden; touch-action: pan-y; cursor: grab; }
+.cc-stage { position: relative; height: var(--cc-h); touch-action: pan-y; cursor: grab; }
 .cc-stage.cc-grabbing { cursor: grabbing; }
 .cc-slide { position: absolute; top: 50%; left: 50%; width: var(--cc-w);
   transform: translate(-50%, -50%) scale(.72); transform-origin: center; opacity: 0; z-index: 1; cursor: pointer;
@@ -623,10 +623,10 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .cc-grid-cta em { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--on-signal); font-style: normal; flex: 0 0 auto; }
 
 .cc-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 5; width: 46px; height: 46px; border-radius: 50%;
-  border: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 84%, transparent); backdrop-filter: blur(8px);
-  color: var(--accent); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 16px rgba(20,16,40,.12);
-  transition: transform .18s ease, background .18s ease, border-color .18s ease, color .18s ease; }
-.cc-nav:hover { background: var(--bg); border-color: var(--accent); color: var(--accent); transform: translateY(-50%) scale(1.06); }
+  border: none; background: var(--accent);
+  color: #fff; cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 16px rgba(46,74,158,.30);
+  transition: transform .18s ease, background .18s ease, color .18s ease; }
+.cc-nav:hover { background: var(--accent-2); color: #fff; transform: translateY(-50%) scale(1.06); }
 .cc-nav:active { transform: translateY(-50%) scale(.95); }
 .cc-nav.cc-prev { left: max(-20px, calc(50% - 392px)); }
 .cc-nav.cc-next { right: max(-20px, calc(50% - 392px)); }
