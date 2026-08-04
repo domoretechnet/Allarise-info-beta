@@ -580,6 +580,16 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .cc-slide .ae-seq .ae-wait { animation: none; opacity: 1; }
 /* Bigger Lutron switch, sitting over the app's + button in the lower-right. */
 .cc-slide .ae-switch { right: 3%; bottom: 7%; width: 42%; }
+/* Critical Alerts: the phone buzzes as the alert takes over the screen (active only). */
+.cc-slide[data-i="3"][data-d="0"] .cc-phone > img { animation: ar-buzz 6.5s ease-in-out infinite; will-change: transform; }
+/* After Alarm Actions: crossfade through verse / notes / weather — reads as a short loop. */
+.cc-fade3 { position: absolute; inset: 0; }
+.cc-fade3 img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; animation: cc-fade3 7.5s ease-in-out infinite; }
+.cc-fade3 img:nth-child(2) { animation-delay: -2.5s; }
+.cc-fade3 img:nth-child(3) { animation-delay: -5s; }
+@keyframes cc-fade3 { 0% { opacity: 0; } 5% { opacity: 1; } 30% { opacity: 1; } 38% { opacity: 0; } 100% { opacity: 0; } }
+.cc-slide .cc-fade3 img { filter: drop-shadow(0 9px 16px rgba(20,16,40,.15)); }
+.cc-slide[data-d="0"] .cc-fade3 img { filter: drop-shadow(0 14px 22px rgba(20,16,40,.24)); }
 
 #cc-ha { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 24px 76px; }
 .cc-ha-wrap { max-width: 940px; margin: 0 auto; }
@@ -802,7 +812,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
             <article class="cc-slide" data-i="1"><div class="cc-phone"><video src="mission-mockup.mp4?v=2" muted autoplay loop playsinline aria-label="Wake-up missions demo: Blocks, Meteor and shake"></video></div></article>
             <article class="cc-slide" data-i="2"><div class="cc-phone"><img src="shot-3.png" alt="Fall asleep to the radio or a sleep sound" loading="lazy"></div></article>
             <article class="cc-slide" data-i="3"><div class="cc-phone"><img src="shot-5.png" alt="A security alert taking over the screen" loading="lazy"></div></article>
-            <article class="cc-slide" data-i="4"><div class="cc-phone"><img src="uploads/10.png" alt="Morning verse, notes and weather after the alarm" loading="lazy"></div></article>
+            <article class="cc-slide" data-i="4"><div class="cc-phone"><div class="cc-fade3"><img src="uploads/10.png" alt="Morning verse after the alarm" loading="lazy"><img src="uploads/14.png" alt="Notes after the alarm" loading="lazy"><img src="uploads/15.png" alt="Morning weather after the alarm" loading="lazy"></div></div></article>
             <article class="cc-slide" data-i="5"><div class="cc-phone"><img src="shot-7.png" alt="The Allarise home screen" loading="lazy"></div></article>
             <article class="cc-slide" data-i="6"><div class="cc-phone"><img src="shot-6.png" alt="The Allarise iOS Shortcuts list" loading="lazy"></div></article>
           </div>
@@ -2072,6 +2082,7 @@ class Component extends DCLogic {
       var el = slides[active], v = el.querySelector('video');
       if (v && v.duration && isFinite(v.duration)) return Math.max(DWELL, Math.round(v.duration * 1000) + 250);
       if (el.querySelector('.ae-seq')) return 8250; // one full 8s switch-demo loop
+      if (el.querySelector('.cc-fade3')) return 7750; // one full verse/notes/weather cycle
       return DWELL;
     }
 
