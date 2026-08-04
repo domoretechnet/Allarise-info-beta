@@ -39,14 +39,15 @@ function syncNavActive() {
 }
 window.addEventListener('hashchange', syncNavActive);
 document.addEventListener('DOMContentLoaded', syncNavActive);
-// Reveal the mobile install bar only once the first row of the "What
-// Allarise has to offer" list has entered the viewport (home page only —
-// other pages render no [data-showrow], so the bar stays hidden there).
+// Reveal the mobile install bar only once the showcase carousel's phone has
+// scrolled far enough up that the bar no longer covers it (home page only —
+// other pages render no #cc-stage, so the bar stays hidden there).
 function syncFab() {
   var fab = document.querySelector('.install-beta-fab');
   if (!fab) return;
-  var row = document.querySelector('[data-showrow]');
-  var show = !!row && row.getBoundingClientRect().top <= window.innerHeight * 0.9;
+  var stage = document.querySelector('#cc-stage');
+  // ~60px ≈ bar height; keep the phone fully clear before attaching the bar.
+  var show = !!stage && stage.getBoundingClientRect().bottom <= window.innerHeight - 60;
   fab.classList.toggle('fab-visible', show);
 }
 window.addEventListener('scroll', function () { window.requestAnimationFrame(syncFab); }, { passive: true });
@@ -548,14 +549,14 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 @media (min-width: 1200px) { #cc-showcase { --cc-w: 320px; --cc-h: 744px; } }
 .cc-wrap { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .cc-eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-tertiary); }
-.cc-caption { max-width: 52ch; min-height: 112px; margin: 22px auto 0; display: flex; flex-direction: column; align-items: center; }
-.cc-title { font-family: var(--font-display); font-size: clamp(24px, 3.2vw, 32px); font-weight: 800; letter-spacing: -.03em; margin: 0 0 10px; text-wrap: balance; color: var(--text); }
+.cc-caption { max-width: 52ch; min-height: 96px; margin: 12px auto 0; display: flex; flex-direction: column; align-items: center; }
+.cc-title { font-family: var(--font-display); font-size: clamp(24px, 3.2vw, 32px); font-weight: 800; letter-spacing: -.03em; margin: 0 0 6px; text-wrap: balance; color: var(--text); }
 .cc-desc { margin: 0; color: var(--text-secondary); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
 .cc-desc strong { color: var(--text); font-weight: 700; }
 .cc-cap-anim { animation: cc-rise .28s ease both; }
 @keyframes cc-rise { from { opacity: 0; } to { opacity: 1; } }   /* plain fade — no translate, so it can't smear into a ghosted duplicate */
 
-.cc-carousel { position: relative; width: 100%; max-width: 760px; margin: 26px auto 0; }
+.cc-carousel { position: relative; width: 100%; max-width: 760px; margin: 12px auto 0; }
 .cc-stage { position: relative; height: var(--cc-h); overflow: hidden; touch-action: pan-y; cursor: grab; }
 .cc-stage.cc-grabbing { cursor: grabbing; }
 .cc-slide { position: absolute; top: 50%; left: 50%; width: var(--cc-w);
@@ -612,10 +613,11 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .cc-tile-body { min-width: 0; }
 .cc-tile b, .cc-grid-cta b { display: block; font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: -.01em; color: var(--text); }
 .cc-tile span, .cc-grid-cta span { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--text-secondary); }
-.cc-grid-cta { grid-column: 2 / 4; align-self: end; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+.cc-tile-cmd { grid-column: 2; }
+.cc-grid-cta { grid-column: 1 / -1; margin-top: 6px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 15px 18px; border-radius: 14px; background: var(--signal); border: none;
   text-decoration: none; color: var(--on-signal); }
-@media (max-width: 900px) { .cc-ha-grid { grid-template-columns: repeat(2, 1fr); } .cc-grid-cta { grid-column: 1 / -1; margin-top: 6px; } }
+@media (max-width: 900px) { .cc-ha-grid { grid-template-columns: repeat(2, 1fr); } .cc-tile-cmd { grid-column: auto; } }
 @media (max-width: 560px) { .cc-ha-grid { grid-template-columns: 1fr; } }
 .cc-grid-cta:hover { filter: brightness(1.08); }
 .cc-grid-cta b { display: block; font-family: var(--font-display); font-size: 14px; font-weight: 700; letter-spacing: -.01em; color: var(--on-signal); }
@@ -638,7 +640,10 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .cc-dots button[aria-current="true"] { width: 26px; background: var(--accent); }
 #cc-showcase :focus-visible, #cc-ha :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
 @media (max-width: 640px) {
-  .cc-slide[data-d="-1"], .cc-slide[data-d="1"] { opacity: 0; pointer-events: none; }
+  /* One phone at a time: park every slide centered and cross-fade only — the
+     desktop fly-in reads as a lateral jerk when the neighbours are hidden. */
+  .cc-slide[data-d] { transform: translate(-50%, -50%) scale(1); transition: opacity .3s ease; }
+  .cc-slide:not([data-d="0"]) { opacity: 0; pointer-events: none; }
   .cc-nav.cc-prev { left: 0; } .cc-nav.cc-next { right: 0; }
   #cc-showcase { padding-top: 44px; }
   .cc-caption { margin-top: 12px; min-height: 0; }   /* pull the title up under the eyebrow */
@@ -851,7 +856,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><div class="cc-tile-body"><b>Alerts</b><span>Any automation can push an alert to the phone — a message, a sound, TTS or your own audio.</span></div></div>
           <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10v4M6 7v10M10 4v16M14 7v10M18 10v4M22 9v6"/></svg><div class="cc-tile-body"><b>Sleep Sounds &amp; Radio</b><span>Start, stop or switch what the phone is playing — white noise, ambient sounds, or a favourite radio station.</span></div></div>
           <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div class="cc-tile-body"><b>Alarm &amp; Command Widget</b><span>Arm or disarm a zone from the app home screen — a real HA entity automations can watch, and HA can turn it off too.</span></div></div>
-          <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><div class="cc-tile-body"><b>Commands</b><span>Your own named triggers — “Lights Off”, “Start Coffee” — each added to HA as a sensor you can run automations from.</span></div></div>
+          <div class="cc-tile cc-tile-cmd"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><div class="cc-tile-body"><b>Commands</b><span>Your own named triggers — “Lights Off”, “Start Coffee” — each added to HA as a sensor you can run automations from.</span></div></div>
           <a class="cc-grid-cta" href="#home-assistant"><div class="cc-tile-body"><b>New to the integration?</b><span>Set it up with HACS in four steps</span></div><em>Open →</em></a>
         </div>
       </div>
