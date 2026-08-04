@@ -543,9 +543,9 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 /* ===== "What Allarise has to offer" carousel (cc-). Self-contained: static
    markup the DS renderer leaves alone, driven by the #cc-showcase script near
    the hero script. Replaced the old two-column list+stage on 2026-08-03. ===== */
-#cc-showcase { border-top: 1px solid var(--border); background: var(--surface); padding: 64px 24px 72px; --cc-w: 250px; --cc-h: 566px; }
-@media (min-width: 760px) { #cc-showcase { --cc-w: 300px; --cc-h: 664px; } }
-@media (min-width: 1200px) { #cc-showcase { --cc-w: 324px; --cc-h: 712px; } }
+#cc-showcase { border-top: 1px solid var(--border); background: var(--surface); padding: 64px 24px 72px; --cc-w: 250px; --cc-h: 590px; }
+@media (min-width: 760px) { #cc-showcase { --cc-w: 300px; --cc-h: 692px; } }
+@media (min-width: 1200px) { #cc-showcase { --cc-w: 320px; --cc-h: 744px; } }
 .cc-wrap { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .cc-eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-tertiary); }
 .cc-caption { max-width: 52ch; min-height: 112px; margin: 22px auto 0; display: flex; flex-direction: column; align-items: center; }
@@ -556,9 +556,10 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 @keyframes cc-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 .cc-carousel { position: relative; width: 100%; max-width: 760px; margin: 26px auto 0; }
-.cc-stage { position: relative; height: var(--cc-h); overflow: hidden;
+.cc-stage { position: relative; height: var(--cc-h); overflow: hidden; touch-action: pan-y; cursor: grab;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+.cc-stage.cc-grabbing { cursor: grabbing; }
 .cc-slide { position: absolute; top: 50%; left: 50%; width: var(--cc-w);
   transform: translate(-50%, -50%) scale(.72); transform-origin: center; opacity: 0; z-index: 1; cursor: pointer;
   transition: transform .55s cubic-bezier(.4,.85,.3,1), opacity .45s ease; }
@@ -567,10 +568,15 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .cc-slide[data-d="1"] { transform: translate(-50%, -50%) translateX(64%) scale(.84); opacity: 1; z-index: 2; }
 .cc-slide[data-d="-2"] { transform: translate(-50%, -50%) translateX(-128%) scale(.72); opacity: 0; pointer-events: none; }
 .cc-slide[data-d="2"] { transform: translate(-50%, -50%) translateX(128%) scale(.72); opacity: 0; pointer-events: none; }
-.cc-phone { position: relative; aspect-ratio: 800 / 1716; border-radius: 30px; overflow: hidden; background: var(--surface-2);
-  box-shadow: 0 22px 40px rgba(20,16,40,.18), 0 6px 14px rgba(20,16,40,.10); }
-.cc-slide[data-d="0"] .cc-phone { box-shadow: 0 40px 70px rgba(46,74,158,.20), 0 22px 40px rgba(20,16,40,.24); }
-.cc-phone img, .cc-phone video { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* The screenshots carry the phone screen on a transparent margin (built for a
+   bezel), so the card stays transparent and the shadow is a drop-shadow that
+   hugs the screen's alpha shape — no stray rectangle around it, no clipped glow. */
+.cc-phone { position: relative; aspect-ratio: 800 / 1716; }
+.cc-phone > img, .cc-phone > video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cc-phone video { border-radius: 30px; overflow: hidden; }
+.cc-phone img, .cc-phone video { -webkit-user-drag: none; user-select: none; }
+.cc-slide .cc-phone > img, .cc-slide .cc-phone > video, .cc-slide .ae-seq > img { filter: drop-shadow(0 9px 16px rgba(20,16,40,.15)); }
+.cc-slide[data-d="0"] .cc-phone > img, .cc-slide[data-d="0"] .cc-phone > video, .cc-slide[data-d="0"] .ae-seq > img { filter: drop-shadow(0 14px 22px rgba(20,16,40,.24)); }
 
 #cc-ha { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 24px 76px; }
 .cc-ha-wrap { max-width: 940px; margin: 0 auto; }
@@ -582,12 +588,13 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .cc-tile-body { min-width: 0; }
 .cc-tile b, .cc-grid-cta b { display: block; font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: -.01em; color: var(--text); }
 .cc-tile span, .cc-grid-cta span { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--text-secondary); }
-.cc-grid-cta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px;
-  padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border);
-  text-decoration: none; color: var(--text); }
-.cc-grid-cta b { display: block; font-family: var(--font-display); font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
-.cc-grid-cta span { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--text-secondary); }
-.cc-grid-cta em { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-style: normal; flex: 0 0 auto; }
+.cc-grid-cta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 24px;
+  padding: 15px 18px; border-radius: 14px; background: var(--signal); border: none;
+  text-decoration: none; color: var(--on-signal); }
+.cc-grid-cta:hover { filter: brightness(1.08); }
+.cc-grid-cta b { display: block; font-family: var(--font-display); font-size: 14px; font-weight: 700; letter-spacing: -.01em; color: var(--on-signal); }
+.cc-grid-cta span { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: rgba(255,255,255,.82); }
+.cc-grid-cta em { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--on-signal); font-style: normal; flex: 0 0 auto; }
 
 .cc-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 5; width: 46px; height: 46px; border-radius: 50%;
   border: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 84%, transparent); backdrop-filter: blur(8px);
@@ -748,7 +755,45 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <div class="cc-carousel" id="cc-carousel" aria-roledescription="carousel" aria-label="What Allarise has to offer">
           <button type="button" class="cc-nav cc-prev" aria-label="Previous feature"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
           <div class="cc-stage" id="cc-stage">
-            <article class="cc-slide" data-i="0"><div class="cc-phone"><img src="shot-1.png" alt="Waiting for Home Assistant to dismiss the alarm" loading="lazy"></div></article>
+            <article class="cc-slide" data-i="0"><div class="cc-phone"><div class="ae-seq" style="position:absolute; inset:0;">
+            <img class="ae-wait" src="shot-1.png" alt="Waiting for Home Assistant to dismiss">
+            <img class="ae-done" src="phone-3.png" alt="Alarm dismissed by Home Assistant">
+            <svg class="ae-switch" viewBox="0 0 560 640" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <g filter="url(#sw-deviceShadow)">
+                <rect x="116" y="30" width="308" height="574" rx="22" fill="url(#sw-plate)" stroke="#c9c6bb" stroke-width="2"/>
+                <path d="M137 53H403" stroke="#fff" stroke-opacity=".58" stroke-width="2" stroke-linecap="round"/>
+                <g class="upper-paddle">
+                  <rect x="151" y="67" width="238" height="166" rx="3" fill="url(#sw-buttonPressed)" stroke="#aaa69b" stroke-width="2" filter="url(#sw-controlInset)"/>
+                  <path d="M157 75H383" stroke="#fff" stroke-opacity=".72" stroke-width="2"/>
+                  <g color="#8e8b82" opacity=".74" transform="translate(176 95)"><use href="#sw-bulb" width="34" height="42"/></g>
+                </g>
+                <g>
+                  <rect x="151" y="243" width="238" height="217" rx="3" fill="url(#sw-button)" stroke="#aaa69b" stroke-width="2" filter="url(#sw-controlInset)"/>
+                  <path d="M153 458 388 244M153 245H388V458" fill="none" stroke="#bab6aa" stroke-width="1.5"/>
+                  <path d="m182 285 9-14 9 14Z" fill="none" stroke="#99968d" stroke-width="2.7" stroke-linejoin="round" opacity=".65"/>
+                  <path d="m340 415 9 14 9-14Z" fill="none" stroke="#99968d" stroke-width="2.7" stroke-linejoin="round" opacity=".65"/>
+                  <circle cx="270" cy="351" r="54" fill="url(#sw-dial)" stroke="#aaa69b" stroke-width="2.2" filter="url(#sw-controlInset)"/>
+                  <path d="M238 321c20-20 52-21 71-3" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.2" stroke-linecap="round"/>
+                </g>
+                <g>
+                  <rect x="151" y="470" width="238" height="105" rx="3" fill="url(#sw-button)" stroke="#aaa69b" stroke-width="2" filter="url(#sw-controlInset)"/>
+                  <g color="#8e8b82" opacity=".68" transform="translate(177 490)"><use href="#sw-bulb" width="24" height="30"/></g>
+                </g>
+                <circle cx="137" cy="100" r="4.2" fill="#3c4037" opacity=".72"/>
+                <circle class="led-glow" cx="137" cy="100" r="13" fill="#b9ff31" filter="url(#sw-ledGlow)"/>
+                <circle class="led-core" cx="137" cy="100" r="6.2" fill="url(#sw-ledCore)"/>
+              </g>
+              <g class="finger" filter="url(#sw-fingerShadow)">
+                <g transform="translate(0 -18)">
+                  <path d="M575 196C520 170 469 158 414 154l-124-9c-38-3-69 19-76 51-7 33 16 64 52 71l126 25c67 14 128 46 183 83Z" fill="url(#sw-skin)"/>
+                  <path d="M575 204C517 181 468 171 414 168l-120-8c-27-2-49 10-59 31 8-29 36-47 70-44l110 8c55 4 106 16 160 41Z" fill="#efc6a7" opacity=".2"/>
+                  <path d="M258 165c9-4 27-4 36 1 7 4 10 10 8 17-2 8-10 13-20 15-12 2-24 0-30-6-5-5-5-11-2-17 2-4 4-7 8-10Z" fill="url(#sw-nail)" opacity=".68"/>
+                  <path d="M257 174c8-7 26-9 37-3" fill="none" stroke="#f1d4c2" stroke-width="2.4" stroke-linecap="round" opacity=".5"/>
+                  <path d="M287 256c55 9 120 22 181 45" fill="none" stroke="#704c3a" stroke-width="2" stroke-linecap="round" opacity=".18"/>
+                </g>
+              </g>
+            </svg>
+          </div></div></article>
             <article class="cc-slide" data-i="1"><div class="cc-phone"><video src="mission-mockup.mp4?v=2" muted autoplay loop playsinline aria-label="Wake-up missions demo: Blocks, Meteor and shake"></video></div></article>
             <article class="cc-slide" data-i="2"><div class="cc-phone"><img src="shot-3.png" alt="Fall asleep to the radio or a sleep sound" loading="lazy"></div></article>
             <article class="cc-slide" data-i="3"><div class="cc-phone"><img src="shot-5.png" alt="A security alert taking over the screen" loading="lazy"></div></article>
@@ -1988,7 +2033,7 @@ class Component extends DCLogic {
     var caption = root.querySelector('#cc-caption');
     var dotsBox = root.querySelector('#cc-dots');
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var DWELL = 5600, timer = null, paused = false, active = 0;
+    var DWELL = 5600, timer = null, paused = false, active = 0, justDragged = false;
 
     var dotEls = slides.map(function (_, i) {
       var b = document.createElement('button');
@@ -2001,7 +2046,7 @@ class Component extends DCLogic {
     });
 
     slides.forEach(function (el, i) {
-      el.addEventListener('click', function () { if (i !== active) go(i); });
+      el.addEventListener('click', function () { if (justDragged) return; if (i !== active) go(i); });
     });
 
     function circ(i) { var d = i - active; if (d > N / 2) d -= N; if (d < -N / 2) d += N; return d; }
@@ -2046,14 +2091,16 @@ class Component extends DCLogic {
       else if (e.key === 'ArrowLeft') { prev(); e.preventDefault(); }
     });
 
-    var tx = null;
-    stage.addEventListener('touchstart', function (e) { tx = e.touches[0].clientX; }, { passive: true });
-    stage.addEventListener('touchend', function (e) {
-      if (tx === null) return;
-      var dx = e.changedTouches[0].clientX - tx;
-      if (Math.abs(dx) > 40) { dx < 0 ? next() : prev(); }
-      tx = null;
+    // Drag / swipe to move — pointer events cover mouse, touch and pen.
+    var downX = null;
+    stage.addEventListener('pointerdown', function (e) { downX = e.clientX; justDragged = false; stage.classList.add('cc-grabbing'); });
+    window.addEventListener('pointerup', function (e) {
+      if (downX === null) return;
+      var dx = e.clientX - downX; downX = null; stage.classList.remove('cc-grabbing');
+      if (Math.abs(dx) > 40) { justDragged = true; (dx < 0 ? next : prev)(); }
     });
+    window.addEventListener('pointercancel', function () { downX = null; stage.classList.remove('cc-grabbing'); });
+    stage.addEventListener('dragstart', function (e) { e.preventDefault(); });
 
     render();
   }
