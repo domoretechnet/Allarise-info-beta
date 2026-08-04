@@ -624,12 +624,12 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 
 .cc-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 5; width: 46px; height: 46px; border-radius: 50%;
   border: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 84%, transparent); backdrop-filter: blur(8px);
-  color: var(--text); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 16px rgba(20,16,40,.12);
+  color: var(--accent); cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 16px rgba(20,16,40,.12);
   transition: transform .18s ease, background .18s ease, border-color .18s ease, color .18s ease; }
 .cc-nav:hover { background: var(--bg); border-color: var(--accent); color: var(--accent); transform: translateY(-50%) scale(1.06); }
 .cc-nav:active { transform: translateY(-50%) scale(.95); }
-.cc-nav.cc-prev { left: max(0px, calc(50% - 348px)); }
-.cc-nav.cc-next { right: max(0px, calc(50% - 348px)); }
+.cc-nav.cc-prev { left: max(-20px, calc(50% - 392px)); }
+.cc-nav.cc-next { right: max(-20px, calc(50% - 392px)); }
 .cc-nav svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
 .cc-dots { display: flex; gap: 9px; justify-content: center; margin: 24px auto 0; }
