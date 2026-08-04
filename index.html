@@ -386,9 +386,10 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 }
 @media (max-width: 700px) {
   [data-mq=lamp] { --lx: 80% !important; --lsc: .42 !important; --lty: -60px !important; }
-  /* The scaled-down lamp scene keeps its app icon below the lamp base, which
-     lands it in the hero copy on narrow screens — drop the icon there. */
-  [data-mq=appicon] { display: none !important; }
+  /* Keep the app icon clear of the hero copy on narrow screens: instead of
+     hanging below the lamp base (where the paragraph lives), it rides up the
+     post into the lamp's light. */
+  [data-mq=appicon] { top: 210px !important; }
   [data-hero] { padding-top: 20px !important; }
   /* Mobile has the bottom install banner, so the hero CTAs are redundant; and
      the hero phone showcase is dropped to keep the mobile hero compact. */
