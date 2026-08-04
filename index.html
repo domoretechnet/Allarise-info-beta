@@ -809,7 +809,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
               </g>
             </svg>
           </div></div></article>
-            <article class="cc-slide" data-i="1"><div class="cc-phone"><video src="mission-mockup.mp4?v=2" muted autoplay loop playsinline aria-label="Wake-up missions demo: Blocks, Meteor and shake"></video></div></article>
+            <article class="cc-slide" data-i="1"><div class="cc-phone"><video src="mission-mockup.mp4?v=2" muted autoplay loop playsinline aria-label="Wake-up missions demo: Bricks, Meteor and shake"></video></div></article>
             <article class="cc-slide" data-i="2"><div class="cc-phone"><img src="shot-3.png" alt="Fall asleep to the radio or a sleep sound" loading="lazy"></div></article>
             <article class="cc-slide" data-i="3"><div class="cc-phone"><img src="shot-5.png" alt="A security alert taking over the screen" loading="lazy"></div></article>
             <article class="cc-slide" data-i="4"><div class="cc-phone"><div class="cc-fade3"><img src="uploads/10.png" alt="Morning verse after the alarm" loading="lazy"><img src="uploads/14.png" alt="Notes after the alarm" loading="lazy"><img src="uploads/15.png" alt="Morning weather after the alarm" loading="lazy"></div></div></article>
@@ -1178,7 +1178,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <p style="margin: 0;">Allarise schedules a system-based AlarmKit backup alarm so your alarm can still fire even if the app isn't running. The backup experience may differ from the in-app alarm mode. For example, alarms will play at your ringer volume. For the full alarm experience — including custom volume, inbound MQTT actions, and more — keep the app running in the background.</p>
         </x-import>
         <x-import component-from-global-scope="Allarise.AccordionItem" question="What are missions?" hint-size="100%,60px">
-          <p style="margin: 0;">Missions are tasks you must complete before the alarm can be dismissed - so you can't just tap dismiss half-awake and go back to sleep. Options include math problems, a phone shake challenge, clearing lines in Blocks, holding off the wave in Meteor, and handing the dismiss to Home Assistant. Chain up to five before the alarm will let go.</p>
+          <p style="margin: 0;">Missions are tasks you must complete before the alarm can be dismissed - so you can't just tap dismiss half-awake and go back to sleep. Options include math problems, a phone shake challenge, clearing lines in Bricks, holding off the wave in Meteor, and handing the dismiss to Home Assistant. Chain up to five before the alarm will let go.</p>
         </x-import>
       </x-import>
 
@@ -1475,7 +1475,7 @@ const NAV = [
 
 const SHOW = [
   { title: 'Alarm Engine', desc: 'Alarms that mean business. Allarise plays at the volume you set, independent of your ringer and mute switch - or «hand the only dismiss button to Home Assistant». A dual alarm coordinator pairs every alarm with an AlarmKit backup, so one of them always fires.', img: 'shot-1.png', aeSeq: true, alt: 'Waiting for Home Assistant, dismissed by a switch press whose status light turns green' },
-  { title: 'Wake-Up Missions', desc: 'Solve math, shake the phone, clear lines in Blocks, hold off the wave in Meteor, or «make Home Assistant dismiss your alarm». Chain up to five missions before the alarm will let go.', video: 'mission-mockup.mp4?v=2', alt: 'Wake-up missions demo: Blocks, Meteor and shake' },
+  { title: 'Wake-Up Missions', desc: 'Solve math, shake the phone, clear lines in Bricks, hold off the wave in Meteor, or «make Home Assistant dismiss your alarm». Chain up to five missions before the alarm will let go.', video: 'mission-mockup.mp4?v=2', alt: 'Wake-up missions demo: Bricks, Meteor and shake' },
   { title: 'Sleep Sounds & Radio', desc: 'Drift off to rain, ocean, white noise - or your favourite radio station. Fade-out, stop-at-next-alarm, and best of all this is «fully controllable from Home Assistant»!', img: 'shot-3.png', alt: 'Fall asleep to the radio or a sleep sound' },
 
   { title: 'Critical Alerts', desc: '«Home Assistant can push an alert that takes over the screen» when it actually matters - a door opened, a leak, a camera tripped.', img: 'shot-5.png', alt: 'Security breach alert taking over the screen' },
@@ -2027,7 +2027,7 @@ class Component extends DCLogic {
   var TITLES = ["Alarm Engine","Wake-Up Missions","Sleep Sounds & Radio","Critical Alerts","After Alarm Actions","The Home Screen","iOS Shortcuts"];
   var DESCS = [
     "Alarms that mean business. Allarise plays at the volume you set, independent of your ringer and mute switch — or <strong>hand the only dismiss button to Home Assistant</strong>. A dual alarm coordinator pairs every alarm with an AlarmKit backup, so one of them always fires.",
-    "Solve math, shake the phone, clear lines in Blocks, hold off the wave in Meteor, or <strong>make Home Assistant dismiss your alarm</strong>. Chain up to five missions before the alarm will let go.",
+    "Solve math, shake the phone, clear lines in Bricks, hold off the wave in Meteor, or <strong>make Home Assistant dismiss your alarm</strong>. Chain up to five missions before the alarm will let go.",
     "Drift off to rain, ocean, white noise — or your favourite radio station. Fade-out, stop-at-next-alarm, and best of all this is <strong>fully controllable from Home Assistant</strong>.",
     "<strong>Home Assistant can push an alert that takes over the screen</strong> when it actually matters — a door opened, a leak, a camera tripped.",
     "Start your day with something you’ll love. Add a Bible verse, notes, the morning weather, or launch a URL / Shortcut the moment your alarm is dismissed.",
