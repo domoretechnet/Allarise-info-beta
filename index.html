@@ -572,11 +572,8 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .cc-phone { position: relative; aspect-ratio: 800 / 1716; }
 .cc-phone > img, .cc-phone > video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .cc-phone img, .cc-phone video { -webkit-user-drag: none; user-select: none; }
-/* The Missions video is pre-framed (opaque, matches the screenshot frame), so
-   it can't carry an alpha drop-shadow — a static phone-shaped shadow PNG sits
-   behind it instead, scaling with the card just like the screenshot shadows. */
-.cc-phone > video { position: relative; z-index: 1; }
-.cc-vsh { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; pointer-events: none; }
+/* The Missions video is pre-framed and opaque (MP4 can't hold alpha), so its
+   phone-shaped drop-shadow is baked into the video over the section colour. */
 .cc-slide .cc-phone > img, .cc-slide .ae-seq > img { filter: drop-shadow(0 9px 16px rgba(20,16,40,.15)); }
 .cc-slide[data-d="0"] .cc-phone > img, .cc-slide[data-d="0"] .ae-seq > img { filter: drop-shadow(0 14px 22px rgba(20,16,40,.24)); }
 /* Alarm Engine: keep the "waiting" screen as an opaque base layer so the
@@ -822,7 +819,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
               </g>
             </svg>
           </div></div></article>
-            <article class="cc-slide" data-i="1"><div class="cc-phone"><img class="cc-vsh" src="mission-shadow.png" alt="" aria-hidden="true"><video src="mission-framed.mp4?v=4" muted autoplay loop playsinline aria-label="Wake-up missions demo: Bricks, Meteor and shake"></video></div></article>
+            <article class="cc-slide" data-i="1"><div class="cc-phone"><video src="mission-framed.mp4?v=5" muted autoplay loop playsinline aria-label="Wake-up missions demo: Bricks, Meteor and shake"></video></div></article>
             <article class="cc-slide" data-i="2"><div class="cc-phone"><img src="shot-3.png" alt="Fall asleep to the radio or a sleep sound" loading="lazy"></div></article>
             <article class="cc-slide" data-i="3"><div class="cc-phone"><img src="shot-5.png" alt="A security alert taking over the screen" loading="lazy"></div></article>
             <article class="cc-slide" data-i="4"><div class="cc-phone"><div class="cc-fade3"><img src="uploads/10.png" alt="Morning verse after the alarm" loading="lazy"><img src="uploads/14.png" alt="Notes after the alarm" loading="lazy"><img src="uploads/15.png" alt="Morning weather after the alarm" loading="lazy"></div></div></article>
