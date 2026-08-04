@@ -556,7 +556,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 @keyframes cc-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 .cc-carousel { position: relative; width: 100%; max-width: 760px; margin: 26px auto 0; }
-.cc-stage { position: relative; height: var(--cc-h); touch-action: pan-y; cursor: grab; }
+.cc-stage { position: relative; height: var(--cc-h); overflow: hidden; touch-action: pan-y; cursor: grab; }
 .cc-stage.cc-grabbing { cursor: grabbing; }
 .cc-slide { position: absolute; top: 50%; left: 50%; width: var(--cc-w);
   transform: translate(-50%, -50%) scale(.72); transform-origin: center; opacity: 0; z-index: 1; cursor: pointer;
@@ -564,8 +564,8 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .cc-slide[data-d="0"] { transform: translate(-50%, -50%) scale(1); opacity: 1; z-index: 3; cursor: default; }
 .cc-slide[data-d="-1"] { transform: translate(-50%, -50%) translateX(-64%) scale(.84); opacity: 1; z-index: 2; }
 .cc-slide[data-d="1"] { transform: translate(-50%, -50%) translateX(64%) scale(.84); opacity: 1; z-index: 2; }
-.cc-slide[data-d="-2"] { transform: translate(-50%, -50%) translateX(-128%) scale(.72); opacity: 0; pointer-events: none; }
-.cc-slide[data-d="2"] { transform: translate(-50%, -50%) translateX(128%) scale(.72); opacity: 0; pointer-events: none; }
+.cc-slide[data-d="-2"] { transform: translate(-50%, -50%) translateX(-176%) scale(.72); opacity: 1; pointer-events: none; }
+.cc-slide[data-d="2"] { transform: translate(-50%, -50%) translateX(176%) scale(.72); opacity: 1; pointer-events: none; }
 /* The screenshots carry the phone screen on a transparent margin (built for a
    bezel), so the card stays transparent and the shadow is a drop-shadow that
    hugs the screen's alpha shape — no stray rectangle around it, no clipped glow. */
