@@ -369,7 +369,6 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   [data-mq=cols] { grid-template-columns: 1fr !important; gap: 34px !important; }
   [data-mq=cols][data-mq-pad] { padding: 30px 22px !important; }
   [data-mq=cols] { margin-left: 0 !important; }
-  [data-mq=showcase] > div { grid-template-columns: 1fr !important; gap: 34px !important; }
   [data-mq=chips] { grid-template-columns: 1fr 1fr !important; }
   [data-mq=feat] { grid-template-columns: 40px 1fr !important; gap: 6px 14px !important; padding: 20px 12px !important; }
   [data-mq=feat] > span:nth-child(3) { grid-column: 2 !important; }
@@ -548,19 +547,19 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 /* ===== "What Allarise has to offer" carousel (cc-). Self-contained: static
    markup the DS renderer leaves alone, driven by the #cc-showcase script near
    the hero script. Replaced the old two-column list+stage on 2026-08-03. ===== */
-#cc-showcase { border-top: 1px solid var(--border); background: var(--surface); padding: 64px 24px 72px; --cc-w: 250px; --cc-h: 590px; }
-@media (min-width: 760px) { #cc-showcase { --cc-w: 300px; --cc-h: 692px; } }
-@media (min-width: 1200px) { #cc-showcase { --cc-w: 320px; --cc-h: 744px; } }
+#cc-showcase { border-top: 1px solid var(--border); background: var(--surface); padding: 40px 24px 72px; --cc-w: 250px; --cc-h: 566px; }
+@media (min-width: 760px) { #cc-showcase { --cc-w: 300px; --cc-h: 668px; } }
+@media (min-width: 1200px) { #cc-showcase { --cc-w: 320px; --cc-h: 712px; } }
 .cc-wrap { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .cc-eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-tertiary); }
-.cc-caption { max-width: 52ch; min-height: 96px; margin: 12px auto 0; display: flex; flex-direction: column; align-items: center; }
+.cc-caption { max-width: 52ch; min-height: 96px; margin: 8px auto 0; display: flex; flex-direction: column; align-items: center; }
 .cc-title { font-family: var(--font-display); font-size: clamp(24px, 3.2vw, 32px); font-weight: 800; letter-spacing: -.03em; margin: 0 0 6px; text-wrap: balance; color: var(--text); }
 .cc-desc { margin: 0; color: var(--text-secondary); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
 .cc-desc strong { color: var(--text); font-weight: 700; }
 .cc-cap-anim { animation: cc-rise .28s ease both; }
 @keyframes cc-rise { from { opacity: 0; } to { opacity: 1; } }   /* plain fade — no translate, so it can't smear into a ghosted duplicate */
 
-.cc-carousel { position: relative; width: 100%; max-width: 760px; margin: 12px auto 0; }
+.cc-carousel { position: relative; width: 100%; max-width: 760px; margin: 2px auto 0; }
 .cc-stage { position: relative; height: var(--cc-h); overflow: hidden; touch-action: pan-y; cursor: grab; }
 .cc-stage.cc-grabbing { cursor: grabbing; }
 .cc-slide { position: absolute; top: 50%; left: 50%; width: var(--cc-w);
@@ -649,9 +648,9 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   .cc-slide[data-d] { transform: translate(-50%, -50%) scale(1); transition: opacity .3s ease; }
   .cc-slide:not([data-d="0"]) { opacity: 0; pointer-events: none; }
   .cc-nav.cc-prev { left: 0; } .cc-nav.cc-next { right: 0; }
-  #cc-showcase { padding-top: 44px; }
-  .cc-caption { margin-top: 12px; min-height: 0; }   /* pull the title up under the eyebrow */
-  .cc-carousel { margin-top: 12px; }                 /* pull the phone up under the description */
+  #cc-showcase { padding-top: 28px; }
+  .cc-caption { margin-top: 8px; min-height: 0; }    /* pull the title up under the eyebrow */
+  .cc-carousel { margin-top: 2px; }                  /* pull the phone up under the description */
 }
 @media (prefers-reduced-motion: reduce) {
   .cc-slide { transition: opacity .2s ease; }
