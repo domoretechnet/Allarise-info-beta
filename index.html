@@ -571,10 +571,14 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
    hugs the screen's alpha shape — no stray rectangle around it, no clipped glow. */
 .cc-phone { position: relative; aspect-ratio: 800 / 1716; }
 .cc-phone > img, .cc-phone > video { width: 100%; height: 100%; object-fit: cover; display: block; }
-.cc-phone video { border-radius: 30px; overflow: hidden; }
 .cc-phone img, .cc-phone video { -webkit-user-drag: none; user-select: none; }
-.cc-slide .cc-phone > img, .cc-slide .cc-phone > video, .cc-slide .ae-seq > img { filter: drop-shadow(0 9px 16px rgba(20,16,40,.15)); }
-.cc-slide[data-d="0"] .cc-phone > img, .cc-slide[data-d="0"] .cc-phone > video, .cc-slide[data-d="0"] .ae-seq > img { filter: drop-shadow(0 14px 22px rgba(20,16,40,.24)); }
+/* The Missions video is pre-framed (opaque, matches the screenshot frame), so
+   it can't carry an alpha drop-shadow — a static phone-shaped shadow PNG sits
+   behind it instead, scaling with the card just like the screenshot shadows. */
+.cc-phone > video { position: relative; z-index: 1; }
+.cc-vsh { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; pointer-events: none; }
+.cc-slide .cc-phone > img, .cc-slide .ae-seq > img { filter: drop-shadow(0 9px 16px rgba(20,16,40,.15)); }
+.cc-slide[data-d="0"] .cc-phone > img, .cc-slide[data-d="0"] .ae-seq > img { filter: drop-shadow(0 14px 22px rgba(20,16,40,.24)); }
 /* Alarm Engine: keep the "waiting" screen as an opaque base layer so the
    switch-press crossfade never shows the page through the transparent card. */
 .cc-slide .ae-seq .ae-wait { animation: none; opacity: 1; }
@@ -592,6 +596,11 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 @keyframes cc-fade-b { 0%, 58% { opacity: 0; } 66%, 92% { opacity: 1; } 100% { opacity: 0; } }
 .cc-slide .cc-fade3 img { filter: drop-shadow(0 9px 16px rgba(20,16,40,.15)); }
 .cc-slide[data-d="0"] .cc-fade3 img { filter: drop-shadow(0 14px 22px rgba(20,16,40,.24)); }
+/* Bonus: the whole phone (frame + video) shakes while the Missions video is on
+   the "shake to dismiss" screen — the script toggles .cc-shaking by video time. */
+@keyframes cc-shake { 0%, 100% { transform: translate3d(0,0,0); } 15% { transform: translate3d(-3px,0,0) rotate(-.5deg); } 30% { transform: translate3d(3px,0,0) rotate(.5deg); } 45% { transform: translate3d(-2.5px,0,0) rotate(-.4deg); } 60% { transform: translate3d(2.5px,0,0) rotate(.4deg); } 75% { transform: translate3d(-1.5px,0,0) rotate(-.25deg); } 90% { transform: translate3d(1.5px,0,0) rotate(0); } }
+.cc-slide[data-i="1"].cc-shaking .cc-phone { animation: cc-shake .32s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .cc-slide.cc-shaking .cc-phone { animation: none; } }
 
 #cc-ha { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 24px 76px; }
 .cc-ha-wrap { max-width: 940px; margin: 0 auto; }
@@ -813,7 +822,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
               </g>
             </svg>
           </div></div></article>
-            <article class="cc-slide" data-i="1"><div class="cc-phone"><video src="mission-mockup.mp4?v=2" muted autoplay loop playsinline aria-label="Wake-up missions demo: Bricks, Meteor and shake"></video></div></article>
+            <article class="cc-slide" data-i="1"><div class="cc-phone"><img class="cc-vsh" src="mission-shadow.png" alt="" aria-hidden="true"><video src="mission-framed.mp4?v=1" muted autoplay loop playsinline aria-label="Wake-up missions demo: Bricks, Meteor and shake"></video></div></article>
             <article class="cc-slide" data-i="2"><div class="cc-phone"><img src="shot-3.png" alt="Fall asleep to the radio or a sleep sound" loading="lazy"></div></article>
             <article class="cc-slide" data-i="3"><div class="cc-phone"><img src="shot-5.png" alt="A security alert taking over the screen" loading="lazy"></div></article>
             <article class="cc-slide" data-i="4"><div class="cc-phone"><div class="cc-fade3"><img src="uploads/10.png" alt="Morning verse after the alarm" loading="lazy"><img src="uploads/14.png" alt="Notes after the alarm" loading="lazy"><img src="uploads/15.png" alt="Morning weather after the alarm" loading="lazy"></div></div></article>
@@ -2133,6 +2142,16 @@ class Component extends DCLogic {
     });
     window.addEventListener('pointercancel', function () { downX = null; stage.classList.remove('cc-grabbing'); });
     stage.addEventListener('dragstart', function (e) { e.preventDefault(); });
+
+    // Bonus: shake the whole phone while the Missions video is on the shake screen (~5.6-8.4s).
+    var vslide = null, vvid = null;
+    slides.forEach(function (el) { var v = el.querySelector('video'); if (v) { vslide = el; vvid = v; } });
+    if (vvid) {
+      vvid.addEventListener('timeupdate', function () {
+        var on = vslide.dataset.d === '0' && vvid.currentTime >= 5.6 && vvid.currentTime <= 8.4;
+        vslide.classList.toggle('cc-shaking', on);
+      });
+    }
 
     render();
   }
