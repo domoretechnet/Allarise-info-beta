@@ -556,9 +556,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 @keyframes cc-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 .cc-carousel { position: relative; width: 100%; max-width: 760px; margin: 26px auto 0; }
-.cc-stage { position: relative; height: var(--cc-h); overflow: hidden; touch-action: pan-y; cursor: grab;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+.cc-stage { position: relative; height: var(--cc-h); overflow: hidden; touch-action: pan-y; cursor: grab; }
 .cc-stage.cc-grabbing { cursor: grabbing; }
 .cc-slide { position: absolute; top: 50%; left: 50%; width: var(--cc-w);
   transform: translate(-50%, -50%) scale(.72); transform-origin: center; opacity: 0; z-index: 1; cursor: pointer;
@@ -577,20 +575,27 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .cc-phone img, .cc-phone video { -webkit-user-drag: none; user-select: none; }
 .cc-slide .cc-phone > img, .cc-slide .cc-phone > video, .cc-slide .ae-seq > img { filter: drop-shadow(0 9px 16px rgba(20,16,40,.15)); }
 .cc-slide[data-d="0"] .cc-phone > img, .cc-slide[data-d="0"] .cc-phone > video, .cc-slide[data-d="0"] .ae-seq > img { filter: drop-shadow(0 14px 22px rgba(20,16,40,.24)); }
+/* Alarm Engine: keep the "waiting" screen as an opaque base layer so the
+   switch-press crossfade never shows the page through the transparent card. */
+.cc-slide .ae-seq .ae-wait { animation: none; opacity: 1; }
+/* Bigger Lutron switch, sitting over the app's + button in the lower-right. */
+.cc-slide .ae-switch { right: 3%; bottom: 7%; width: 42%; }
 
 #cc-ha { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 24px 76px; }
 .cc-ha-wrap { max-width: 940px; margin: 0 auto; }
 .cc-ha-head { text-align: center; margin-bottom: 32px; }
 .cc-ha-title { font-family: var(--font-display); font-size: clamp(26px, 3.4vw, 38px); font-weight: 800; letter-spacing: -.03em; margin: 12px 0 0; text-wrap: balance; color: var(--text); }
-.cc-ha-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px 30px; }
+.cc-ha-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px 30px; align-items: start; }
 .cc-tile { display: flex; gap: 9px; min-width: 0; }
 .cc-tile svg { flex: 0 0 auto; margin-top: 3px; }
 .cc-tile-body { min-width: 0; }
 .cc-tile b, .cc-grid-cta b { display: block; font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: -.01em; color: var(--text); }
 .cc-tile span, .cc-grid-cta span { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--text-secondary); }
-.cc-grid-cta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 24px;
+.cc-grid-cta { grid-column: 2 / 4; align-self: end; display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 15px 18px; border-radius: 14px; background: var(--signal); border: none;
   text-decoration: none; color: var(--on-signal); }
+@media (max-width: 900px) { .cc-ha-grid { grid-template-columns: repeat(2, 1fr); } .cc-grid-cta { grid-column: 1 / -1; margin-top: 6px; } }
+@media (max-width: 560px) { .cc-ha-grid { grid-template-columns: 1fr; } }
 .cc-grid-cta:hover { filter: brightness(1.08); }
 .cc-grid-cta b { display: block; font-family: var(--font-display); font-size: 14px; font-weight: 700; letter-spacing: -.01em; color: var(--on-signal); }
 .cc-grid-cta span { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: rgba(255,255,255,.82); }
@@ -824,8 +829,8 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10v4M6 7v10M10 4v16M14 7v10M18 10v4M22 9v6"/></svg><div class="cc-tile-body"><b>Sleep Sounds &amp; Radio</b><span>Start, stop or switch what the phone is playing — white noise, ambient sounds, or a favourite radio station.</span></div></div>
           <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div class="cc-tile-body"><b>Alarm &amp; Command Widget</b><span>Arm or disarm a zone from the app home screen — a real HA entity automations can watch, and HA can turn it off too.</span></div></div>
           <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><div class="cc-tile-body"><b>Commands</b><span>Your own named triggers — “Lights Off”, “Start Coffee” — each added to HA as a sensor you can run automations from.</span></div></div>
+          <a class="cc-grid-cta" href="#home-assistant"><div class="cc-tile-body"><b>New to the integration?</b><span>Set it up with HACS in four steps</span></div><em>Open →</em></a>
         </div>
-        <a class="cc-grid-cta" href="#home-assistant"><div class="cc-tile-body"><b>New to the integration?</b><span>Set it up with HACS in four steps</span></div><em>Open →</em></a>
       </div>
     </section>
 
@@ -2033,7 +2038,7 @@ class Component extends DCLogic {
     var caption = root.querySelector('#cc-caption');
     var dotsBox = root.querySelector('#cc-dots');
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var DWELL = 5600, timer = null, paused = false, active = 0, justDragged = false;
+    var DWELL = 5600, timer = null, paused = false, userStopped = false, active = 0, justDragged = false;
 
     var dotEls = slides.map(function (_, i) {
       var b = document.createElement('button');
@@ -2053,9 +2058,21 @@ class Component extends DCLogic {
 
     // Restart the active slide's video from the top each time it's shown; the
     // neighbours' videos keep looping on their own (autoplay loop).
-    function restartVideo() {
-      var v = slides[active].querySelector('video');
+    function restartMedia() {
+      var el = slides[active];
+      var v = el.querySelector('video');
       if (v) { try { v.currentTime = 0; var p = v.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+      // restart the Alarm Engine switch-press demo from the top
+      el.querySelectorAll('.ae-seq img, .ae-switch, .ae-switch *').forEach(function (n) {
+        if (n.getAnimations) n.getAnimations().forEach(function (a) { try { a.currentTime = 0; } catch (e) {} });
+      });
+    }
+    // How long to sit on a slide: long enough to play its loop once.
+    function slideDwell() {
+      var el = slides[active], v = el.querySelector('video');
+      if (v && v.duration && isFinite(v.duration)) return Math.max(DWELL, Math.round(v.duration * 1000) + 250);
+      if (el.querySelector('.ae-seq')) return 8250; // one full 8s switch-demo loop
+      return DWELL;
     }
 
     function render() {
@@ -2067,7 +2084,7 @@ class Component extends DCLogic {
       if (title) title.textContent = TITLES[active] || '';
       if (desc) desc.innerHTML = DESCS[active] || '';
       if (caption) { caption.classList.remove('cc-cap-anim'); void caption.offsetWidth; caption.classList.add('cc-cap-anim'); }
-      restartVideo();
+      restartMedia();
       schedule();
     }
     function go(i) { active = ((i % N) + N) % N; render(); }
@@ -2075,7 +2092,7 @@ class Component extends DCLogic {
     function prev() { go(active - 1); }
 
     // Auto-advance without a visible bar; pauses on hover/focus, off for reduced motion.
-    function schedule() { clearTimeout(timer); if (reduce || paused) return; timer = setTimeout(next, DWELL); }
+    function schedule() { clearTimeout(timer); if (reduce || paused || userStopped) return; timer = setTimeout(next, slideDwell()); }
     function hold() { paused = true; clearTimeout(timer); }
     function resume() { paused = false; schedule(); }
     root.addEventListener('mouseenter', hold);
@@ -2097,7 +2114,7 @@ class Component extends DCLogic {
     window.addEventListener('pointerup', function (e) {
       if (downX === null) return;
       var dx = e.clientX - downX; downX = null; stage.classList.remove('cc-grabbing');
-      if (Math.abs(dx) > 40) { justDragged = true; (dx < 0 ? next : prev)(); }
+      if (Math.abs(dx) > 40) { justDragged = true; userStopped = true; clearTimeout(timer); (dx < 0 ? next : prev)(); }
     });
     window.addEventListener('pointercancel', function () { downX = null; stage.classList.remove('cc-grabbing'); });
     stage.addEventListener('dragstart', function (e) { e.preventDefault(); });
