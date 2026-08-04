@@ -822,7 +822,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
               </g>
             </svg>
           </div></div></article>
-            <article class="cc-slide" data-i="1"><div class="cc-phone"><img class="cc-vsh" src="mission-shadow.png" alt="" aria-hidden="true"><video src="mission-framed.mp4?v=3" muted autoplay loop playsinline aria-label="Wake-up missions demo: Bricks, Meteor and shake"></video></div></article>
+            <article class="cc-slide" data-i="1"><div class="cc-phone"><img class="cc-vsh" src="mission-shadow.png" alt="" aria-hidden="true"><video src="mission-framed.mp4?v=4" muted autoplay loop playsinline aria-label="Wake-up missions demo: Bricks, Meteor and shake"></video></div></article>
             <article class="cc-slide" data-i="2"><div class="cc-phone"><img src="shot-3.png" alt="Fall asleep to the radio or a sleep sound" loading="lazy"></div></article>
             <article class="cc-slide" data-i="3"><div class="cc-phone"><img src="shot-5.png" alt="A security alert taking over the screen" loading="lazy"></div></article>
             <article class="cc-slide" data-i="4"><div class="cc-phone"><div class="cc-fade3"><img src="uploads/10.png" alt="Morning verse after the alarm" loading="lazy"><img src="uploads/14.png" alt="Notes after the alarm" loading="lazy"><img src="uploads/15.png" alt="Morning weather after the alarm" loading="lazy"></div></div></article>
@@ -2143,7 +2143,7 @@ class Component extends DCLogic {
     window.addEventListener('pointercancel', function () { downX = null; stage.classList.remove('cc-grabbing'); });
     stage.addEventListener('dragstart', function (e) { e.preventDefault(); });
 
-    // Bonus: shake the whole phone while the Missions video is on the shake screen (~5.6-8.8s).
+    // Bonus: shake the whole phone while the Missions video is on the shake screen (~5.6-8.4s).
     var vslide = null, vvid = null;
     slides.forEach(function (el) { var v = el.querySelector('video'); if (v) { vslide = el; vvid = v; } });
     if (vvid) {
@@ -2153,7 +2153,7 @@ class Component extends DCLogic {
       vvid.addEventListener('loadeddata', vplay);
       vplay();
       vvid.addEventListener('timeupdate', function () {
-        var on = vslide.dataset.d === '0' && vvid.currentTime >= 5.6 && vvid.currentTime <= 8.8;
+        var on = vslide.dataset.d === '0' && vvid.currentTime >= 5.6 && vvid.currentTime <= 8.4;
         vslide.classList.toggle('cc-shaking', on);
       });
     }
