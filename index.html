@@ -543,39 +543,40 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 /* ===== "What Allarise has to offer" carousel (cc-). Self-contained: static
    markup the DS renderer leaves alone, driven by the #cc-showcase script near
    the hero script. Replaced the old two-column list+stage on 2026-08-03. ===== */
-#cc-showcase { border-top: 1px solid var(--border); background: var(--surface); padding: 64px 24px 72px; }
+#cc-showcase { border-top: 1px solid var(--border); background: var(--surface); padding: 64px 24px 72px; --cc-w: 250px; --cc-h: 566px; }
+@media (min-width: 760px) { #cc-showcase { --cc-w: 300px; --cc-h: 664px; } }
+@media (min-width: 1200px) { #cc-showcase { --cc-w: 324px; --cc-h: 712px; } }
 .cc-wrap { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .cc-eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-tertiary); }
-.cc-caption { max-width: 52ch; min-height: 138px; margin: 22px auto 0; display: flex; flex-direction: column; align-items: center; }
-.cc-counter { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; color: var(--accent); margin-bottom: 8px; }
-.cc-counter span { color: var(--text-tertiary); }
+.cc-caption { max-width: 52ch; min-height: 112px; margin: 22px auto 0; display: flex; flex-direction: column; align-items: center; }
 .cc-title { font-family: var(--font-display); font-size: clamp(24px, 3.2vw, 32px); font-weight: 800; letter-spacing: -.03em; margin: 0 0 10px; text-wrap: balance; color: var(--text); }
 .cc-desc { margin: 0; color: var(--text-secondary); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
 .cc-desc strong { color: var(--text); font-weight: 700; }
 .cc-cap-anim { animation: cc-rise .5s cubic-bezier(.2,.7,.3,1) both; }
 @keyframes cc-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
-.cc-carousel { position: relative; width: 100%; max-width: 700px; margin: 26px auto 0; }
-.cc-stage { position: relative; height: min(64vh, 540px); overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 13%, #000 87%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 13%, #000 87%, transparent); }
-.cc-slide { position: absolute; top: 50%; left: 50%; width: clamp(200px, 56vw, 240px);
-  transform: translate(-50%, -50%) scale(.7); transform-origin: center; opacity: 0; z-index: 1; cursor: pointer;
-  transition: transform .55s cubic-bezier(.4,.85,.3,1), opacity .5s ease, filter .5s ease; }
-.cc-slide[data-d="0"] { transform: translate(-50%, -50%) scale(1); opacity: 1; z-index: 3; cursor: default; filter: none; }
-.cc-slide[data-d="-1"] { transform: translate(-50%, -50%) translateX(-78%) scale(.8); opacity: .4; z-index: 2; filter: blur(1.4px) brightness(.92) saturate(.92); }
-.cc-slide[data-d="1"] { transform: translate(-50%, -50%) translateX(78%) scale(.8); opacity: .4; z-index: 2; filter: blur(1.4px) brightness(.92) saturate(.92); }
-.cc-slide[data-d="-2"] { transform: translate(-50%, -50%) translateX(-150%) scale(.7); opacity: 0; pointer-events: none; }
-.cc-slide[data-d="2"] { transform: translate(-50%, -50%) translateX(150%) scale(.7); opacity: 0; pointer-events: none; }
-.cc-phone { position: relative; aspect-ratio: 800 / 1716; background: #0b0c16; border-radius: 34px; padding: 6px;
-  box-shadow: 0 30px 46px rgba(20,16,40,.28), 0 10px 18px rgba(20,16,40,.18); }
-.cc-slide[data-d="0"] .cc-phone { box-shadow: 0 40px 66px rgba(46,74,158,.18), 0 30px 46px rgba(20,16,40,.30); }
-.cc-phone img, .cc-phone video { width: 100%; height: 100%; object-fit: cover; border-radius: 28px; display: block; }
+.cc-carousel { position: relative; width: 100%; max-width: 760px; margin: 26px auto 0; }
+.cc-stage { position: relative; height: var(--cc-h); overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+.cc-slide { position: absolute; top: 50%; left: 50%; width: var(--cc-w);
+  transform: translate(-50%, -50%) scale(.72); transform-origin: center; opacity: 0; z-index: 1; cursor: pointer;
+  transition: transform .55s cubic-bezier(.4,.85,.3,1), opacity .45s ease; }
+.cc-slide[data-d="0"] { transform: translate(-50%, -50%) scale(1); opacity: 1; z-index: 3; cursor: default; }
+.cc-slide[data-d="-1"] { transform: translate(-50%, -50%) translateX(-64%) scale(.84); opacity: 1; z-index: 2; }
+.cc-slide[data-d="1"] { transform: translate(-50%, -50%) translateX(64%) scale(.84); opacity: 1; z-index: 2; }
+.cc-slide[data-d="-2"] { transform: translate(-50%, -50%) translateX(-128%) scale(.72); opacity: 0; pointer-events: none; }
+.cc-slide[data-d="2"] { transform: translate(-50%, -50%) translateX(128%) scale(.72); opacity: 0; pointer-events: none; }
+.cc-phone { position: relative; aspect-ratio: 800 / 1716; border-radius: 30px; overflow: hidden; background: var(--surface-2);
+  box-shadow: 0 22px 40px rgba(20,16,40,.18), 0 6px 14px rgba(20,16,40,.10); }
+.cc-slide[data-d="0"] .cc-phone { box-shadow: 0 40px 70px rgba(46,74,158,.20), 0 22px 40px rgba(20,16,40,.24); }
+.cc-phone img, .cc-phone video { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.cc-slide.cc-grid-slide { width: min(600px, 90vw); cursor: default; }
-.cc-grid { text-align: left; background: var(--bg); border: 1px solid var(--border); border-radius: 22px; padding: 20px;
-  max-height: min(64vh, 540px); overflow-y: auto; box-shadow: 0 30px 46px rgba(20,16,40,.14); }
-.cc-grid-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+#cc-ha { background: var(--bg); border-top: 1px solid var(--border); padding: 60px 24px 76px; }
+.cc-ha-wrap { max-width: 940px; margin: 0 auto; }
+.cc-ha-head { text-align: center; margin-bottom: 32px; }
+.cc-ha-title { font-family: var(--font-display); font-size: clamp(26px, 3.4vw, 38px); font-weight: 800; letter-spacing: -.03em; margin: 12px 0 0; text-wrap: balance; color: var(--text); }
+.cc-ha-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px 30px; }
 .cc-tile { display: flex; gap: 9px; min-width: 0; }
 .cc-tile svg { flex: 0 0 auto; margin-top: 3px; }
 .cc-tile-body { min-width: 0; }
@@ -598,27 +599,18 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .cc-nav.cc-next { right: max(0px, calc(50% - 348px)); }
 .cc-nav svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
-.cc-autobar { width: min(240px, 60%); height: 3px; border-radius: 99px; background: var(--surface-2); margin: 20px auto 0; overflow: hidden; }
-.cc-autobar i { display: block; height: 100%; width: 100%; border-radius: 99px; background: var(--accent); transform-origin: left;
-  transform: scaleX(0); animation: cc-fill var(--cc-dwell, 5600ms) linear forwards; }
-.cc-carousel:hover .cc-autobar i, .cc-carousel:focus-within .cc-autobar i { animation-play-state: paused; }
-@keyframes cc-fill { to { transform: scaleX(1); } }
-.cc-dots { display: flex; gap: 9px; justify-content: center; margin: 22px auto 0; }
+.cc-dots { display: flex; gap: 9px; justify-content: center; margin: 24px auto 0; }
 .cc-dots button { width: 8px; height: 8px; padding: 0; border: none; border-radius: 99px; background: var(--surface-2); cursor: pointer; transition: width .3s ease, background .3s ease; }
 .cc-dots button:hover { background: var(--text-tertiary); }
 .cc-dots button[aria-current="true"] { width: 26px; background: var(--accent); }
-.cc-hint { margin: 16px auto 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-tertiary); }
-#cc-showcase :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
+#cc-showcase :focus-visible, #cc-ha :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
 @media (max-width: 640px) {
   .cc-slide[data-d="-1"], .cc-slide[data-d="1"] { opacity: 0; pointer-events: none; }
   .cc-nav.cc-prev { left: 0; } .cc-nav.cc-next { right: 0; }
   .cc-stage { -webkit-mask-image: none; mask-image: none; }
-  .cc-slide.cc-grid-slide { width: 92vw; }
-  .cc-grid-tiles { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
   .cc-slide { transition: opacity .2s ease; }
-  .cc-autobar { display: none; }
   .cc-cap-anim { animation: none; }
 }
 </style>
@@ -750,7 +742,6 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
       <div class="cc-wrap">
         <div class="cc-eyebrow">What Allarise has to offer</div>
         <div class="cc-caption" id="cc-caption" aria-live="polite">
-          <div class="cc-counter" id="cc-counter"></div>
           <h3 class="cc-title" id="cc-title"></h3>
           <p class="cc-desc" id="cc-desc"></p>
         </div>
@@ -764,29 +755,32 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
             <article class="cc-slide" data-i="4"><div class="cc-phone"><img src="uploads/10.png" alt="Morning verse, notes and weather after the alarm" loading="lazy"></div></article>
             <article class="cc-slide" data-i="5"><div class="cc-phone"><img src="shot-7.png" alt="The Allarise home screen" loading="lazy"></div></article>
             <article class="cc-slide" data-i="6"><div class="cc-phone"><img src="shot-6.png" alt="The Allarise iOS Shortcuts list" loading="lazy"></div></article>
-            <article class="cc-slide cc-grid-slide" data-i="7">
-              <div class="cc-grid">
-                <div class="cc-grid-tiles">
-                  <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><div class="cc-tile-body"><b>Sensors</b><span>Alarm state, next fire time, snoozes left and what is playing. Fire times are real timestamps — run automations before the alarm or when it goes off.</span></div></div>
-                  <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></svg><div class="cc-tile-body"><b>Per-Alarm Devices</b><span>Every alarm is its own HA device, with its own sensors, buttons and enable switch. Target one alarm directly.</span></div></div>
-                  <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9l5 12 1.8-5.2L21 14zM7.2 2.2L8 5.1M5.1 8l-2.9-.8M2.2 16.8L5.1 16M16.8 2.2L16 5.1"/></svg><div class="cc-tile-body"><b>Buttons</b><span>Dismiss, snooze, skip or un-skip an alarm without touching the phone.</span></div></div>
-                  <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h8a6 6 0 010 12H8A6 6 0 018 6zM16 15a3 3 0 100-6 3 3 0 000 6z"/></svg><div class="cc-tile-body"><b>Switches</b><span>Enable or disable an alarm entirely, the same toggle as in the app.</span></div></div>
-                  <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a8 8 0 100-16 8 8 0 000 16zM12 9v4h3M5 3L2 6M19 3l3 3"/></svg><div class="cc-tile-body"><b>Create Alarms from HA</b><span>Services to create, update and delete alarms, plus one-shot Quick Alarms.</span></div></div>
-                  <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11l5 5v11H4zM15 4v5h5M8 13h6M8 16h4"/></svg><div class="cc-tile-body"><b>Alarm Notes</b><span>Set notes on an alarm from Home Assistant — they greet you on screen after the alarm is dismissed.</span></div></div>
-                  <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><div class="cc-tile-body"><b>Alerts</b><span>Any automation can push an alert to the phone — a message, a sound, TTS or your own audio.</span></div></div>
-                  <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10v4M6 7v10M10 4v16M14 7v10M18 10v4M22 9v6"/></svg><div class="cc-tile-body"><b>Sleep Sounds &amp; Radio</b><span>Start, stop or switch what the phone is playing — white noise, ambient sounds, or a favourite radio station.</span></div></div>
-                  <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div class="cc-tile-body"><b>Alarm &amp; Command Widget</b><span>Arm or disarm a zone from the app home screen — a real HA entity automations can watch, and HA can turn it off too.</span></div></div>
-                  <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><div class="cc-tile-body"><b>Commands</b><span>Your own named triggers — “Lights Off”, “Start Coffee” — each added to HA as a sensor you can run automations from.</span></div></div>
-                </div>
-                <a class="cc-grid-cta" href="#home-assistant"><div class="cc-tile-body"><b>New to the integration?</b><span>Set it up with HACS in four steps</span></div><em>Open →</em></a>
-              </div>
-            </article>
           </div>
           <button type="button" class="cc-nav cc-next" aria-label="Next feature"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
-          <div class="cc-autobar"><i></i></div>
         </div>
         <div class="cc-dots" id="cc-dots" role="tablist" aria-label="Choose a feature"></div>
-        <div class="cc-hint">◀ ▶ or arrow keys · auto-advances · hover to pause</div>
+      </div>
+    </section>
+
+    <section id="cc-ha" data-reveal>
+      <div class="cc-ha-wrap">
+        <div class="cc-ha-head">
+          <div class="cc-eyebrow">Rich Home Assistant Features</div>
+          <h2 class="cc-ha-title">Everything Allarise exposes to Home Assistant.</h2>
+        </div>
+        <div class="cc-ha-grid">
+          <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><div class="cc-tile-body"><b>Sensors</b><span>Alarm state, next fire time, snoozes left and what is playing. Fire times are real timestamps — run automations before the alarm or when it goes off.</span></div></div>
+          <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></svg><div class="cc-tile-body"><b>Per-Alarm Devices</b><span>Every alarm is its own HA device, with its own sensors, buttons and enable switch. Target one alarm directly.</span></div></div>
+          <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9l5 12 1.8-5.2L21 14zM7.2 2.2L8 5.1M5.1 8l-2.9-.8M2.2 16.8L5.1 16M16.8 2.2L16 5.1"/></svg><div class="cc-tile-body"><b>Buttons</b><span>Dismiss, snooze, skip or un-skip an alarm without touching the phone.</span></div></div>
+          <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h8a6 6 0 010 12H8A6 6 0 018 6zM16 15a3 3 0 100-6 3 3 0 000 6z"/></svg><div class="cc-tile-body"><b>Switches</b><span>Enable or disable an alarm entirely, the same toggle as in the app.</span></div></div>
+          <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a8 8 0 100-16 8 8 0 000 16zM12 9v4h3M5 3L2 6M19 3l3 3"/></svg><div class="cc-tile-body"><b>Create Alarms from HA</b><span>Services to create, update and delete alarms, plus one-shot Quick Alarms.</span></div></div>
+          <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h11l5 5v11H4zM15 4v5h5M8 13h6M8 16h4"/></svg><div class="cc-tile-body"><b>Alarm Notes</b><span>Set notes on an alarm from Home Assistant — they greet you on screen after the alarm is dismissed.</span></div></div>
+          <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><div class="cc-tile-body"><b>Alerts</b><span>Any automation can push an alert to the phone — a message, a sound, TTS or your own audio.</span></div></div>
+          <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10v4M6 7v10M10 4v16M14 7v10M18 10v4M22 9v6"/></svg><div class="cc-tile-body"><b>Sleep Sounds &amp; Radio</b><span>Start, stop or switch what the phone is playing — white noise, ambient sounds, or a favourite radio station.</span></div></div>
+          <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div class="cc-tile-body"><b>Alarm &amp; Command Widget</b><span>Arm or disarm a zone from the app home screen — a real HA entity automations can watch, and HA can turn it off too.</span></div></div>
+          <div class="cc-tile"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><div class="cc-tile-body"><b>Commands</b><span>Your own named triggers — “Lights Off”, “Start Coffee” — each added to HA as a sensor you can run automations from.</span></div></div>
+        </div>
+        <a class="cc-grid-cta" href="#home-assistant"><div class="cc-tile-body"><b>New to the integration?</b><span>Set it up with HACS in four steps</span></div><em>Open →</em></a>
       </div>
     </section>
 
@@ -1970,7 +1964,7 @@ class Component extends DCLogic {
 // re-inits if the SPA re-mounts the home view. Caption copy lives here so the
 // «emphasis» phrases can be bolded; the media lives in the markup.
 (function () {
-  var TITLES = ["Alarm Engine","Wake-Up Missions","Sleep Sounds & Radio","Critical Alerts","After Alarm Actions","The Home Screen","iOS Shortcuts","Rich Home Assistant Features"];
+  var TITLES = ["Alarm Engine","Wake-Up Missions","Sleep Sounds & Radio","Critical Alerts","After Alarm Actions","The Home Screen","iOS Shortcuts"];
   var DESCS = [
     "Alarms that mean business. Allarise plays at the volume you set, independent of your ringer and mute switch — or <strong>hand the only dismiss button to Home Assistant</strong>. A dual alarm coordinator pairs every alarm with an AlarmKit backup, so one of them always fires.",
     "Solve math, shake the phone, clear lines in Blocks, hold off the wave in Meteor, or <strong>make Home Assistant dismiss your alarm</strong>. Chain up to five missions before the alarm will let go.",
@@ -1978,10 +1972,8 @@ class Component extends DCLogic {
     "<strong>Home Assistant can push an alert that takes over the screen</strong> when it actually matters — a door opened, a leak, a camera tripped.",
     "Start your day with something you’ll love. Add a Bible verse, notes, the morning weather, or launch a URL / Shortcut the moment your alarm is dismissed.",
     "Skip tomorrow’s alarm, <strong>arm the Alarm &amp; Command Widget so Home Assistant can take action</strong>, and control what is playing — all from one screen.",
-    "A Shortcut for just about everything — skip the next alarm, start a station, stop sleep sounds. Wire them into automations, the Action button, or a widget.",
-    "Sensors, per-alarm devices, buttons, switches, alerts and more — <strong>everything the integration exposes to Home Assistant</strong>."
+    "A Shortcut for just about everything — skip the next alarm, start a station, stop sleep sounds. Wire them into automations, the Action button, or a widget."
   ];
-  var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
 
   function init(root) {
     if (!root || root.dataset.ccInit) return;
@@ -1991,16 +1983,13 @@ class Component extends DCLogic {
     root.dataset.ccInit = '1';
 
     var N = slides.length;
-    var isGrid = slides.map(function (el) { return el.classList.contains('cc-grid-slide'); });
-    var counter = root.querySelector('#cc-counter');
     var title = root.querySelector('#cc-title');
     var desc = root.querySelector('#cc-desc');
     var caption = root.querySelector('#cc-caption');
     var dotsBox = root.querySelector('#cc-dots');
-    var autofill = root.querySelector('.cc-autobar i');
-    var active = 0;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var DWELL = 5600, timer = null, paused = false, active = 0;
 
-    // dots
     var dotEls = slides.map(function (_, i) {
       var b = document.createElement('button');
       b.type = 'button';
@@ -2012,37 +2001,42 @@ class Component extends DCLogic {
     });
 
     slides.forEach(function (el, i) {
-      el.addEventListener('click', function () { if (i !== active && !isGrid[i]) go(i); });
+      el.addEventListener('click', function () { if (i !== active) go(i); });
     });
 
     function circ(i) { var d = i - active; if (d > N / 2) d -= N; if (d < -N / 2) d += N; return d; }
 
+    // Restart the active slide's video from the top each time it's shown; the
+    // neighbours' videos keep looping on their own (autoplay loop).
+    function restartVideo() {
+      var v = slides[active].querySelector('video');
+      if (v) { try { v.currentTime = 0; var p = v.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+    }
+
     function render() {
       slides.forEach(function (el, i) {
-        var d = circ(i), dd;
-        if (i === active) dd = 0;
-        else if (Math.abs(d) === 1) dd = (isGrid[active] || isGrid[i]) ? (d > 0 ? 2 : -2) : d;
-        else dd = d > 0 ? 2 : -2;
-        el.dataset.d = dd;
+        var d = circ(i);
+        el.dataset.d = Math.abs(d) <= 1 ? d : (d > 0 ? 2 : -2);
       });
       dotEls.forEach(function (b, i) { b.setAttribute('aria-current', i === active ? 'true' : 'false'); });
-      if (counter) counter.innerHTML = pad(active + 1) + ' <span>/ ' + pad(N) + '</span>';
       if (title) title.textContent = TITLES[active] || '';
       if (desc) desc.innerHTML = DESCS[active] || '';
       if (caption) { caption.classList.remove('cc-cap-anim'); void caption.offsetWidth; caption.classList.add('cc-cap-anim'); }
-      restartAuto();
+      restartVideo();
+      schedule();
     }
     function go(i) { active = ((i % N) + N) % N; render(); }
     function next() { go(active + 1); }
     function prev() { go(active - 1); }
 
-    function restartAuto() {
-      if (!autofill) return;
-      autofill.style.animation = 'none';
-      void autofill.offsetWidth;
-      autofill.style.animation = '';
-    }
-    if (autofill) autofill.addEventListener('animationend', next);
+    // Auto-advance without a visible bar; pauses on hover/focus, off for reduced motion.
+    function schedule() { clearTimeout(timer); if (reduce || paused) return; timer = setTimeout(next, DWELL); }
+    function hold() { paused = true; clearTimeout(timer); }
+    function resume() { paused = false; schedule(); }
+    root.addEventListener('mouseenter', hold);
+    root.addEventListener('mouseleave', resume);
+    root.addEventListener('focusin', hold);
+    root.addEventListener('focusout', resume);
 
     var nextBtn = root.querySelector('.cc-next'), prevBtn = root.querySelector('.cc-prev');
     if (nextBtn) nextBtn.addEventListener('click', next);
