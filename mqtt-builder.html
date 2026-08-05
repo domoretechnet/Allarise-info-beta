@@ -454,7 +454,10 @@
           <div class="field-group">
             <label>MQTT ID (optional tracking key)</label>
             <input type="text" id="ca-mqtt-id" placeholder="my-automation-alarm" oninput="updateCreateAlarm()">
-            <div class="field-hint">A free-form tag stored on the alarm so your automations can mark alarms they created. It does not rename or renumber anything — the alarm's HA entities still use the normal MQTT alarm index.</div>
+            <div class="field-hint">A name you choose for an alarm your automation owns. It does not rename or renumber anything — the alarm's HA entities still use the normal MQTT alarm index. <strong>Send the same MQTT ID again and the alarm is updated in place instead of duplicated</strong>, so an automation that re-runs leaves you with one alarm rather than a new one each time. Leave it blank and every create makes a new alarm.</div>
+          </div>
+          <div class="info-box" style="margin-top:8px">
+            <strong>Cap:</strong> the app refuses a new alarm once <strong>50</strong> alarms created over MQTT already exist, and says so in its log. iOS limits how many pending alarms an app can hold, and alarms you set by hand have to fit inside it too. Delete ones you no longer need with <code>delete_alarm</code>, or reuse an MQTT ID so repeat runs update instead of create. Alarms made in the app are never counted and never refused.
           </div>
         </div>
 
@@ -520,13 +523,14 @@
           <div class="row-2">
             <div class="field-group">
               <label>Duration (min)</label>
-              <input type="number" id="ca-snooze-duration" placeholder="— default —" min="1" max="60" oninput="updateCreateAlarm()">
+              <input type="number" id="ca-snooze-duration" placeholder="— default —" min="1" max="30" oninput="updateCreateAlarm()">
             </div>
             <div class="field-group">
               <label>Max Count</label>
-              <input type="number" id="ca-max-snooze" placeholder="— default —" min="0" oninput="updateCreateAlarm()">
+              <input type="number" id="ca-max-snooze" placeholder="— default —" min="0" max="20" oninput="updateCreateAlarm()">
             </div>
           </div>
+          <div class="field-hint">Duration is 1–30 minutes and Max Count is 0–20, where <strong>0 means unlimited snoozes</strong>. Hold durations are 0.5–30 seconds. Send something outside a range and the app pulls it to the nearest end and notes it in its log — the alarm is still created, so nothing else in your payload is lost.</div>
           <div class="row-2">
             <div class="field-group">
               <label>Snooze Gesture</label>
@@ -540,7 +544,7 @@
             </div>
             <div class="field-group" id="ca-snooze-hold-group" style="display:none">
               <label>Hold Duration (seconds)</label>
-              <input type="number" id="ca-snooze-hold-duration" placeholder="— default —" min="0.5" max="10" step="0.5" oninput="updateCreateAlarm()">
+              <input type="number" id="ca-snooze-hold-duration" placeholder="— default —" min="0.5" max="30" step="0.5" oninput="updateCreateAlarm()">
             </div>
           </div>
         </div>
@@ -559,7 +563,7 @@
             </div>
             <div class="field-group" id="ca-skip-hold-group" style="display:none">
               <label>Hold Duration (seconds)</label>
-              <input type="number" id="ca-skip-hold-duration" placeholder="— default —" min="0.5" max="10" step="0.5" oninput="updateCreateAlarm()">
+              <input type="number" id="ca-skip-hold-duration" placeholder="— default —" min="0.5" max="30" step="0.5" oninput="updateCreateAlarm()">
             </div>
           </div>
         </div>
@@ -1182,11 +1186,11 @@
             <div class="row-2">
               <div class="field-group">
                 <label>Snooze Duration</label>
-                <input type="number" id="ua-snooze-duration" placeholder="— no change —" oninput="updateUpdateAlarm()">
+                <input type="number" id="ua-snooze-duration" placeholder="— no change —" min="1" max="30" oninput="updateUpdateAlarm()">
               </div>
               <div class="field-group">
                 <label>Max Snooze</label>
-                <input type="number" id="ua-max-snooze" placeholder="— no change —" oninput="updateUpdateAlarm()">
+                <input type="number" id="ua-max-snooze" placeholder="— no change —" min="0" max="20" oninput="updateUpdateAlarm()">
               </div>
             </div>
             <div class="row-2">
@@ -1202,7 +1206,7 @@
               </div>
               <div class="field-group" id="ua-snooze-hold-group" style="display:none">
                 <label>Hold Duration (seconds)</label>
-                <input type="number" id="ua-snooze-hold-duration" placeholder="— no change —" min="0.5" max="10" step="0.5" oninput="updateUpdateAlarm()">
+                <input type="number" id="ua-snooze-hold-duration" placeholder="— no change —" min="0.5" max="30" step="0.5" oninput="updateUpdateAlarm()">
               </div>
             </div>
             <div class="row-2" style="margin-top:8px">
@@ -1217,7 +1221,7 @@
               </div>
               <div class="field-group" id="ua-skip-hold-group" style="display:none">
                 <label>Hold Duration (seconds)</label>
-                <input type="number" id="ua-skip-hold-duration" placeholder="— no change —" min="0.5" max="10" step="0.5" oninput="updateUpdateAlarm()">
+                <input type="number" id="ua-skip-hold-duration" placeholder="— no change —" min="0.5" max="30" step="0.5" oninput="updateUpdateAlarm()">
               </div>
             </div>
           </div>
@@ -1542,11 +1546,11 @@
             <div class="row-2">
               <div class="field-group">
                 <label>Snooze Duration</label>
-                <input type="number" id="ubn-snooze-duration" placeholder="— no change —" oninput="updateByName()">
+                <input type="number" id="ubn-snooze-duration" placeholder="— no change —" min="1" max="30" oninput="updateByName()">
               </div>
               <div class="field-group">
                 <label>Max Snooze</label>
-                <input type="number" id="ubn-max-snooze" placeholder="— no change —" oninput="updateByName()">
+                <input type="number" id="ubn-max-snooze" placeholder="— no change —" min="0" max="20" oninput="updateByName()">
               </div>
             </div>
             <div class="row-2">
@@ -1562,7 +1566,7 @@
               </div>
               <div class="field-group" id="ubn-snooze-hold-group" style="display:none">
                 <label>Hold Duration (seconds)</label>
-                <input type="number" id="ubn-snooze-hold-duration" placeholder="— no change —" min="0.5" max="10" step="0.5" oninput="updateByName()">
+                <input type="number" id="ubn-snooze-hold-duration" placeholder="— no change —" min="0.5" max="30" step="0.5" oninput="updateByName()">
               </div>
             </div>
             <div class="row-2" style="margin-top:8px">
@@ -1577,7 +1581,7 @@
               </div>
               <div class="field-group" id="ubn-skip-hold-group" style="display:none">
                 <label>Hold Duration (seconds)</label>
-                <input type="number" id="ubn-skip-hold-duration" placeholder="— no change —" min="0.5" max="10" step="0.5" oninput="updateByName()">
+                <input type="number" id="ubn-skip-hold-duration" placeholder="— no change —" min="0.5" max="30" step="0.5" oninput="updateByName()">
               </div>
             </div>
           </div>
@@ -2065,7 +2069,8 @@
           </div>
           <div class="field-group">
             <label>Link URL (tap to open)</label>
-            <input type="text" id="al-link-url" oninput="updateAlert()">
+            <input type="text" id="al-link-url" placeholder="http://homeassistant.local:8123/lovelace" oninput="updateAlert()">
+            <div class="field-hint"><strong>http:// or https:// only.</strong> The button opens in the browser, so a custom app scheme (<code>myapp://</code>, <code>homeassistant://</code>) is left off the alert card with only a line in the app's log — the alert itself still shows. To open another app, use a per-alarm App Link (<code>dismiss_app_uri</code> / <code>snooze_app_uri</code>) instead.</div>
           </div>
           <div class="field-group">
             <label>Fade-in</label>
@@ -2127,6 +2132,10 @@
 
     <div class="info-box">
       <strong>Tip:</strong> Each alarm in the HACS integration has its own set of button entities — Dismiss, Snooze, Skip, Unskip, Kill Snoozed, and Delete — already wired to the same topics. Use raw MQTT here when you need to target a specific alarm index directly in an automation without relying on button entity availability.
+    </div>
+
+    <div class="info-box">
+      <strong>Optional <code>ts</code> — "only if this is still fresh".</strong> Any JSON payload may carry <code>ts</code>, the unix epoch second you sent it (<code>{"ts": {{ now().timestamp() | int }}}</code> in a template). The app ignores a command whose <code>ts</code> is more than 60 seconds off, so a dismiss that was delayed or replayed does not land at the wrong moment. Since the 2026-08-03 app update this check applies on these per-alarm topics and the plain switch commands as well, not just the dashboard command topics. It stays optional: leave <code>ts</code> out and the command runs whenever it arrives, exactly as before, and a bare <code>ON</code> / <code>OFF</code> payload has no <code>ts</code> to check.
     </div>
 
     <div class="config-bar" style="margin-bottom:20px">

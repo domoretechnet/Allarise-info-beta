@@ -322,7 +322,34 @@
     <strong>If you use Home Assistant:</strong> commands sent to a phone on Dynamic reach it while
     it is charging or close to an alarm, and not while it is asleep. Switch to <strong>On</strong>
     if you need the phone to answer at any hour. Details are on the
-    <a href="home-assistant.html#ref-persistence">Home Assistant page</a>.
+    <a href="/#ha-reference">Home Assistant reference</a>.
+  </p>
+
+  <h3>Home Assistant: fewer surprises from automations</h3>
+  <p>
+    Nothing you have already built needs changing &mdash; every field and payload works
+    exactly as it did. What changed is how the app handles a few awkward cases:
+  </p>
+  <ul>
+    <li><strong>Give <code>create_alarm</code> an <code>mqtt_id</code> and re-running it
+      updates that alarm instead of making another one.</strong> This is the answer to
+      "Home Assistant keeps creating alarms".</li>
+    <li><strong>A ceiling of 50 alarms created from Home Assistant.</strong> Past that,
+      <code>create_alarm</code> declines rather than crowding out the alarms you set by
+      hand. Delete the ones you do not need, or reuse an <code>mqtt_id</code>.</li>
+    <li><strong>Out-of-range values are trimmed rather than obeyed</strong> &mdash; snooze
+      length, snooze count and hold durations are held to what the app itself offers, and
+      a days list that mixes names and numbers now keeps every day you listed.</li>
+    <li><strong>The optional <code>ts</code> freshness stamp is honoured everywhere</strong>,
+      including per-alarm dismiss, snooze, skip and enabled. If you do not send
+      <code>ts</code>, nothing changes at all.</li>
+    <li><strong>Alert link buttons open web addresses only</strong> (<code>http</code> /
+      <code>https</code>). To launch another app, use a per-alarm App Link.</li>
+  </ul>
+  <p>
+    All of it is written up on the <a href="/#ha-reference">Home Assistant reference</a>,
+    along with a broker access-control example worth reading if anything besides your phone
+    and Home Assistant shares your MQTT broker.
   </p>
 
   <h3>Removed</h3>
