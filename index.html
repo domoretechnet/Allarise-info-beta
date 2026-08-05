@@ -583,8 +583,11 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
 .cc-slide[data-d="0"] { transform: translate(-50%, -50%) scale(1); opacity: 1; z-index: 3; cursor: default; }
 .cc-slide[data-d="-1"] { transform: translate(-50%, -50%) translateX(-64%) scale(.84); opacity: 1; z-index: 2; }
 .cc-slide[data-d="1"] { transform: translate(-50%, -50%) translateX(64%) scale(.84); opacity: 1; z-index: 2; }
-.cc-slide[data-d="-2"] { transform: translate(-50%, -50%) translateX(-176%) scale(.72); opacity: 1; pointer-events: none; }
-.cc-slide[data-d="2"] { transform: translate(-50%, -50%) translateX(176%) scale(.72); opacity: 1; pointer-events: none; }
+/* Far slides are parked just off-stage. Kept at opacity 0 so the slide that
+   wraps around the "back" of the circle (-2 → 2 or vice versa) never shows
+   while it crosses the stage behind the active card. */
+.cc-slide[data-d="-2"] { transform: translate(-50%, -50%) translateX(-176%) scale(.72); opacity: 0; pointer-events: none; }
+.cc-slide[data-d="2"] { transform: translate(-50%, -50%) translateX(176%) scale(.72); opacity: 0; pointer-events: none; }
 /* The screenshots carry the phone screen on a transparent margin (built for a
    bezel), so the card stays transparent and the shadow is a drop-shadow that
    hugs the screen's alpha shape — no stray rectangle around it, no clipped glow. */
@@ -847,7 +850,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
               </g>
             </svg>
           </div></div></article>
-            <article class="cc-slide" data-i="1"><div class="cc-phone"><video src="mission-framed.mp4?v=5" muted autoplay loop playsinline aria-label="Wake-up missions demo: Bricks, Meteor and shake"></video></div></article>
+            <article class="cc-slide" data-i="1"><div class="cc-phone"><video src="mission-framed.mp4?v=5" poster="mission-poster.jpg" preload="auto" muted autoplay loop playsinline aria-label="Wake-up missions demo: Bricks, Meteor and shake"></video></div></article>
             <article class="cc-slide" data-i="2"><div class="cc-phone"><img src="shot-3.png" alt="Fall asleep to the radio or a sleep sound" loading="lazy"></div></article>
             <article class="cc-slide" data-i="3"><div class="cc-phone"><img src="shot-5.png" alt="A security alert taking over the screen" loading="lazy"></div></article>
             <article class="cc-slide" data-i="4"><div class="cc-phone"><div class="cc-fade3"><img src="uploads/10.png" alt="Morning verse after the alarm" loading="lazy"><img src="uploads/14.png" alt="Notes after the alarm" loading="lazy"><img src="uploads/15.png" alt="Morning weather after the alarm" loading="lazy"></div></div></article>
@@ -929,7 +932,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
       </div>
 
       <div id="step-mqtt" data-reveal style="margin-top: 56px;">
-        <x-import component-from-global-scope="Allarise.StepBlock" step="2" title="Set up your MQTT broker" hint-size="100%,620px">
+        <x-import component-from-global-scope="Allarise.StepBlock" step="2" title="Set up your MQTT broker" hint-size="100%,1180px">
           <p style="margin: 0 0 16px; color: var(--text-secondary); line-height: 1.65;">Allarise talks to Home Assistant through an MQTT broker. If you don't have one yet, install Mosquitto first, then create a dedicated user for the app so it's restricted to only the topics it needs.</p>
           <p style="font-weight: 600; margin: 0 0 8px;">Step 2a — Install the Mosquitto broker</p>
           <p style="margin: 0 0 8px; color: var(--text-secondary); line-height: 1.65;">Already have an MQTT broker running? Skip to Step 2b. Otherwise, install the Mosquitto broker app (formerly known as an add-on):</p>
@@ -943,6 +946,16 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <p style="margin: 0; color: var(--text-secondary); line-height: 1.65;">Open <strong>Settings → Add-ons → Mosquitto broker → Configuration</strong> and add a login under the <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">logins</x-import> key:</p>
           <x-import component-from-global-scope="Allarise.CodeBlock" label="Mosquitto broker config" code="{{ codeMosquitto }}" hint-size="100%,160px"></x-import>
           <p style="margin: 16px 0 0; color: var(--text-secondary); line-height: 1.65;">Save and <strong>restart the Mosquitto add-on</strong> after making this change.</p>
+          <p style="font-weight: 600; margin: 28px 0 8px;">Step 2c — Restrict who may publish commands (recommended)</p>
+          <p style="margin: 0 0 12px; color: var(--text-secondary); line-height: 1.65;">By default every broker login can publish to every topic. Allarise takes its instructions from the topics under <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">allarise/</x-import> — so anything else that can reach your broker with valid credentials (a smart plug, a script, a guest device, a shared login) can dismiss an alarm or create one. An access control list fixes that at the broker, which is the only place it can be fixed: the app has no way to tell one publisher from another.</p>
+          <p style="margin: 0 0 12px; color: var(--text-secondary); line-height: 1.65;">Give the phone and Home Assistant their own logins, then grant each only the topics it needs. Add a config file so Mosquitto loads an ACL file:</p>
+          <x-import component-from-global-scope="Allarise.CodeBlock" label="/share/mosquitto/allarise.conf" code="{{ codeAclConf }}" hint-size="100%,120px"></x-import>
+          <p style="margin: 16px 0 12px; color: var(--text-secondary); line-height: 1.65;">Then write the list itself. <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">write</x-import> means "may publish", <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">read</x-import> means "may subscribe". Replace <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">iphone</x-import> with your Device Name if you changed it, and <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">allarise</x-import> with your Topic Prefix:</p>
+          <x-import component-from-global-scope="Allarise.CodeBlock" label="/share/mosquitto/accesscontrollist" code="{{ codeAcl }}" hint-size="100%,420px"></x-import>
+          <p style="margin: 16px 0 0; color: var(--text-secondary); line-height: 1.65;">Restart Mosquitto afterwards. Any login not named in the file gets no access to the Allarise topics at all, which is the point — a compromised or careless third-party client can no longer act on your alarms. Test with the app's <strong>Test Connection</strong> button before you rely on it; an ACL that is too tight shows up as a connection that succeeds but state that never arrives.</p>
+          <div style="margin-top: 20px;">
+            <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,90px">This is broker configuration, not an app or integration setting — nothing changes in Allarise or in Home Assistant, and skipping it leaves you exactly where you were. It is worth doing if anything other than your phone and Home Assistant shares the broker, and especially if the broker is reachable from outside your network.</x-import>
+          </div>
         </x-import>
       </div>
 
@@ -1088,6 +1101,21 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Create a new alarm from an automation - only time is required, everything else follows the app defaults. Set ephemeral: true for a one-shot Quick Alarm that deletes itself after firing (it gets no per-alarm HA entities, but shows in the Quick Alarm dashboard sensors).</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.create_alarm" code="{{ codeCreateAlarm }}" hint-size="100%,240px"></x-import>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.delete_alarm" code="{{ codeDeleteAlarm }}" hint-size="100%,140px"></x-import>
+        <h4 style="font-family: var(--font-display); font-size: 17px; margin: 28px 0 6px;">Give it an mqtt_id so re-running updates instead of duplicating</h4>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">mqtt_id is a name you choose for an alarm your automation owns. Include one and create_alarm becomes idempotent: the first run creates the alarm, and every run after that finds the alarm carrying that id and updates it in place, exactly as update_alarm would. Nothing is duplicated, and you never have to look up the index the app assigned.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="Same automation, run daily — one alarm, not thirty" code="{{ codeMqttId }}" hint-size="100%,220px"></x-import>
+        <div style="margin-top: 20px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="tip" icon="{{ iconBolt }}" hint-size="100%,110px"><strong>This is the fix for "Home Assistant keeps creating alarms".</strong> Without mqtt_id, every call to create_alarm creates a new alarm — a trigger that fires twice leaves you with two. Use a different mqtt_id per alarm the automation is responsible for (shift_start, gym, school_run), and reuse it forever. Alarms you make in the app are untouched by any of this.</x-import>
+        </div>
+        <div style="margin-top: 16px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,130px"><strong>50-alarm ceiling for alarms created from Home Assistant.</strong> Once 50 alarms created this way exist on the phone, create_alarm refuses and says so in the app's log rather than adding a 51st. iOS only lets an app hold so many pending alarms at once, and the ones you set by hand have to fit too — a runaway automation must not be able to crowd them out. Nothing is ever deleted to make room, and alarms created in the app are neither counted nor refused. If you hit it, remove the ones you no longer need with allarise.delete_alarm, or switch the automation to mqtt_id so repeat runs update a single alarm instead of stacking up new ones.</x-import>
+        </div>
+        <h4 style="font-family: var(--font-display); font-size: 17px; margin: 28px 0 6px;">Value limits</h4>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">create_alarm and update_alarm hold a few fields to the same range the app's own editor offers. A value outside the range is pulled to the nearest end and noted in the app's log — the call still goes through and the rest of your fields still apply, so an automation never fails over one number. Worth knowing so a setting that "did not take" makes sense:</p>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ limitCols }}" rows="{{ limitRows }}" variant="rules" hint-size="100%,240px"></x-import>
+        <div style="margin-top: 20px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,110px"><strong>Mixed days lists are read entry by entry.</strong> days accepts weekday names or numbers (1 = Sunday), and a list that mixes the two — <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">[1, 2, "3"]</x-import>, say, where one value arrived as text from a template — is now read one entry at a time, so every day you listed is kept. Previously a list like that could be discarded whole, quietly leaving a recurring alarm as a one-time one.</x-import>
+        </div>
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.create_command · delete_command</h3>
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Create the custom command buttons the app shows on its home screen and alarm screens. Each command also appears in HA as a fired / idle status sensor, and arm_action can tie a command to your arm zones. Re-creating an existing name updates it in place; allarise.delete_command removes one by name.</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.create_command" code="{{ codeCreateCommand }}" hint-size="100%,220px"></x-import>
@@ -1105,9 +1133,18 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Notify</h3>
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Send an alert to the phone with the <code>notify.send_message</code> action, targeting the <strong>Send Alert</strong> entity on the Allarise device (its entity id is shown under Settings → Devices → your Allarise device, typically <code>notify.allarise_&lt;device&gt;_dashboard_notify</code>). The data block also accepts image_url, video_url and link_url to attach media or a tappable link to the alert card:</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="Send an alert" code="{{ codeNotify }}" hint-size="100%,200px"></x-import>
+        <div style="margin-top: 20px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,130px"><strong>link_url must be an http:// or https:// address.</strong> The alert's link button opens in the browser, so those are the only two schemes the phone will offer. A custom app scheme — <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">myapp://</x-import>, <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">homeassistant://</x-import> — is left off the alert card entirely, with a note in the app's log; the rest of the alert still shows, so a missing button is the only symptom. To launch another app, use the per-alarm <strong>App Links</strong> (dismiss_app_uri / snooze_app_uri), which exist for exactly that and are set up on the phone rather than sent in over MQTT.</x-import>
+        </div>
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.trigger_alert</h3>
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Request an alert alarm on the phone when app and iOS conditions permit.</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.trigger_alert" code="{{ codeTriggerAlert }}" hint-size="100%,200px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Which volume scale each door uses</h3>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">All three doors lead to the same alert, but they do not all spell loudness the same way — copying a number from one into another is how you end up 100× off. The rule of thumb: a field named volume is a percentage, and a field named volume_level is a fraction, because that is Home Assistant's own convention for media players.</p>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ volCols }}" rows="{{ volRows }}" variant="rules" hint-size="100%,220px"></x-import>
+        <div style="margin-top: 20px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,110px">The phone is forgiving about it — a value of 0.8 is read as 80%, and 80 is read as 80% — so an automation written either way keeps working. But write what the field asks for: 1 in a percentage field means full volume, not one percent, and that is not a mistake you want to discover at 3am.</x-import>
+        </div>
         </div>
       </div>
 
@@ -1151,6 +1188,15 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
         <p style="margin: 0 0 20px; color: var(--text-secondary); line-height: 1.65;">All topics follow the pattern {prefix}/{device}/… With default settings, prefix is allarise and device is iphone.</p>
         <x-import component-from-global-scope="Allarise.DataTable" columns="{{ topicCols }}" rows="{{ topicRows }}" variant="bordered" zebra="{{ true }}" hint-size="100%,300px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Command freshness — the optional ts field</h3>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">MQTT keeps a message until someone reads it, which is usually what you want and occasionally not: a retained or delayed dismiss can arrive long after the moment it was meant for. Any JSON command payload may carry <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">ts</x-import>, the time you sent it in unix epoch seconds. If it turns out to be more than <strong>60 seconds</strong> old (or 60 seconds in the future, which means the clocks disagree), the phone logs the command and does not run it.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="Stamp a command with the time you sent it" code="{{ codeTs }}" hint-size="100%,180px"></x-import>
+        <p style="margin: 16px 0 14px; color: var(--text-secondary); line-height: 1.65;">ts is optional and always has been. Leave it out and the command runs whenever it lands, exactly as before — which is the right choice for anything you would still want honoured after the phone has been asleep. It earns its keep on commands where late is worse than never: dismiss, delete, turning an alarm off.</p>
+        <div style="margin-top: 4px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,130px"><strong>Since the 2026-08-03 app update, ts is checked on every inbound topic.</strong> It used to be honoured only on the dashboard command topics, so a per-alarm dismiss, snooze, skip or enabled — and the plain switch commands such as alert_vibrate and app_persistence — ignored it. Now they all apply the same 60-second window. Nothing needs changing: payloads without ts still run, and a bare <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">ON</x-import> or <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">OFF</x-import> from a Home Assistant switch has no ts to check. The only difference is that a stale ts is now respected on those topics instead of ignored.</x-import>
+        </div>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Who is allowed to publish here</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">The phone acts on any correctly-formed command that reaches these topics — it cannot tell which client sent it. If other devices or people share your broker, restrict publishing to the Allarise topics with a broker-side access control list; <a href="#step-mqtt">Step 2c of the setup guide</a> has a Mosquitto example you can paste in.</p>
         </div>
       </div>
 
@@ -1773,6 +1819,10 @@ const DATA = {
     { a: 'AlarmKit', b: 'When you create your first alarm', c: 'Scheduling system-level alarms that fire reliably', d: 'Optional (core feature)' }
   ],
   codeMosquitto: 'logins:\n  - username: allarise\n    password: "your_secure_password"\ncustomize:\n  active: true\n  folder: mosquitto',
+  codeAclConf: '# Create this file, then restart the Mosquitto add-on.\n# customize.folder: mosquitto (above) is what makes it load.\nacl_file /share/mosquitto/accesscontrollist',
+  codeAcl: '# The phone: publishes its own state, listens for its own commands.\nuser allarise\ntopic write allarise/iphone/#\ntopic read  allarise/iphone/command/#\ntopic read  allarise/iphone/alarm/+/command/#\ntopic write allarise/alarm/+/set\ntopic read  allarise/alarm/+/state\n\n# Home Assistant: reads everything, sends commands.\nuser homeassistant\ntopic read  allarise/#\ntopic write allarise/iphone/command/#\ntopic write allarise/iphone/alarm/+/command/#\ntopic write allarise/alarm/+/state\n\n# Any other login gets no access to allarise topics at all.',
+  codeTs: 'action: mqtt.publish\ndata:\n  topic: allarise/iphone/alarm/3/command/dismiss\n  payload: >-\n    {"ts": {{ now().timestamp() | int }}}',
+  codeMqttId: 'action: allarise.create_alarm\ndata:\n  mqtt_id: shift_start        # your own name for this alarm\n  time: "{{ states(\'input_datetime.shift\') }}"\n  label: "Shift"\n  sound: "Alarm_Clock"\n# First run creates it. Every run after updates that same alarm.',
   codeTts: 'service: media_player.play_media\ntarget:\n  entity_id: media_player.allarise_iphone\ndata:\n  media_content_id: media-source://tts/cloud?message=Good+morning\n  media_content_type: music',
   codeVolume: 'service: media_player.volume_set\ntarget:\n  entity_id: media_player.allarise_iphone\ndata:\n  volume_level: 0.8',
   codeNotify: 'action: notify.send_message\ntarget:\n  entity_id: notify.allarise_iphone_dashboard_notify\ndata:\n  message: "Front door opened"\n  title: "Door Alert"\n  data:\n    sound: "Perimeter_Breach"\n    volume: 80\n    media_url: "http://your-ha.local:8123/local/doorbell.mp3"',
