@@ -254,6 +254,31 @@
 
   <h2>Version 5.2</h2>
 
+  <h3>Slept Through Today (Home Assistant) &mdash; 2026-08-06</h3>
+  <p>
+    Allarise now keeps a running tally of the alarms you slept through today
+    &mdash; an alarm that rang for <strong>ten minutes</strong> with nobody
+    dismissing or snoozing it. It counts <strong>alarms, not rings</strong>, so an
+    alarm you snoozed and then slept through is one; a late dismiss still counts,
+    on the day the alarm rang. The count resets at local midnight and catches up on
+    its own, so you do not have to open the app for a slept-through alarm to be
+    recorded.
+  </p>
+  <p>
+    The app publishes that count, and the Home Assistant integration
+    (<strong>3.4.0 and later</strong>) turns it into a <strong>Slept Through
+    Today</strong> sensor on the dashboard device, with an <code>alarms</code>
+    attribute listing which ones (name, index and the time it rang). It is the
+    record, not a replay &mdash; a slept-through alarm never re-runs its
+    after-alarm notes, verse or weather later. Full detail, and an example
+    automation, are on the <a href="/#ha-reference">Home Assistant reference</a>.
+  </p>
+  <p>
+    Version skew is safe either way: an older app never publishes the count so the
+    sensor stays unavailable, and an older integration simply does not create it.
+    Nothing errors.
+  </p>
+
   <h3>Multi-mission alarms</h3>
   <p>
     An alarm can now run up to <strong>five missions in a row</strong> before it will

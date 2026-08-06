@@ -1180,6 +1180,12 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <div style="margin-top: 20px;">
           <x-import component-from-global-scope="Allarise.Callout" tone="tip" icon="{{ iconBolt }}" hint-size="100%,100px">Use a per-alarm Fire Time (…_alarm_1_fire_time) to tie the automation to one specific alarm. The dashboard Alarm Fire Time sensor tracks whichever alarm is next, so it will follow you across alarms — handy for a general "pre-wake" routine, but it also means a nap alarm will trigger it.</x-import>
         </div>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Get a nudge when you sleep through an alarm</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">The Slept Through Today sensor counts the alarms that rang for ten minutes with nobody dismissing or snoozing them — alarms, not rings — and resets at local midnight. It catches up on its own, so an alarm you slept through is counted even if you never opened the app afterwards. Trigger on it rising above zero and read the alarms attribute for the names.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="automation.yaml" code="{{ codeAutoSleptThrough }}" hint-size="100%,300px"></x-import>
+        <div style="margin-top: 20px;">
+          <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,110px">The count is the record, not a replay — a slept-through alarm never re-runs its after-alarm actions (notes, verse, weather, app link) later on. If the alarm carried notes, they stay on the alarm itself. On an older app or an older integration the sensor is simply unavailable or absent, so this automation just never fires; nothing breaks.</x-import>
+        </div>
         </div>
       </div>
 
@@ -1726,6 +1732,7 @@ const DATA = {
     { k: 'Alarm ID', v: 'MQTT index of the active alarm' },
     { k: 'Alarm Snooze Count', v: 'Number of times the current alarm has been snoozed' },
     { k: 'Snoozes Remaining', v: 'Snoozes left before alarm is force-dismissed' },
+    { k: 'Slept Through Today', v: "How many of today's alarms you slept through — an alarm that rang for 10 minutes with nobody dismissing or snoozing it. Counts alarms, not rings, so a snoozed-then-ignored alarm is one. Resets at local midnight, and a late dismiss still counts on the day the alarm rang. The alarms attribute lists each one — name, index and at (ISO time it rang), up to 10. Stays unavailable until the app has published it once, so an older app version simply leaves it unavailable." },
     { k: 'Alarm Count', v: 'Number of active (enabled) alarms' },
     { k: 'App Version', v: 'Allarise app version string' },
     { k: 'App Online', v: 'Connected when the iOS app is reachable over the broker. (A binary sensor - Home Assistant lists it here in the Sensors section.)' },
@@ -1867,7 +1874,8 @@ const DATA = {
   codeDismiss: 'service: allarise.dismiss\ndata:\n  device_name: iPhone',
   codeAutoSunday: 'automation:\n  alias: "Re-enable work alarm on Sunday"\n  trigger:\n    - platform: time\n      at: "20:00:00"\n  condition:\n    - condition: time\n      weekday: [sun]\n  action:\n    - service: allarise.update_alarm\n      data:\n        name: "Work Alarm"\n        enabled: true',
   codeAutoDoor: 'automation:\n  alias: "Front door night alert"\n  trigger:\n    - platform: state\n      entity_id: binary_sensor.front_door\n      to: "on"\n  condition:\n    - condition: time\n      after: "22:00:00"\n      before: "06:00:00"\n  action:\n    - service: allarise.trigger_alert\n      data:\n        title: "Front Door"\n        message: "Front door opened"\n        sound: "Perimeter_Breach"\n        volume: 90          # percent, 0-100',
-  codeAutoLights: 'automation:\n  triggers:\n    - trigger: time\n      at:\n        entity_id: sensor.allarise_YOUR_DEVICE_alarm_1_fire_time\n        offset: "-00:05:00"     # negative = before the alarm\n  actions:\n    - action: light.turn_on\n      target:\n        entity_id: light.YOUR_LIGHT\n      data:\n        brightness_pct: 40\n        transition: 300         # fade up over the 5 minutes\n  mode: single'
+  codeAutoLights: 'automation:\n  triggers:\n    - trigger: time\n      at:\n        entity_id: sensor.allarise_YOUR_DEVICE_alarm_1_fire_time\n        offset: "-00:05:00"     # negative = before the alarm\n  actions:\n    - action: light.turn_on\n      target:\n        entity_id: light.YOUR_LIGHT\n      data:\n        brightness_pct: 40\n        transition: 300         # fade up over the 5 minutes\n  mode: single',
+  codeAutoSleptThrough: 'automation:\n  alias: "Nudge me when I sleep through an alarm"\n  trigger:\n    - platform: numeric_state\n      entity_id: sensor.allarise_YOUR_DEVICE_dashboard_slept_through_today\n      above: 0\n  action:\n    - service: notify.notify\n      data:\n        title: "Slept through an alarm"\n        message: >-\n          {{ state_attr("sensor.allarise_YOUR_DEVICE_dashboard_slept_through_today", "alarms")\n             | map(attribute="name") | join(", ") }}'
 };
 
 class Component extends DCLogic {
