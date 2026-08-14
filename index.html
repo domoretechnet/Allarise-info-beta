@@ -1115,11 +1115,17 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 12px;">Controlling alarms</h2>
         <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
         <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Act on an alarm from an automation or script. For one-tap dashboard actions, use the buttons and controls published above - these are the services behind them, plus the ones that change how an alarm is configured.</p>
-        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 6px;">allarise.dismiss · snooze · skip</h3>
-        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Dismiss the currently ringing or snoozed alarm, snooze the ringing alarm, or skip the next fire of the next upcoming alarm.</p>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 6px;">allarise.dismiss</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Dismiss the currently ringing or snoozed alarm.</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.dismiss" code="{{ codeDismiss }}" hint-size="100%,120px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.snooze</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Snooze the currently ringing alarm.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.snooze" code="{{ codeSnooze }}" hint-size="100%,120px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.skip</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Skip the next fire of the next upcoming alarm.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.skip" code="{{ codeSkip }}" hint-size="100%,120px"></x-import>
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.update_alarm</h3>
-        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Modify an alarm by index or name. All fields except device_name are optional — only the fields you include will be changed.</p>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Modify an alarm by index or name. All fields except device_name are optional — only the fields you include will be changed. Building an advanced alarm (missions, after-alarm actions, radio)? The <a href="mqtt-builder.html">MQTT Builder</a> writes the full service call for you.</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.update_alarm" code="{{ codeUpdateAlarm }}" hint-size="100%,300px"></x-import>
         <h4 style="font-family: var(--font-display); font-size: 17px; margin: 28px 0 6px;">Missions</h4>
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">An alarm can require up to five missions in sequence. Use missions to set the whole chain — each entry is either a type name or an object with its own settings:</p>
@@ -1131,7 +1137,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">notes replaces the text on the after-alarm Notes page. append_notes adds a line instead — prefixed HA: and divider-separated — so a routine can build a briefing up over several steps without re-sending the whole note:</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="Append to the Notes page" code="{{ codeAppendNotes }}" hint-size="100%,160px"></x-import>
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.create_alarm · delete_alarm</h3>
-        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Create a new alarm from an automation - only time is required, everything else follows the app defaults. Set ephemeral: true for a one-shot Quick Alarm that deletes itself after firing (it gets no per-alarm HA entities, but shows in the Quick Alarm dashboard sensors).</p>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Create a new alarm from an automation - only time is required, everything else follows the app defaults. Set ephemeral: true for a one-shot Quick Alarm that deletes itself after firing (it gets no per-alarm HA entities, but shows in the Quick Alarm dashboard sensors). Building an advanced alarm (missions, after-alarm actions, radio)? The <a href="mqtt-builder.html">MQTT Builder</a> writes the full service call for you.</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.create_alarm" code="{{ codeCreateAlarm }}" hint-size="100%,240px"></x-import>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.delete_alarm" code="{{ codeDeleteAlarm }}" hint-size="100%,140px"></x-import>
         <h4 style="font-family: var(--font-display); font-size: 17px; margin: 28px 0 6px;">Give it an mqtt_id so re-running updates instead of duplicating</h4>
@@ -1922,6 +1928,8 @@ const DATA = {
   codeAppendNotes: 'service: allarise.update_alarm\ndata:\n  index: 1\n  append_notes: "Bins go out tonight"\n  alarm_screen_commands: ["Coffee", "Lights"]   # up to 4 buttons',
   codeTriggerAlert: 'service: allarise.trigger_alert\ndata:\n  device_name: iPhone\n  title: "Motion Detected"\n  message: "Front camera triggered"\n  alert_id: front_door   # optional - resending replaces the pending alert\n  sound: "Perimeter_Breach"\n  volume: 90\n  media_url: "http://ha.local:8123/local/alert.mp3"',
   codeDismiss: 'service: allarise.dismiss\ndata:\n  device_name: iPhone',
+  codeSnooze: 'service: allarise.snooze\ndata:\n  device_name: iPhone',
+  codeSkip: 'service: allarise.skip\ndata:\n  device_name: iPhone',
   codeAutoSunday: 'automation:\n  alias: "Re-enable work alarm on Sunday"\n  trigger:\n    - platform: time\n      at: "20:00:00"\n  condition:\n    - condition: time\n      weekday: [sun]\n  action:\n    - service: allarise.update_alarm\n      data:\n        name: "Work Alarm"\n        enabled: true',
   codeAutoDoor: 'automation:\n  alias: "Front door night alert"\n  trigger:\n    - platform: state\n      entity_id: binary_sensor.front_door\n      to: "on"\n  condition:\n    - condition: time\n      after: "22:00:00"\n      before: "06:00:00"\n  action:\n    - service: allarise.trigger_alert\n      data:\n        title: "Front Door"\n        message: "Front door opened"\n        sound: "Perimeter_Breach"\n        volume: 90          # percent, 0-100',
   codeAutoLights: 'automation:\n  triggers:\n    - trigger: time\n      at:\n        entity_id: sensor.allarise_YOUR_DEVICE_alarm_1_fire_time\n        offset: "-00:05:00"     # negative = before the alarm\n  actions:\n    - action: light.turn_on\n      target:\n        entity_id: light.YOUR_LIGHT\n      data:\n        brightness_pct: 40\n        transition: 300         # fade up over the 5 minutes\n  mode: single',
