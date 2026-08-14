@@ -1136,10 +1136,9 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <h4 style="font-family: var(--font-display); font-size: 17px; margin: 28px 0 6px;">Notes page</h4>
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">notes replaces the text on the after-alarm Notes page. append_notes adds a line instead — prefixed HA: and divider-separated — so a routine can build a briefing up over several steps without re-sending the whole note:</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="Append to the Notes page" code="{{ codeAppendNotes }}" hint-size="100%,160px"></x-import>
-        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.create_alarm · delete_alarm</h3>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.create_alarm</h3>
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Create a new alarm from an automation - only time is required, everything else follows the app defaults. Set ephemeral: true for a one-shot Quick Alarm that deletes itself after firing (it gets no per-alarm HA entities, but shows in the Quick Alarm dashboard sensors). Building an advanced alarm (missions, after-alarm actions, radio)? The <a href="mqtt-builder.html">MQTT Builder</a> writes the full service call for you.</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.create_alarm" code="{{ codeCreateAlarm }}" hint-size="100%,240px"></x-import>
-        <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.delete_alarm" code="{{ codeDeleteAlarm }}" hint-size="100%,140px"></x-import>
         <h4 style="font-family: var(--font-display); font-size: 17px; margin: 28px 0 6px;">Give it an mqtt_id so re-running updates instead of duplicating</h4>
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">mqtt_id is a name you choose for an alarm your automation owns. Include one and create_alarm becomes idempotent: the first run creates the alarm, and every run after that finds the alarm carrying that id and updates it in place, exactly as update_alarm would. Nothing is duplicated, and you never have to look up the index the app assigned.</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="Same automation, run daily — one alarm, not thirty" code="{{ codeMqttId }}" hint-size="100%,220px"></x-import>
@@ -1155,9 +1154,15 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <div style="margin-top: 20px;">
           <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,110px"><strong>Mixed days lists are read entry by entry.</strong> days accepts weekday names or numbers (1 = Sunday), and a list that mixes the two — <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">[1, 2, "3"]</x-import>, say, where one value arrived as text from a template — is now read one entry at a time, so every day you listed is kept. Previously a list like that could be discarded whole, quietly leaving a recurring alarm as a one-time one.</x-import>
         </div>
-        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.create_command · delete_command</h3>
-        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Create the custom command buttons the app shows on its home screen and alarm screens. Each command also appears in HA as a fired / idle status sensor, and arm_action can tie a command to your arm zones. Re-creating an existing name updates it in place; allarise.delete_command removes one by name.</p>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.delete_alarm</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Delete an alarm by index or name.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.delete_alarm" code="{{ codeDeleteAlarm }}" hint-size="100%,140px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.create_command</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Create the custom command buttons the app shows on its home screen and alarm screens. Each command also appears in HA as a fired / idle status sensor, and arm_action can tie a command to your arm zones. Re-creating an existing name updates it in place.</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.create_command" code="{{ codeCreateCommand }}" hint-size="100%,220px"></x-import>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.delete_command</h3>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Delete a custom command button from the phone, by name. Matching is case-sensitive.</p>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.delete_command" code="{{ codeDeleteCommand }}" hint-size="100%,120px"></x-import>
         </div>
       </div>
 
@@ -1923,6 +1928,7 @@ const DATA = {
   codeUpdateAlarm: 'service: allarise.update_alarm\ndata:\n  device_name: iPhone        # optional if only one device\n  index: 3                   # the MQTT alarm index (or target by name:)\n  time: "07:30"\n  enabled: true\n  days: [monday, tuesday, wednesday, thursday, friday]   # names or 1-7, 1=Sunday\n  sound: "Alarm_Clock"\n  volume: 80\n  snooze_interval: 9\n  snooze_limit: 3\n  notes: "Team meeting at 9am"\n  morning_weather: true\n  verse_of_day: true\n  radio_station: "Smooth Jazz 24/7"\n  dismiss_app_uri: "shortcuts://run-shortcut?name=Morning"',
   codeCreateAlarm: 'service: allarise.create_alarm\ndata:\n  time: "06:45"              # the only required field\n  label: "Gym"\n  days: [monday, wednesday, friday]\n  sound: "Digital_Alarm_Clock"\n  volume: 70                 # percent, 0-100\n  mqtt_id: gym               # reuse it and re-runs update this alarm\n  after_alarm_actions: [verse, weather, notes]\n  ephemeral: false           # true = one-shot Quick Alarm, deleted after it fires',
   codeDeleteAlarm: 'service: allarise.delete_alarm\ndata:\n  index: 3          # or target by name:\n  # name: "Gym"     # case-insensitive',
+  codeDeleteCommand: 'service: allarise.delete_command\ndata:\n  name: "Coffee"',
   codeCreateCommand: 'service: allarise.create_command\ndata:\n  name: "Coffee"\n  icon: "cup.and.saucer.fill"   # any SF Symbol name\n  color_rgb: [255, 149, 0]      # or one of 36 preset color names\n  arm_action: none              # none | arm | disarm | toggle\n  show_in_list: true',
   codeMissions: 'service: allarise.update_alarm\ndata:\n  index: 3\n  missions:\n    - mission: math\n      mission_config:\n        math_count: 3\n        math_difficulty: hard\n    - shake\n    - mission: meteor\n      mission_config:\n        meteor_difficulty: easy',
   codeAppendNotes: 'service: allarise.update_alarm\ndata:\n  index: 1\n  append_notes: "Bins go out tonight"\n  alarm_screen_commands: ["Coffee", "Lights"]   # up to 4 buttons',
