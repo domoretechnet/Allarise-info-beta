@@ -1045,7 +1045,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <p style="margin: 0 0 12px; color: var(--text-secondary); line-height: 1.65;">Whether the app stays awake in the background to receive commands.</p>
         <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sensorCols }}" rows="{{ controlRowsAwake }}" variant="rules" hint-size="100%,200px"></x-import>
         <div style="margin-top: 20px;">
-          <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,150px"><strong>App Persistence gates remote control.</strong> If persistence is off (or Dynamic while the app is asleep), the app cannot receive commands from Home Assistant. A command sent while it is asleep is missed, not saved for later, and the App Persistence switch itself shows as unavailable. A radio-station alarm rings its backup tone instead of the station. Your alarms still fire either way. Persistence only decides what the app can do around them.</x-import>
+          <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,150px"><strong>App Persistence gates remote control.</strong> If persistence is off (or Dynamic while the app is asleep), the app cannot receive commands from Home Assistant. A command sent while it is asleep is missed, not saved for later, and the App Persistence Mode control itself shows as unavailable. A radio-station alarm rings its backup tone instead of the station. Your alarms still fire either way. Persistence only decides what the app can do around them.</x-import>
         </div>
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 4px;">Zones</h3>
         <p style="margin: 0 0 12px; color: var(--text-secondary); line-height: 1.65;">Shared arm and disarm states from the home-screen Alarm Widget, one switch per zone.</p>
@@ -1101,7 +1101,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <ul style="margin: 0 0 18px; padding-left: 20px; color: var(--text-secondary); line-height: 1.65;">
           <li><strong>State sensors hold their last values.</strong> Alarm names, fire times, days, sounds, missions, enabled state and the dashboard sensors keep reporting what the phone last sent instead of going unavailable. A sensor that has never had a value stays unavailable. Nothing is invented.</li>
           <li><strong>App Online tells you if the phone can be reached.</strong> Use the App Online binary sensor whenever an automation needs to know right now.</li>
-          <li><strong>Action entities go unavailable while offline.</strong> Buttons, switches (including per-alarm Enabled and App Persistence), selects, numbers, the notify entity and the alert media player all need a phone that can receive them, so they show as unavailable until the phone reconnects.</li>
+          <li><strong>Action entities go unavailable while offline.</strong> Buttons, switches (including per-alarm Enabled), selects (including App Persistence Mode), numbers, the notify entity and the alert media player all need a phone that can receive them, so they show as unavailable until the phone reconnects.</li>
           <li><strong>A Home Assistant restart never loses your alarms.</strong> Alarm pages and their data rebuild from retained MQTT, so a restart at 2pm still shows every alarm, not blank entities.</li>
           <li><strong>Reconnecting refreshes everything.</strong> States catch up within about a second of the app coming back.</li>
         </ul>
@@ -1756,8 +1756,7 @@ const DATA = {
     { k: 'System Volume', v: "The phone's hardware media volume, 0 to 100, the same volume the side buttons change. Sleep sounds and the radio play through it, so what you actually hear is Sleep Volume and System Volume working together: keep both up." }
   ],
   controlRowsAwake: [
-    { k: 'App Persistence', v: 'Keeps Allarise awake in the background so it can receive commands from Home Assistant. On or off. It shows as unavailable in Home Assistant until the app reports in, and once the app has fully suspended it cannot be switched back on remotely.' },
-    { k: 'App Persistence Mode', v: 'The mode you picked in the app: on, off, or dynamic. Dynamic keeps the app awake only while charging or close to an alarm, so the app is ready when it matters and rests the rest of the time. The App Persistence switch shows whether it is awake right now.' }
+    { k: 'App Persistence Mode', v: 'Keeps Allarise awake in the background so it can receive commands from Home Assistant. Pick on, off, or dynamic. Dynamic keeps the app awake only while charging or close to an alarm, so the app is ready when it matters and rests the rest of the time. The App Persistence sensor shows whether it is awake right now, and once the app has fully suspended it cannot be switched back on remotely.' }
   ],
   controlRowsZones: [
     { k: '{Zone} Armed', v: 'A shared armed or disarmed state, one switch per zone (Home, Night, Away). Zones come from the home-screen Alarm Widget: the zone is the name you give its arm control, and every phone using that name shares one state. Arm or disarm from the widget or from here and every phone on that zone follows. Arming does not change your alarms; it is a state your Home Assistant automations decide what to do with (lock doors, run a scene). Retained, with Home Assistant as the source of truth, so the switch stays available and correct even while the phone is offline.' }
