@@ -254,10 +254,10 @@
 
   <h2>Version 5.2</h2>
 
-  <h3>Slept Through Today (Home Assistant) &mdash; 2026-08-06</h3>
+  <h3>Slept Through Today (Home Assistant), 2026-08-06</h3>
   <p>
-    Allarise now keeps a running tally of the alarms you slept through today
-    &mdash; an alarm that rang for <strong>ten minutes</strong> with nobody
+    Allarise now keeps a running tally of the alarms you slept through today,
+    an alarm that rang for <strong>ten minutes</strong> with nobody
     dismissing or snoozing it. It counts <strong>alarms, not rings</strong>, so an
     alarm you snoozed and then slept through is one; a late dismiss still counts,
     on the day the alarm rang. The count resets at local midnight and catches up on
@@ -267,9 +267,9 @@
   <p>
     The app publishes that count, and the Home Assistant integration
     (<strong>3.4.0 and later</strong>) turns it into a <strong>Slept Through
-    Today</strong> sensor on the dashboard device, with an <code>alarms</code>
+    Today</strong> sensor on the dashboard, with an <code>alarms</code>
     attribute listing which ones (name, index and the time it rang). It is the
-    record, not a replay &mdash; a slept-through alarm never re-runs its
+    record, not a replay: a slept-through alarm never re-runs its
     after-alarm notes, verse or weather later. Full detail, and an example
     automation, are on the <a href="/#ha-reference">Home Assistant reference</a>.
   </p>
@@ -282,21 +282,21 @@
   <h3>Multi-mission alarms</h3>
   <p>
     An alarm can now run up to <strong>five missions in a row</strong> before it will
-    dismiss. Mix them freely &mdash; maths then a shake, or three rounds of the same
+    dismiss. Mix them freely: maths then a shake, or three rounds of the same
     thing. Set them up under Missions when editing an alarm.
   </p>
 
   <h3>Two new missions</h3>
   <ul>
-    <li><strong>Block Drop</strong> &mdash; clear falling blocks to shut the alarm up.</li>
-    <li><strong>Meteor Defense</strong> &mdash; shoot down what is coming at you.</li>
+    <li><strong>Block Drop</strong>: clear falling blocks to shut the alarm up.</li>
+    <li><strong>Meteor Defense</strong>: shoot down what is coming at you.</li>
   </ul>
   <p>Both have easy, medium and hard difficulty settings.</p>
 
   <h3>Radio</h3>
   <p>
     Internet radio stations can now be used as an <strong>alarm sound</strong> and as a
-    <strong>sleep sound</strong>. Add stations in Settings, then pick one anywhere a
+    <strong>sleep sounds</strong> source. Add stations in Settings, then pick one anywhere a
     sound is chosen. If a station cannot be reached when the alarm fires, Allarise falls
     back to your normal alarm tone rather than staying silent.
   </p>
@@ -307,10 +307,10 @@
     Settings &rarr; Allarise Pro:
   </p>
   <ul>
-    <li><strong>Usage Data &amp; Crash Reports</strong> &mdash; anonymous. Helps find
+    <li><strong>Usage Data &amp; Crash Reports</strong>: anonymous. Helps find
       crashes that cannot be reproduced and shows which features actually get used.
       Nothing you typed is ever included.</li>
-    <li><strong>Product Updates</strong> &mdash; occasional notifications about new
+    <li><strong>Product Updates</strong>: occasional notifications about new
       features. Tapping one opens this page.</li>
   </ul>
   <p>
@@ -320,27 +320,27 @@
 
   <h3>App Persistence is now three-way</h3>
   <p>
-    App Persistence &mdash; the setting that keeps Allarise awake in the background &mdash;
+    App Persistence (the setting that keeps Allarise awake in the background)
     used to be on or off. It now has a third option, and <strong>everyone has been moved
     to it</strong>. You will see a one-time notice in the app explaining the change.
   </p>
   <p>
-    <strong>On &mdash; always ready.</strong> The app stays awake all night. Highest battery use.
+    <strong>On: always ready.</strong> The app stays awake all night. Highest battery use.
   </p>
   <p>
-    <strong>Dynamic &mdash; ready when it matters.</strong> The app stays awake while your phone is
+    <strong>Dynamic: ready when it matters.</strong> The app stays awake while your phone is
     charging and in the roughly 75 minutes before your next alarm, and sleeps the rest of the
     time. This is the new default.
   </p>
   <p>
-    <strong>Off &mdash; best battery.</strong> The app sleeps until you open it.
+    <strong>Off: best battery.</strong> The app sleeps until you open it.
   </p>
   <p>
     <strong>Your alarm rings on time in all three.</strong> The alarm is scheduled with iOS
     itself no matter which you pick. What changes is the quality of the wake-up: whether the
     app can use your custom volume, play a radio station rather than its own tone, and answer
     Home Assistant. Under Dynamic those depend on iOS waking the app, so treat them as usually
-    available in those windows rather than guaranteed &mdash; choose <strong>On</strong> if you
+    available in those windows rather than guaranteed. Choose <strong>On</strong> if you
     need certainty. Change it under Settings &rarr; Reliability.
   </p>
   <p>
@@ -352,7 +352,7 @@
 
   <h3>Home Assistant: fewer surprises from automations</h3>
   <p>
-    Nothing you have already built needs changing &mdash; every field and payload works
+    Nothing you have already built needs changing: every field and payload works
     exactly as it did. What changed is how the app handles a few awkward cases:
   </p>
   <ul>
@@ -362,7 +362,7 @@
     <li><strong>A ceiling of 50 alarms created from Home Assistant.</strong> Past that,
       <code>create_alarm</code> declines rather than crowding out the alarms you set by
       hand. Delete the ones you do not need, or reuse an <code>mqtt_id</code>.</li>
-    <li><strong>Out-of-range values are trimmed rather than obeyed</strong> &mdash; snooze
+    <li><strong>Out-of-range values are trimmed rather than obeyed</strong>: snooze
       length, snooze count and hold durations are held to what the app itself offers, and
       a days list that mixes names and numbers now keeps every day you listed.</li>
     <li><strong>The optional <code>ts</code> freshness stamp is honoured everywhere</strong>,
@@ -389,7 +389,7 @@
   <div class="callout yellow">
     <span class="icon">💬</span>
     <div class="body">
-      Found something broken? The beta is where that is most useful &mdash;
+      Found something broken? The beta is where that is most useful:
       <a href="https://discord.gg/wUxJKAD4dP">Discord</a> or
       <a href="mailto:support@domoretech.net">support@domoretech.net</a>.
     </div>
