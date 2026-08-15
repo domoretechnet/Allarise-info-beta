@@ -696,8 +696,13 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <a href="mqtt-builder.html">MQTT Builder</a>
         </div></div>
       </div>
-      <a href="whatsnew.html">What&rsquo;s New</a>
-      <a href="#faq" data-navkey="faq">FAQ</a>
+      <div class="nav-ha-group">
+        <a href="#faq" data-navkey="faq">More <span style="font-size: 9px; opacity: .7;">&#9660;</span></a>
+        <div class="nav-submenu"><div class="nav-submenu-box">
+          <a href="whatsnew.html">What&rsquo;s New</a>
+          <a href="#faq">FAQ</a>
+        </div></div>
+      </div>
       <button type="button" class="nav-menu-btn" aria-label="Menu">&#9776;</button>
       <div class="nav-dropdown">
         <a href="#home">Home</a>
@@ -705,8 +710,9 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <a href="#home-assistant" class="nav-dd-sub">Setup guide</a>
         <a href="#ha-reference" class="nav-dd-sub">Entity reference</a>
         <a href="mqtt-builder.html" class="nav-dd-sub">MQTT Builder</a>
-        <a href="whatsnew.html">What&rsquo;s New</a>
-        <a href="#faq">FAQ</a>
+        <div class="nav-dd-label">More</div>
+        <a href="whatsnew.html" class="nav-dd-sub">What&rsquo;s New</a>
+        <a href="#faq" class="nav-dd-sub">FAQ</a>
       </div>
     </nav>
   </div>
