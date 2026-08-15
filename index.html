@@ -1201,10 +1201,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <x-import component-from-global-scope="Allarise.Callout" tone="tip" icon="{{ iconBolt }}" hint-size="100%,72px">Use until_next_alarm: true in sleep_sound_start to have the app attempt to stop white noise when the next alarm fires, without requiring a separate automation.</x-import>
         </div>
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Internet radio</h3>
-        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">The radio has the same shape: an Audio: Radio Station select listing the stations favorited on the phone (pick one to start, none to stop), Audio: Radio Stop / Pause / Resume buttons, and Radio State, Radio Station and Radio Stations Available sensors on the dashboard. Alarms can also wake to a station - set radio_station on create_alarm or update_alarm, and the per-alarm Radio Station sensor reports it. While the radio is playing, the Sleep Volume slider adjusts the radio.</p>
-        <div style="margin-top: 20px;">
-          <x-import component-from-global-scope="Allarise.Callout" tone="warn" icon="{{ iconBolt }}" hint-size="100%,90px">Radio needs App Persistence. Live playback and radio wake-up alarms only work while the app is kept alive in the background.</x-import>
-        </div>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">The radio plays through the same sleep audio player as sleep sounds: one of the two plays at a time (starting one stops the other), and while the radio is playing the Sleep Volume slider adjusts the radio. It has the same shape of controls: an Audio: Radio Station select listing the stations favorited on the phone (pick one to start, none to stop), Audio: Radio Stop / Pause / Resume buttons, and Radio State, Radio Station and Radio Stations Available sensors on the dashboard. Alarms can also wake to a station - set radio_station on create_alarm or update_alarm, and the per-alarm Radio Station sensor reports it.</p>
         </div>
       </div>
 
