@@ -682,6 +682,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
   <div style="position: sticky; top: 0; z-index: 200;">
     <!-- Hand-rolled nav (same .site-nav classes as the DS component): the DS
          SiteNav has no submenu support, and the HA pages nest under one item. -->
+    <!-- NAV IS DUPLICATED: this exact nav also lives in whatsnew.html. Any change here MUST be mirrored there (desktop links, submenus, AND the mobile .nav-dropdown), or the pages drift apart. -->
     <nav class="site-nav">
       <a class="nav-home" href="#home">
         <img class="icon-light" src="app-icon.png" alt="" />
