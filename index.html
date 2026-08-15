@@ -1201,7 +1201,8 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <x-import component-from-global-scope="Allarise.Callout" tone="tip" icon="{{ iconBolt }}" hint-size="100%,72px">Use until_next_alarm: true in sleep_sound_start to have the app attempt to stop white noise when the next alarm fires, without requiring a separate automation.</x-import>
         </div>
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Internet radio</h3>
-        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">The radio plays through the same sleep audio player as sleep sounds: one of the two plays at a time (starting one stops the other), and while the radio is playing the Sleep Volume slider adjusts the radio. It has the same shape of controls: an Audio: Radio Station select listing the stations favorited on the phone (pick one to start, none to stop), Audio: Radio Stop / Pause / Resume buttons, and Radio State, Radio Station and Radio Stations Available sensors on the dashboard. Alarms can also wake to a station - set radio_station on create_alarm or update_alarm, and the per-alarm Radio Station sensor reports it.</p>
+        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">The radio plays through the same sleep audio player as sleep sounds: one of the two plays at a time (starting one stops the other), and while the radio is playing the Sleep Volume slider adjusts the radio. Alarms can also wake to a station - set radio_station on create_alarm or update_alarm, and the per-alarm Radio Station sensor reports it.</p>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sleepControlCols }}" rows="{{ radioControlRows }}" variant="rules" hint-size="100%,220px"></x-import>
         </div>
       </div>
 
@@ -1846,6 +1847,13 @@ const DATA = {
     { k: 'Sleep Sound Stop (button)', v: 'Fully stop playback and release the audio session' },
     { k: 'Sleep Sound Pause (button)', v: 'Mute audio while keeping the session alive (lock screen controls remain visible)' },
     { k: 'Sleep Sound Resume (button)', v: 'Unmute and resume from where it was paused' }
+  ],
+  radioControlRows: [
+    { k: 'Audio: Radio Station (select)', v: 'Pick one of your favorited stations to start it, none to stop. The list is the stations you favorited in the app.' },
+    { k: 'Audio: Radio Stop / Pause / Resume (buttons)', v: 'Transport controls for the radio player.' },
+    { k: 'Radio State (sensor)', v: 'Whether the radio is playing, paused or stopped.' },
+    { k: 'Radio Station (sensor)', v: 'The station playing right now.' },
+    { k: 'Radio Stations Available (sensor)', v: 'The stations favorited on the phone, as a list automations can read.' }
   ],
   topicRows: [
     { d: 'App → HA', t: 'allarise/iphone/sensor/{key}', x: 'Dashboard sensor values' },
