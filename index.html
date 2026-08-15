@@ -1186,9 +1186,6 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Alert volume: two number styles</h3>
         <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Whichever way you send the alert, its volume field uses one of two number styles. A field named volume is a whole-number percent: 80 means 80%. media_player.volume_set instead uses volume_level, Home Assistant's standard fraction for media players: 0.8 means 80%. Do not copy a number from one style into the other. The Alert Volume slider and sensor always speak percent.</p>
         <x-import component-from-global-scope="Allarise.DataTable" columns="{{ volCols }}" rows="{{ volRows }}" variant="rules" hint-size="100%,220px"></x-import>
-        <div style="margin-top: 20px;">
-          <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,110px">The phone is forgiving: it reads 0.8 and 80 both as 80%, so an automation written either way keeps working. Still, write what the field asks for. A bare 1 in a percent field is read as full volume, not one percent, and 3am is a bad time to find that out.</x-import>
-        </div>
         </div>
       </div>
 
