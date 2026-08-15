@@ -1169,7 +1169,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
       <div id="ref-alerts" data-reveal style="margin-top: 64px;">
         <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 12px;">Alerts on the phone</h2>
         <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
-        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Three doors into the same in-app alert card: a media player entity, the standard notify action, and a service call.</p>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Three ways to trigger the same in-app alert card: the standard notify action, the allarise.trigger_alert service, or the Alert Media player entity.</p>
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 0 0 6px;">Alert Media</h3>
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Exposes a media player entity that triggers a one-time in-app alert card on the phone — plays your chosen audio or TTS with a dismiss button. Supports play_media, media_announce and volume_set, alongside the Alert Vibrate and Alert Loop Media switches; the current level is reported by the Alert Volume sensor.</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="Play TTS via media player" code="{{ codeTts }}" hint-size="100%,180px"></x-import>
@@ -1183,11 +1183,11 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">allarise.trigger_alert</h3>
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Request an HA alert on the phone when app and iOS conditions permit.</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.trigger_alert" code="{{ codeTriggerAlert }}" hint-size="100%,200px"></x-import>
-        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Which volume scale each door uses</h3>
-        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">All three doors lead to the same alert, but they do not all spell loudness the same way — copying a number from one into another is how you end up 100× off. The rule of thumb: a field named volume is a percentage, and a field named volume_level is a fraction, because that is Home Assistant's own convention for media players.</p>
+        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Alert volume: two number styles</h3>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Whichever way you send the alert, its volume field uses one of two number styles. A field named volume is a whole-number percent: 80 means 80%. media_player.volume_set instead uses volume_level, Home Assistant's standard fraction for media players: 0.8 means 80%. Do not copy a number from one style into the other. The Alert Volume slider and sensor always speak percent.</p>
         <x-import component-from-global-scope="Allarise.DataTable" columns="{{ volCols }}" rows="{{ volRows }}" variant="rules" hint-size="100%,220px"></x-import>
         <div style="margin-top: 20px;">
-          <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,110px">The phone is forgiving about it — a value of 0.8 is read as 80%, and 80 is read as 80% — so an automation written either way keeps working. But write what the field asks for: 1 in a percentage field means full volume, not one percent, and that is not a mistake you want to discover at 3am.</x-import>
+          <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,110px">The phone is forgiving: it reads 0.8 and 80 both as 80%, so an automation written either way keeps working. Still, write what the field asks for. A bare 1 in a percent field is read as full volume, not one percent, and 3am is a bad time to find that out.</x-import>
         </div>
         </div>
       </div>
@@ -1710,10 +1710,9 @@ const DATA = {
     { key: 'v', header: 'Scale' }
   ],
   volRows: [
-    { k: 'notify.send_message', f: 'data → volume', v: 'Whole number 0–100 (percent). volume: 80 is 80%.' },
-    { k: 'allarise.trigger_alert', f: 'volume', v: 'Whole number 0–100 (percent). volume: 90 is 90%.' },
-    { k: 'media_player.volume_set', f: 'volume_level', v: 'Fraction 0.0–1.0, as Home Assistant requires for any media player. 0.8 is 80%. The integration converts it to a percentage before it reaches the phone.' },
-    { k: 'The Alert Volume slider / sensor', f: '—', v: 'Reported as a percentage, 0–100.' }
+    { k: 'notify.send_message', f: 'data → volume', v: 'Percent, 0 to 100. volume: 80 is 80%.' },
+    { k: 'allarise.trigger_alert', f: 'volume', v: 'Percent, 0 to 100. volume: 90 is 90%.' },
+    { k: 'media_player.volume_set', f: 'volume_level', v: 'Fraction, 0.0 to 1.0. 0.8 is 80%. The integration converts it to percent for the phone.' }
   ],
   tocSetup: [
     { title: 'Setup', numbered: true, entries: [
