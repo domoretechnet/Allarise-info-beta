@@ -1240,6 +1240,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <div style="margin-top: 20px;">
           <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,110px"><strong>The optional ts field.</strong> Any JSON command payload may include <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">ts</x-import>, the send time in unix epoch seconds, checked on every inbound topic. A command more than 60 seconds old, or in the future (check that you sent seconds, not milliseconds), is logged and not run. Useful on commands where late is worse than never (dismiss, delete, disable); leave it off everything else, and commands without ts always run.</x-import>
         </div>
+        <x-import component-from-global-scope="Allarise.CodeBlock" label="Stamp a command with the time you sent it" code="{{ codeTs }}" hint-size="100%,180px"></x-import>
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Who is allowed to publish here</h3>
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">The phone acts on any correctly-formed command that reaches these topics — it cannot tell which client sent it. If other devices or people share your broker, restrict publishing to the Allarise topics with a broker-side access control list — see the <a href="https://mosquitto.org/documentation/">Mosquitto documentation</a> for how to configure one.</p>
         </div>
@@ -1917,6 +1918,7 @@ const DATA = {
   codeTts: 'service: media_player.play_media\ntarget:\n  entity_id: media_player.allarise_iphone\ndata:\n  media_content_id: media-source://tts/cloud?message=Good+morning\n  media_content_type: music',
   codeVolume: 'service: media_player.volume_set\ntarget:\n  entity_id: media_player.allarise_iphone\ndata:\n  volume_level: 0.8',
   codeNotify: 'action: notify.send_message\ntarget:\n  entity_id: notify.allarise_iphone_dashboard_notify\ndata:\n  message: "Front door opened"\n  title: "Door Alert"\n  data:\n    sound: "Perimeter_Breach"\n    volume: 80          # percent, 0-100\n    media_url: "http://your-ha.local:8123/local/doorbell.mp3"\n    link_url: "http://your-ha.local:8123/lovelace/cameras"   # http/https only',
+  codeTs: 'action: mqtt.publish\ndata:\n  topic: allarise/iphone/alarm/3/command/dismiss\n  payload: >-\n    {"ts": {{ now().timestamp() | int }}}',
   codeSleepService: 'action: select.select_option\ntarget:\n  entity_id: select.allarise_iphone_dashboard_audio_sleep_sound   # yours is listed under Settings > Devices\ndata:\n  option: "Light_Rain"    # any sound from the select, or "none" to stop',
   codeSleepStart: 'action: mqtt.publish\ndata:\n  topic: allarise/iphone/command/sleep_sound_start\n  payload: |\n    {\n      "sound": "Brown_Noise",\n      "volume": 60,\n      "duration_minutes": 30,\n      "fade_out_minutes": 5\n    }',
   codeSleepChange: 'action: mqtt.publish\ndata:\n  topic: allarise/iphone/command/sleep_sound_change\n  payload: \'{"sound": "Sea_Waves"}\'',
