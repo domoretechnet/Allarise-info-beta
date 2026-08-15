@@ -1613,12 +1613,12 @@ const SHOW = [
   { title: 'Alarm Engine', desc: 'Alarms that mean business. «Hand the only dismiss button to Home Assistant», and a dual alarm coordinator pairs every alarm with an AlarmKit backup, so one of them always fires.', img: 'shot-1.png', aeSeq: true, alt: 'Waiting for Home Assistant, dismissed by a switch press whose status light turns green' },
   { title: 'Radio Alarms', desc: 'Wake up to «your favorite radio station», or choose an alarm tone. Allarise plays at the volume you set, independent of your ringer and mute switch.', img: 'shot-8.png', alt: 'New alarm with a radio station as the primary sound and a backup alarm tone' },
   { title: 'Wake-Up Missions', desc: 'Solve math, shake the phone, clear lines in Bricks, hold off the wave in Meteor, or «make Home Assistant dismiss your alarm». Chain up to five missions before the alarm will let go.', video: 'mission-mockup.mp4?v=2', alt: 'Wake-up missions demo: Bricks, Meteor and shake' },
-  { title: 'Sleep Sounds & Radio', desc: 'Drift off to rain, ocean, white noise - or your favorite radio station. Fade-out, stop-at-next-alarm, and best of all this is «fully controllable from Home Assistant»!', img: 'shot-3.png', alt: 'Fall asleep to the radio or a sleep sound' },
+  { title: 'Sleep Sounds & Radio', desc: 'Drift off to rain, ocean, white noise, or your favorite radio station. Fade-out, stop-at-next-alarm, and best of all this is «fully controllable from Home Assistant»!', img: 'shot-3.png', alt: 'Fall asleep to the radio or a sleep sound' },
 
-  { title: 'Critical Alerts', desc: '«Home Assistant can push an alert that takes over the screen» when it actually matters - a door opened, a leak, a camera tripped.', img: 'shot-5.png', alt: 'Security breach alert taking over the screen' },
+  { title: 'Critical Alerts', desc: '«Home Assistant can push an alert that takes over the screen» when it actually matters: a door opened, a leak, a camera tripped.', img: 'shot-5.png', alt: 'Security breach alert taking over the screen' },
   { title: 'After Alarm Actions', desc: "Start your day with something you'll love. Choose to add a Bible verse, notes, the morning weather, or launch a URL / Shortcut after your alarm.", img: 'uploads/10.png', imgs: ['uploads/10.png', 'uploads/14.png', 'uploads/15.png'], alt: 'Morning verse, notes and weather after the alarm' },
-  { title: 'The Home Screen', desc: 'Skip tomorrow\'s alarm, «arm the Alarm & Command Widget so Home Assistant can take action», and control what is playing - all from one screen.', img: 'shot-7.png', alt: 'The Allarise home screen' },
-  { title: 'iOS Shortcuts', desc: 'A Shortcut for just about everything - skip the next alarm, start a station, stop sleep sounds. Wire them into automations, the Action button, or a widget.', img: 'shot-6.png', alt: 'The Allarise iOS Shortcuts list' },
+  { title: 'The Home Screen', desc: 'Skip tomorrow\'s alarm, «arm the Alarm & Command Widget so Home Assistant can take action», and control what is playing, all from one screen.', img: 'shot-7.png', alt: 'The Allarise home screen' },
+  { title: 'iOS Shortcuts', desc: 'A Shortcut for just about everything: skip the next alarm, start a station, stop sleep sounds. Wire them into automations, the Action button, or a widget.', img: 'shot-6.png', alt: 'The Allarise iOS Shortcuts list' },
   { title: 'Rich Home Assistant Features', desc: '', cta: { href: '#home-assistant', title: 'New to the integration?', text: 'Set it up with HACS in four steps' }, tiles: [
     { name: 'Sensors', icon: 'M22 12h-4l-3 9L9 3l-3 9H2', desc: 'Alarm state, next fire time, snoozes left and what is playing. Fire times are real timestamps - run automations before the alarm or when it goes off.' },
     { name: 'Per-Alarm Devices', icon: 'M12 2l9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 17l9 5 9-5', desc: 'Every alarm is its own HA device, with its own sensors, buttons and enable switch. Target one alarm directly.' },
@@ -2219,11 +2219,11 @@ class Component extends DCLogic {
     "Solve math, shake the phone, clear lines in Bricks, hold off the wave in Meteor, or <strong>make Home Assistant dismiss your alarm</strong>. Chain up to five missions before the alarm will let go.",
     "Alarms that mean business. <strong>Hand the only dismiss button to Home Assistant</strong>, and a dual alarm coordinator pairs every alarm with an AlarmKit backup, so one of them always fires.",
     "Wake up to <strong>your favorite radio station</strong>, or choose an alarm tone. Allarise plays at the volume you set, independent of your ringer and mute switch.",
-    "Drift off to rain, ocean, white noise — or your favorite radio station. Fade-out, stop-at-next-alarm, and best of all this is <strong>fully controllable from Home Assistant</strong>.",
-    "<strong>Home Assistant can push an alert that takes over the screen</strong> when it actually matters — a door opened, a leak, a camera tripped.",
+    "Drift off to rain, ocean, white noise, or your favorite radio station. Fade-out, stop-at-next-alarm, and best of all this is <strong>fully controllable from Home Assistant</strong>.",
+    "<strong>Home Assistant can push an alert that takes over the screen</strong> when it actually matters: a door opened, a leak, a camera tripped.",
     "Start your day with something you’ll love. Add a Bible verse, notes, the morning weather, or launch a URL / Shortcut the moment your alarm is dismissed.",
-    "Skip tomorrow’s alarm, <strong>arm the Alarm &amp; Command Widget so Home Assistant can take action</strong>, and control what is playing — all from one screen.",
-    "A Shortcut for just about everything — skip the next alarm, start a station, stop sleep sounds. Wire them into automations, the Action button, or a widget."
+    "Skip tomorrow’s alarm, <strong>arm the Alarm &amp; Command Widget so Home Assistant can take action</strong>, and control what is playing, all from one screen.",
+    "A Shortcut for just about everything: skip the next alarm, start a station, stop sleep sounds. Wire them into automations, the Action button, or a widget."
   ];
 
   function init(root) {
