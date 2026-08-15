@@ -254,6 +254,16 @@
 
   <h2>Version 5.2</h2>
 
+  <h3>The short list: what&rsquo;s new since the App Store release</h3>
+  <ul>
+    <li><strong>Allarise is now free.</strong> Every feature is unlocked for everyone; purchases became an optional tip jar. Existing purchasers and early adopters keep everything and are never prompted.</li>
+    <li><strong>Slept Through Today.</strong> The app tallies alarms that rang ten minutes with no dismiss or snooze, resets at local midnight, and catches up even if you never open the app. The integration (3.4.0+) exposes it as a Home Assistant dashboard sensor with an <code>alarms</code> attribute.</li>
+    <li><strong>Automatic alarm consolidation.</strong> When you&rsquo;ve slept through a set of alarms, missions consolidate into one set instead of stacking, notes merge into one page, and sleep sounds stop for good when an alarm fires instead of resuming after snooze.</li>
+    <li><strong>App Persistence went three-way.</strong> New Dynamic mode keeps the app awake only while charging or near an alarm, with a one-time notice explaining it to existing installs.</li>
+    <li><strong>Custom accent colors.</strong> Pick an accent per theme and per light/dark appearance; it applies app-wide.</li>
+    <li><strong>HA alert media fixes.</strong> Images now load from plain-http Home Assistant hosts, and video failures are surfaced instead of silent.</li>
+  </ul>
+
   <h3>Slept Through Today (Home Assistant), 2026-08-06</h3>
   <p>
     Allarise now keeps a running tally of the alarms you slept through today,
