@@ -20,6 +20,9 @@
       --tertiary: #8A8DA6;
       --accent: #2E4A9E;
       --accent-2: #283070;
+      --text-secondary: #565A78;
+      --text-tertiary: #8A8DA6;
+      --shadow-sm: 0 1px 0 rgba(26,27,51,.07);
       --card: #FFFFFF;
       --card-border: #DDDCEA;
       --card-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);
@@ -66,43 +69,60 @@
     }
     .hero .app-icon .icon-light { display: block; }
     .hero .app-icon .icon-dark  { display: none; }
+    /* Header copied from index.html: DS-bundle .site-nav base rules plus the
+       hand-rolled submenu/dropdown overrides from index's inline <style>. */
     .site-nav {
       position: sticky;
       top: 0;
       z-index: 50;
       background: var(--bg);
       border-bottom: 1px solid var(--border);
+      backdrop-filter: none;
       display: flex;
       align-items: center;
       gap: 24px;
       padding: 0 32px;
       height: 52px;
+      font-family: var(--font-sans);
     }
-    .site-nav a {
-      font-size: 14px;
-      color: var(--secondary);
-      text-decoration: none;
-    }
-    .site-nav a:hover { color: var(--accent); }
     .site-nav .nav-home {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       margin-right: auto;
+      text-decoration: none;
+      flex-shrink: 0;
     }
     .site-nav .nav-home img {
       width: 28px;
       height: 28px;
       border-radius: 6px;
     }
-    .site-nav .nav-home .icon-light { display: block; }
-    .site-nav .nav-home .icon-dark  { display: none; }
     .site-nav .nav-home span {
       font-size: 16px;
       font-weight: 700;
       color: var(--text);
     }
+    .site-nav a {
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .site-nav a:hover { color: var(--accent); }
+    .site-nav .nav-active { color: var(--accent) !important; font-weight: 600; }
     .nav-active { color: var(--accent) !important; font-weight: 600; }
+    /* Desktop submenu nesting the HA pages under one nav item. The outer layer
+       carries only the hover bridge so the pointer can travel from the link to
+       the box without the menu closing. */
+    .nav-ha-group { position: relative; display: flex; align-items: center; }
+    .nav-ha-group > a { display: flex; align-items: center; gap: 5px; }
+    .nav-submenu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); padding-top: 10px; z-index: 300; }
+    .nav-ha-group:hover .nav-submenu, .nav-ha-group:focus-within .nav-submenu { display: block; }
+    .nav-submenu-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5); padding: 6px 0; min-width: 185px; }
+    .nav-submenu-box a { display: block; padding: 9px 16px; font-size: 14px; white-space: nowrap; color: var(--text-secondary); }
+    .nav-submenu-box a:hover { background: var(--surface); color: var(--text); text-decoration: none; }
+    .nav-dd-label { padding: 14px 24px 2px; font-size: 16px; font-weight: 700; color: var(--text); }
     .hero h1 {
       font-family: var(--font-sans);
       font-size: 32px;
@@ -157,15 +177,16 @@
     }
     h3 {
       font-family: var(--font-sans);
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 700;
       letter-spacing: -0.02em;
-      margin: 20px 0 8px;
-      color: var(--accent);
+      margin: 24px 0 8px;
+      color: var(--text);
     }
-    p { margin-bottom: 12px; color: var(--text); font-size: 15px; }
+    p { margin-bottom: 12px; color: var(--secondary); font-size: 16px; line-height: 1.65; }
+    p strong, li strong { color: var(--text); }
     ul, ol { margin: 0 0 12px 24px; }
-    li { margin-bottom: 6px; font-size: 15px; }
+    li { margin-bottom: 8px; font-size: 16px; line-height: 1.65; color: var(--secondary); }
     a { color: var(--accent); text-decoration: none; }
     a:hover { color: var(--accent-2); text-decoration: underline; }
     hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
@@ -188,18 +209,20 @@
       margin-top: 32px;
     }
     .contact-box h3 { margin-top: 0; }
-    footer { border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--secondary); }
-    footer a { color: var(--accent); text-decoration: none; }
-    footer .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
+    /* Footer copied from index.html's DS SiteFooter (.site-footer). */
+    .site-footer { border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--text-secondary); font-family: var(--font-sans); }
+    .site-footer a { color: var(--accent); text-decoration: none; }
+    .site-footer a:hover { color: var(--accent-2); text-decoration: underline; }
+    .site-footer .footer-links { display: flex; gap: 20px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
     .nav-menu-btn {
       display: none; background: none; border: none; cursor: pointer;
       color: var(--text); font-size: 22px; padding: 4px 8px;
       border-radius: 6px; line-height: 1; margin-left: auto;
     }
     .nav-dropdown {
-      display: none; position: fixed; top: 52px; left: 0; right: 0;
+      display: none; position: absolute; top: 52px; left: 0; right: 0;
       background: var(--bg); border-bottom: 1px solid var(--border);
-      z-index: 200; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      z-index: 200; box-shadow: var(--shadow-sm);
     }
     .nav-dropdown a {
       display: block; padding: 14px 24px; font-size: 16px;
@@ -209,38 +232,54 @@
     .nav-dropdown a:last-child { border-bottom: none; }
     .nav-dropdown a.nav-active { color: var(--accent); font-weight: 600; }
     .nav-dropdown.open { display: block; }
+    /* The HA sub-items read as one group: no dividers between them, one before FAQ. */
+    .nav-dropdown a.nav-dd-sub { padding-left: 38px; border-bottom: none; font-size: 15px; }
+    .nav-dropdown a.nav-dd-sub + a:not(.nav-dd-sub) { border-top: 1px solid var(--border); }
+    @media (max-width: 520px) {
+      .site-nav { gap: 0 !important; }
+    }
     @media (max-width: 600px) {
       .hero h1 { font-size: 26px; }
       .site-nav { padding: 0 16px; }
       .site-nav a:not(.nav-home) { display: none !important; }
       .nav-menu-btn { display: block !important; }
+      /* The mobile links live inside the dropdown; re-show them there, and hide
+         the desktop HA hover group so tapping the hamburger shows a real menu. */
+      .site-nav .nav-dropdown a { display: block !important; }
+      .nav-ha-group { display: none !important; }
     }
   </style>
 </head>
 <body>
-<!-- BETA SITE BANNER — present only on beta.allarise.app, not on the production site. -->
-<div style="background:#b45309;color:#fff;padding:10px 16px;text-align:center;font:600 14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;position:relative;z-index:9999">
-  🧪 Beta site — documents the TestFlight build and the <code style="background:rgba(0,0,0,.22);padding:1px 5px;border-radius:4px">allarise-hacs-beta</code> integration.
-  <a href="https://allarise.app" style="color:#fff;text-decoration:underline">Go to the release site →</a>
-</div>
 
-<nav class="site-nav">
-  <a href="index.html" class="nav-home">
-    <img src="app-icon.png" class="icon-light" alt="Allarise" />
-    <img src="app-icon-dark.png" class="icon-dark" alt="Allarise" />
-    <span>Allarise</span>
-  </a>
-  <a href="index.html">About</a>
-  <a href="home-assistant.html">Home Assistant</a>
-  <a href="mqtt-builder.html">MQTT Builder</a>
-  <a href="faq.html">FAQ</a>
-  <button class="nav-menu-btn" id="nav-menu-btn" onclick="toggleNav()">☰</button>
-</nav>
-<div class="nav-dropdown" id="nav-dropdown">
-  <a href="index.html">About</a>
-  <a href="home-assistant.html">Home Assistant</a>
-  <a href="mqtt-builder.html">MQTT Builder</a>
-  <a href="faq.html">FAQ</a>
+<div style="position: sticky; top: 0; z-index: 200;">
+  <!-- Header copied from index.html's hand-rolled nav. Links are plain anchors
+       into the main site since this is a standalone page. -->
+  <nav class="site-nav">
+    <a class="nav-home" href="index.html#home">
+      <img class="icon-light" src="app-icon.png" alt="" />
+      <span>Allarise</span>
+    </a>
+    <a href="index.html#home">Home</a>
+    <div class="nav-ha-group">
+      <a href="index.html#home-assistant">Home Assistant <span style="font-size: 9px; opacity: .7;">&#9660;</span></a>
+      <div class="nav-submenu"><div class="nav-submenu-box">
+        <a href="index.html#home-assistant">Setup guide</a>
+        <a href="index.html#ha-reference">Entity reference</a>
+        <a href="mqtt-builder.html">MQTT Builder</a>
+      </div></div>
+    </div>
+    <a href="index.html#faq">FAQ</a>
+    <button type="button" class="nav-menu-btn" aria-label="Menu">&#9776;</button>
+    <div class="nav-dropdown">
+      <a href="index.html#home">Home</a>
+      <div class="nav-dd-label">Home Assistant</div>
+      <a href="index.html#home-assistant" class="nav-dd-sub">Setup guide</a>
+      <a href="index.html#ha-reference" class="nav-dd-sub">Entity reference</a>
+      <a href="mqtt-builder.html" class="nav-dd-sub">MQTT Builder</a>
+      <a href="index.html#faq">FAQ</a>
+    </div>
+  </nav>
 </div>
 
 <div class="wrapper">
@@ -254,14 +293,6 @@
     <h1>Allarise</h1>
     <p class="subtitle">What&rsquo;s New</p>
     <span class="updated">Beta channel</span>
-  </div>
-
-  <div class="callout green">
-    <span class="icon">🧪</span>
-    <div class="body">
-      These are the notes for the <strong>TestFlight beta</strong>. Features here may
-      change before they reach the App Store, and some may not ship at all.
-    </div>
   </div>
 
   <h2>Version 5.2</h2>
@@ -406,49 +437,29 @@
     have been updated to match.
   </p>
 
-  <hr />
-
-  <div class="callout yellow">
-    <span class="icon">💬</span>
-    <div class="body">
-      Found something broken? The beta is where that is most useful:
-      <a href="https://discord.gg/wUxJKAD4dP">Discord</a> or
-      <a href="mailto:support@domoretech.net">support@domoretech.net</a>.
-    </div>
-  </div>
 
 </div>
 
-<footer>
+<footer class="site-footer">
   <div class="footer-links">
-    <a href="https://discord.gg/wUxJKAD4dP"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="18" height="18" style="vertical-align:-3px;margin-right:5px;fill:currentColor"><path d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"/></svg>Discord</a>
-    <a href="mailto:support@domoretech.net">✉️ support@domoretech.net</a>
-    <a href="privacy.html">Privacy Policy</a>
-    <a href="terms.html">Terms of Use</a>
+    <a href="https://discord.gg/wUxJKAD4dP">Discord</a>
+    <a href="mailto:support@domoretech.net">support@domoretech.net</a>
+    <a href="index.html#privacy">Privacy Policy</a>
+    <a href="index.html#terms">Terms of Use</a>
   </div>
-  <div>© 2026 Allarise</div>
+  <div style="font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-tertiary); margin-top: 14px;">© 2026 Allarise</div>
 </footer>
 
 <script>
-  var _navOpen = false;
-  function toggleNav() {
-    var d = document.getElementById('nav-dropdown');
-    var b = document.getElementById('nav-menu-btn');
-    _navOpen = !_navOpen;
-    d.style.display = _navOpen ? 'block' : 'none';
-    b.textContent = _navOpen ? '✕' : '☰';
-  }
-  document.addEventListener('click', function(e) {
-    if (!_navOpen) return;
-    var d = document.getElementById('nav-dropdown');
-    var b = document.getElementById('nav-menu-btn');
-    if (!d.contains(e.target) && e.target !== b && !b.contains(e.target)) {
-      _navOpen = false;
-      d.style.display = 'none';
-      b.textContent = '☰';
-    }
-  });
-  document.getElementById('nav-dropdown').style.display = 'none';
+  // Plain-DOM nav behaviour copied from index.html: the hamburger toggles the
+  // mobile dropdown, and choosing a link closes it. The desktop HA submenu
+  // opens on hover via CSS, so it needs no script.
+  document.addEventListener('click', function (e) {
+    var closest = function (sel) { return e.target && e.target.closest ? e.target.closest(sel) : null; };
+    var dd = document.querySelector('.nav-dropdown');
+    if (closest('.nav-menu-btn')) { if (dd) dd.classList.toggle('open'); return; }
+    if (closest('.nav-dropdown.open a') && dd) dd.classList.remove('open');
+  }, true);
 </script>
 
 </body>
