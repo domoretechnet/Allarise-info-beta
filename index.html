@@ -1241,8 +1241,6 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
           <x-import component-from-global-scope="Allarise.Callout" tone="note" icon="{{ iconInfo }}" hint-size="100%,110px"><strong>The optional ts field.</strong> Any JSON command payload may include <x-import component-from-global-scope="Allarise.InlineCode" hint-size="auto,18px">ts</x-import>, the send time in unix epoch seconds, checked on every inbound topic. A command more than 60 seconds old, or in the future (check that you sent seconds, not milliseconds), is logged and not run. Useful on commands where late is worse than never (dismiss, delete, disable); leave it off everything else.</x-import>
         </div>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="Stamp a command with the time you sent it" code="{{ codeTs }}" hint-size="100%,180px"></x-import>
-        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Who is allowed to publish here</h3>
-        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">The phone acts on any correctly-formed command that reaches these topics — it cannot tell which client sent it. If other devices or people share your broker, restrict publishing to the Allarise topics with a broker-side access control list — see the <a href="https://mosquitto.org/documentation/">Mosquitto documentation</a> for how to configure one.</p>
         </div>
       </div>
 
