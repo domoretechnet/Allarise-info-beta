@@ -6,46 +6,42 @@
   <link rel="icon" type="image/png" href="app-icon.png">
   <link rel="apple-touch-icon" href="app-icon.png">
   <title>[BETA] Allarise — What's New</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <style>
     :root {
-      --bg: #ffffff;
-      --surface: #f5f5f7;
-      --border: #d2d2d7;
-      --text: #1d1d1f;
-      --secondary: #6e6e73;
-      --accent: #0071e3;
-      --green: #1d8348;
-      --green-bg: #eafaf1;
-      --yellow-bg: #fef9e7;
-      --yellow: #7d6608;
-      --red: #922b21;
-      --red-bg: #fdedec;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #000000;
-        --surface: #1c1c1e;
-        --border: #38383a;
-        --text: #f5f5f7;
-        --secondary: #98989d;
-        --accent: #2997ff;
-        --green: #30d158;
-        --green-bg: #0d2614;
-        --yellow-bg: #2a2200;
-        --yellow: #ffd60a;
-        --red: #ff453a;
-        --red-bg: #2d0e0c;
-      }
+      --bg: #FCFAF6;
+      --surface: #F1EFF7;
+      --border: #DBD8E6;
+      --text: #1A1B33;
+      --secondary: #565A78;
+      --tertiary: #8A8DA6;
+      --accent: #2E4A9E;
+      --accent-2: #283070;
+      --card: #FFFFFF;
+      --card-border: #DDDCEA;
+      --card-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);
+      --green: #22603A;
+      --green-bg: #E8F0E8;
+      --yellow: #92620A;
+      --yellow-bg: #FFEFD2;
+      --red: #8E2A1E;
+      --red-bg: #F9E9E5;
+      --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: var(--font-sans);
       background: var(--bg);
       color: var(--text);
       font-size: 16px;
       line-height: 1.6;
-      cursor: pointer;
+      -webkit-font-smoothing: antialiased;
     }
+    ::selection { background: var(--accent); color: #FFFFFF; }
     .wrapper {
       max-width: 760px;
       margin: 0 auto;
@@ -70,10 +66,6 @@
     }
     .hero .app-icon .icon-light { display: block; }
     .hero .app-icon .icon-dark  { display: none; }
-    @media (prefers-color-scheme: dark) {
-      .hero .app-icon .icon-light { display: none; }
-      .hero .app-icon .icon-dark  { display: block; }
-    }
     .site-nav {
       position: sticky;
       top: 0;
@@ -105,10 +97,6 @@
     }
     .site-nav .nav-home .icon-light { display: block; }
     .site-nav .nav-home .icon-dark  { display: none; }
-    @media (prefers-color-scheme: dark) {
-      .site-nav .nav-home .icon-light { display: none; }
-      .site-nav .nav-home .icon-dark  { display: block; }
-    }
     .site-nav .nav-home span {
       font-size: 16px;
       font-weight: 700;
@@ -116,32 +104,41 @@
     }
     .nav-active { color: var(--accent) !important; font-weight: 600; }
     .hero h1 {
+      font-family: var(--font-sans);
       font-size: 32px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
       margin-bottom: 8px;
     }
     .hero .subtitle {
-      font-size: 16px;
-      color: var(--secondary);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--tertiary);
+      margin-top: 6px;
     }
     .updated {
       display: inline-block;
       margin-top: 12px;
-      font-size: 13px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
       color: var(--secondary);
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 4px 12px;
+      padding: 5px 14px;
     }
     .callout {
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 16px 20px;
       margin-bottom: 24px;
       display: flex;
       gap: 12px;
       align-items: flex-start;
+      box-shadow: var(--card-shadow);
     }
     .callout.green { background: var(--green-bg); border: 1px solid var(--green); color: var(--green); }
     .callout.yellow { background: var(--yellow-bg); border: 1px solid var(--yellow); color: var(--yellow); }
@@ -150,15 +147,19 @@
     .callout .body { color: var(--text); font-size: 15px; }
     .callout .body strong { color: inherit; }
     h2 {
+      font-family: var(--font-sans);
       font-size: 22px;
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: -0.02em;
       margin: 40px 0 12px;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--border);
     }
     h3 {
+      font-family: var(--font-sans);
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: -0.02em;
       margin: 20px 0 8px;
       color: var(--accent);
     }
@@ -166,12 +167,23 @@
     ul, ol { margin: 0 0 12px 24px; }
     li { margin-bottom: 6px; font-size: 15px; }
     a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    a:hover { color: var(--accent-2); text-decoration: underline; }
     hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
-    .contact-box {
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 6px;
+      padding: 1px 5px;
+      color: var(--text);
+      overflow-wrap: anywhere;
+    }
+    .contact-box {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      box-shadow: var(--card-shadow);
       padding: 24px;
       margin-top: 32px;
     }
