@@ -1192,17 +1192,15 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
       <div id="ref-sleep" data-reveal style="margin-top: 64px;">
         <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 12px;">Audio: Sleep Sounds</h2>
         <div style="background: var(--step-bg); border: 1px solid var(--step-border); border-radius: 14px; padding: 26px 30px 28px; box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);">
-        <p style="margin: 0 0 20px; color: var(--text-secondary); line-height: 1.65;">Sleep sounds (white noise, rain, fan, etc.) can be started, stopped, paused, resumed, and adjusted remotely from supported Home Assistant automations or scripts when app and iOS conditions allow. The current sound name and volume are published as sensors on the dashboard and can also be surfaced in Home Assistant dashboards.</p>
-        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sleepControlCols }}" rows="{{ sleepButtonRows }}" variant="rules" hint-size="100%,240px"></x-import>
+        <p style="margin: 0 0 20px; color: var(--text-secondary); line-height: 1.65;">Sleep sounds (white noise, rain, fan, etc.) and internet radio share one audio player: one of the two plays at a time (starting one stops the other), and Sleep Volume sets the level of whichever is playing. Both can be started, stopped, paused, resumed, and adjusted remotely from supported Home Assistant automations or scripts when app and iOS conditions allow. The current sound name and volume are published as sensors on the dashboard.</p>
+        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sleepControlCols }}" rows="{{ audioControlRows }}" variant="rules" hint-size="100%,420px"></x-import>
+        <p style="margin: 20px 0 4px; color: var(--text-secondary); line-height: 1.65;">Alarms can also wake to a station - set radio_station on create_alarm or update_alarm, and the per-alarm Radio Station sensor reports it.</p>
         <p style="margin: 20px 0 4px; color: var(--text-secondary); line-height: 1.65;">All sleep sound commands are sent via MQTT to the app's command topic. Available sounds: Brown_Noise, white_noise, Fan, Light_Rain, Summer_Rain, Sea_Waves, Mountain_Stream, Rainforest_Birds.</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="Start a sleep sound" code="{{ codeSleepStart }}" hint-size="100%,220px"></x-import>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="Change sound without stopping" code="{{ codeSleepChange }}" hint-size="100%,120px"></x-import>
         <div style="margin-top: 20px;">
           <x-import component-from-global-scope="Allarise.Callout" tone="tip" icon="{{ iconBolt }}" hint-size="100%,72px">Use until_next_alarm: true in sleep_sound_start to have the app attempt to stop white noise when the next alarm fires, without requiring a separate automation.</x-import>
         </div>
-        <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Internet radio</h3>
-        <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">The radio plays through the same sleep audio player as sleep sounds: one of the two plays at a time (starting one stops the other), and while the radio is playing the Sleep Volume slider adjusts the radio. Alarms can also wake to a station - set radio_station on create_alarm or update_alarm, and the per-alarm Radio Station sensor reports it.</p>
-        <x-import component-from-global-scope="Allarise.DataTable" columns="{{ sleepControlCols }}" rows="{{ radioControlRows }}" variant="rules" hint-size="100%,220px"></x-import>
         </div>
       </div>
 
@@ -1840,16 +1838,14 @@ const DATA = {
     { k: 'Audio: Sleep Sound Stop / Pause / Resume', v: 'Control sleep sounds playback' },
     { k: 'Audio: Radio Stop / Pause / Resume', v: 'Transport controls for the internet radio player' }
   ],
-  sleepButtonRows: [
+  audioControlRows: [
     { k: 'Audio: Sleep Sound (select)', v: 'Pick a sound to start it, none to stop. Options come from the sound list the app publishes.' },
-    { k: 'Sleep Volume (slider)', v: 'Playback level, 0 to 100. Adjusts the radio instead while the radio is playing.' },
+    { k: 'Audio: Radio Station (select)', v: 'Pick one of your favorited stations to start it, none to stop. The list is the stations you favorited in the app.' },
+    { k: 'Sleep Volume (slider)', v: 'Playback level for whichever is playing, 0 to 100.' },
     { k: 'System Volume (slider)', v: "The phone's hardware media volume. Works together with Sleep Volume to set what you actually hear." },
     { k: 'Sleep Sound Stop (button)', v: 'Fully stop playback and release the audio session' },
     { k: 'Sleep Sound Pause (button)', v: 'Mute audio while keeping the session alive (lock screen controls remain visible)' },
-    { k: 'Sleep Sound Resume (button)', v: 'Unmute and resume from where it was paused' }
-  ],
-  radioControlRows: [
-    { k: 'Audio: Radio Station (select)', v: 'Pick one of your favorited stations to start it, none to stop. The list is the stations you favorited in the app.' },
+    { k: 'Sleep Sound Resume (button)', v: 'Unmute and resume from where it was paused' },
     { k: 'Audio: Radio Stop / Pause / Resume (buttons)', v: 'Transport controls for the radio player.' },
     { k: 'Radio State (sensor)', v: 'Whether the radio is playing, paused or stopped.' },
     { k: 'Radio Station (sensor)', v: 'The station playing right now.' },
