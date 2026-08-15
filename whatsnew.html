@@ -168,13 +168,20 @@
     .callout .body strong { color: inherit; }
     h2 {
       font-family: var(--font-sans);
-      font-size: 22px;
+      font-size: 28px;
       font-weight: 800;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.025em;
       margin: 40px 0 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
     }
+    .card {
+      background: #FFFFFF;
+      border: 1px solid #DDDCEA;
+      border-radius: 14px;
+      padding: 26px 30px 28px;
+      box-shadow: 0 1px 2px rgba(16,18,41,.05), 0 10px 24px -18px rgba(16,18,41,.5);
+    }
+    .card ul { margin: 0; padding-left: 20px; }
+    .card li:last-child { margin-bottom: 0; }
     h3 {
       font-family: var(--font-sans);
       font-size: 17px;
@@ -269,6 +276,7 @@
         <a href="mqtt-builder.html">MQTT Builder</a>
       </div></div>
     </div>
+    <a href="whatsnew.html" class="nav-active">What&rsquo;s New</a>
     <a href="index.html#faq">FAQ</a>
     <button type="button" class="nav-menu-btn" aria-label="Menu">&#9776;</button>
     <div class="nav-dropdown">
@@ -277,6 +285,7 @@
       <a href="index.html#home-assistant" class="nav-dd-sub">Setup guide</a>
       <a href="index.html#ha-reference" class="nav-dd-sub">Entity reference</a>
       <a href="mqtt-builder.html" class="nav-dd-sub">MQTT Builder</a>
+      <a href="whatsnew.html">What&rsquo;s New</a>
       <a href="index.html#faq">FAQ</a>
     </div>
   </nav>
@@ -295,9 +304,9 @@
     <span class="updated">Beta channel</span>
   </div>
 
-  <h2>Version 5.2</h2>
+  <h2>Version 5.2.4</h2>
 
-  <h3>The short list: what&rsquo;s new since the App Store release</h3>
+  <div class="card">
   <ul>
     <li><strong>Allarise is now free.</strong> Every feature is unlocked for everyone; purchases became an optional tip jar. Existing purchasers and early adopters keep everything and are never prompted.</li>
     <li><strong>Slept Through Today.</strong> The app tallies alarms that rang ten minutes with no dismiss or snooze, resets at local midnight, and catches up even if you never open the app. The integration (3.4.0+) exposes it as a Home Assistant dashboard sensor with an <code>alarms</code> attribute.</li>
@@ -306,138 +315,7 @@
     <li><strong>Custom accent colors.</strong> Pick an accent per theme and per light/dark appearance; it applies app-wide.</li>
     <li><strong>HA alert media fixes.</strong> Images now load from plain-http Home Assistant hosts, and video failures are surfaced instead of silent.</li>
   </ul>
-
-  <h3>Slept Through Today (Home Assistant), 2026-08-06</h3>
-  <p>
-    Allarise now keeps a running tally of the alarms you slept through today,
-    an alarm that rang for <strong>ten minutes</strong> with nobody
-    dismissing or snoozing it. It counts <strong>alarms, not rings</strong>, so an
-    alarm you snoozed and then slept through is one; a late dismiss still counts,
-    on the day the alarm rang. The count resets at local midnight and catches up on
-    its own, so you do not have to open the app for a slept-through alarm to be
-    recorded.
-  </p>
-  <p>
-    The app publishes that count, and the Home Assistant integration
-    (<strong>3.4.0 and later</strong>) turns it into a <strong>Slept Through
-    Today</strong> sensor on the dashboard, with an <code>alarms</code>
-    attribute listing which ones (name, index and the time it rang). It is the
-    record, not a replay: a slept-through alarm never re-runs its
-    after-alarm notes, verse or weather later. Full detail, and an example
-    automation, are on the <a href="/#ha-reference">Home Assistant reference</a>.
-  </p>
-  <p>
-    Version skew is safe either way: an older app never publishes the count so the
-    sensor stays unavailable, and an older integration simply does not create it.
-    Nothing errors.
-  </p>
-
-  <h3>Multi-mission alarms</h3>
-  <p>
-    An alarm can now run up to <strong>five missions in a row</strong> before it will
-    dismiss. Mix them freely: maths then a shake, or three rounds of the same
-    thing. Set them up under Missions when editing an alarm.
-  </p>
-
-  <h3>Two new missions</h3>
-  <ul>
-    <li><strong>Block Drop</strong>: clear falling blocks to shut the alarm up.</li>
-    <li><strong>Meteor Defense</strong>: shoot down what is coming at you.</li>
-  </ul>
-  <p>Both have easy, medium and hard difficulty settings.</p>
-
-  <h3>Radio</h3>
-  <p>
-    Internet radio stations can now be used as an <strong>alarm sound</strong> and as a
-    <strong>sleep sounds</strong> source. Add stations in Settings, then pick one anywhere a
-    sound is chosen. If a station cannot be reached when the alarm fires, Allarise falls
-    back to your normal alarm tone rather than staying silent.
-  </p>
-
-  <h3>Optional usage data and product updates</h3>
-  <p>
-    Two new settings, both <strong>off unless you turn them on</strong>, under
-    Settings &rarr; Allarise Pro:
-  </p>
-  <ul>
-    <li><strong>Usage Data &amp; Crash Reports</strong>: anonymous. Helps find
-      crashes that cannot be reproduced and shows which features actually get used.
-      Nothing you typed is ever included.</li>
-    <li><strong>Product Updates</strong>: occasional notifications about new
-      features. Tapping one opens this page.</li>
-  </ul>
-  <p>
-    Full detail on both is in the <a href="privacy.html">Privacy Policy</a> (sections 2.3
-    and 2.7). Declining either costs you nothing else in the app.
-  </p>
-
-  <h3>App Persistence is now three-way</h3>
-  <p>
-    App Persistence (the setting that keeps Allarise awake in the background)
-    used to be on or off. It now has a third option, and <strong>everyone has been moved
-    to it</strong>. You will see a one-time notice in the app explaining the change.
-  </p>
-  <p>
-    <strong>On: always ready.</strong> The app stays awake all night. Highest battery use.
-  </p>
-  <p>
-    <strong>Dynamic: ready when it matters.</strong> The app stays awake while your phone is
-    charging and in the roughly 75 minutes before your next alarm, and sleeps the rest of the
-    time. This is the new default.
-  </p>
-  <p>
-    <strong>Off: best battery.</strong> The app sleeps until you open it.
-  </p>
-  <p>
-    <strong>Your alarm rings on time in all three.</strong> The alarm is scheduled with iOS
-    itself no matter which you pick. What changes is the quality of the wake-up: whether the
-    app can use your custom volume, play a radio station rather than its own tone, and answer
-    Home Assistant. Under Dynamic those depend on iOS waking the app, so treat them as usually
-    available in those windows rather than guaranteed. Choose <strong>On</strong> if you
-    need certainty. Change it under Settings &rarr; Reliability.
-  </p>
-  <p>
-    <strong>If you use Home Assistant:</strong> commands sent to a phone on Dynamic reach it while
-    it is charging or close to an alarm, and not while it is asleep. Switch to <strong>On</strong>
-    if you need the phone to answer at any hour. Details are on the
-    <a href="/#ha-reference">Home Assistant reference</a>.
-  </p>
-
-  <h3>Home Assistant: fewer surprises from automations</h3>
-  <p>
-    Nothing you have already built needs changing: every field and payload works
-    exactly as it did. What changed is how the app handles a few awkward cases:
-  </p>
-  <ul>
-    <li><strong>Give <code>create_alarm</code> an <code>mqtt_id</code> and re-running it
-      updates that alarm instead of making another one.</strong> This is the answer to
-      "Home Assistant keeps creating alarms".</li>
-    <li><strong>A ceiling of 50 alarms created from Home Assistant.</strong> Past that,
-      <code>create_alarm</code> declines rather than crowding out the alarms you set by
-      hand. Delete the ones you do not need, or reuse an <code>mqtt_id</code>.</li>
-    <li><strong>Out-of-range values are trimmed rather than obeyed</strong>: snooze
-      length, snooze count and hold durations are held to what the app itself offers, and
-      a days list that mixes names and numbers now keeps every day you listed.</li>
-    <li><strong>The optional <code>ts</code> freshness stamp is honoured everywhere</strong>,
-      including per-alarm dismiss, snooze, skip and enabled. If you do not send
-      <code>ts</code>, nothing changes at all.</li>
-    <li><strong>Alert link buttons open web addresses only</strong> (<code>http</code> /
-      <code>https</code>). To launch another app, use a per-alarm App Link.</li>
-  </ul>
-  <p>
-    All of it is written up on the <a href="/#ha-reference">Home Assistant reference</a>,
-    along with a broker access-control example worth reading if anything besides your phone
-    and Home Assistant shares your MQTT broker.
-  </p>
-
-  <h3>Removed</h3>
-  <p>
-    <strong>NWS Weather Alerts</strong> has been removed. The relevant sections of the
-    <a href="terms.html">Terms of Use</a> and <a href="privacy.html">Privacy Policy</a>
-    have been updated to match.
-  </p>
-
-
+  </div>
 </div>
 
 <footer class="site-footer">
