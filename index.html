@@ -1194,7 +1194,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <p style="margin: 0 0 4px; color: var(--text-secondary); line-height: 1.65;">Request an HA alert on the phone when app and iOS conditions permit.</p>
         <x-import component-from-global-scope="Allarise.CodeBlock" label="allarise.trigger_alert" code="{{ codeTriggerAlert }}" hint-size="100%,200px"></x-import>
         <h3 style="font-family: var(--font-display); font-size: 18px; margin: 32px 0 6px;">Alert volume: two number styles</h3>
-        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Whichever way you send the alert, its volume field uses one of two number styles. A field named volume is a whole-number percent: 80 means 80%. media_player.volume_set instead uses volume_level, Home Assistant's standard fraction for media players: 0.8 means 80%. Do not copy a number from one style into the other. The Alert Volume slider and sensor always speak percent.</p>
+        <p style="margin: 0 0 14px; color: var(--text-secondary); line-height: 1.65;">Whichever way you send the alert, its volume field uses one of two number styles. A field named volume is a whole-number percent: 80 means 80%. From integration 3.4.1 a fraction like 0.8 is accepted too; older integrations read it as 0. media_player.volume_set instead uses volume_level, Home Assistant's standard fraction for media players: 0.8 means 80%. Do not copy a number from one style into the other. The Alert Volume slider and sensor always speak percent.</p>
         <x-import component-from-global-scope="Allarise.DataTable" columns="{{ volCols }}" rows="{{ volRows }}" variant="rules" hint-size="100%,220px"></x-import>
         </div>
       </div>
@@ -1216,7 +1216,7 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         <div style="margin-top: 20px;">
           <x-import component-from-global-scope="Allarise.Callout" tone="tip" icon="{{ iconBolt }}" hint-size="100%,72px">Use until_next_alarm: true in sleep_sound_start to have the app attempt to stop white noise when the next alarm fires, without requiring a separate automation.</x-import>
         </div>
-        <p style="margin: 20px 0 0; color: var(--text-secondary); line-height: 1.65;">Alarms can also wake to a station: set radio_station on create_alarm or update_alarm, and the per-alarm Radio Station sensor reports it.</p>
+        <p style="margin: 20px 0 0; color: var(--text-secondary); line-height: 1.65;">Alarms can also wake to a station: set radio_station on create_alarm or update_alarm to a favorited station's name (from integration 3.4.1 a stream URL as {url: ...} works too), and the per-alarm Radio Station sensor reports it.</p>
         </div>
       </div>
 
@@ -1708,7 +1708,7 @@ const DATA = {
     { k: 'Snooze (snooze_interval on update_alarm, snooze_duration on create_alarm)', r: '1–30 minutes', v: 'Matches the stepper in the app. 45 becomes 30.' },
     { k: 'Max snoozes (snooze_limit / max_snooze_count)', r: '0–20', v: '0 means unlimited snoozing, not "no snoozing" - it is the app’s own meaning for 0. A negative number is read as 0.' },
     { k: 'snooze_hold_duration · skip_hold_duration', r: '0.5–30 seconds', v: 'How long the button must be held. Only used when the matching mode is Hold.' },
-    { k: 'volume', r: '0–100', v: 'A percentage. See Alerts for how the alert paths differ.' }
+    { k: 'volume', r: '0–100', v: 'A percentage. From integration 3.4.1 a fraction works too: 0.5 is 50%. Older integrations read a fraction as 0. See Alerts for how the alert paths differ.' }
   ],
   volCols: [
     { key: 'k', header: 'If you send the alert with' },
@@ -1716,7 +1716,7 @@ const DATA = {
     { key: 'v', header: 'What to write' }
   ],
   volRows: [
-    { k: 'notify.send_message or allarise.trigger_alert', f: 'volume', v: 'A percent, 0 to 100. volume: 80 is 80%.' },
+    { k: 'notify.send_message or allarise.trigger_alert', f: 'volume', v: 'A percent, 0 to 100. volume: 80 is 80%. From integration 3.4.1, volume: 0.8 also works.' },
     { k: 'media_player.volume_set on the Alert Media player', f: 'volume_level', v: 'A fraction, 0.0 to 1.0. volume_level: 0.8 is 80%. The integration converts it to percent for the phone.' }
   ],
   tocSetup: [
