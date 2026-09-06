@@ -1354,6 +1354,27 @@ h1, h2, h3, .hero h1, .section h2, .page-header h1 { font-family: var(--font-dis
         </x-import>
       </x-import>
 
+      <div style="margin-top: 48px;">
+        <h2 style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0 0 18px; color: var(--text);">Open Source</h2>
+      </div>
+      <x-import component-from-global-scope="Allarise.Accordion" hint-size="100%,200px">
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="Is Allarise open source?" hint-size="100%,60px">
+          <p style="margin: 0 0 10px;">Yes. The iOS app, the Home Assistant integration and this website are all published on GitHub:</p>
+          <ul style="margin: 0; padding-left: 20px; line-height: 1.7;">
+            <li><a href="https://github.com/domoretechnet/allarise-ios">allarise-ios</a> — the iOS app</li>
+            <li><a href="https://github.com/domoretechnet/allarise-hacs">allarise-hacs</a> — the Home Assistant integration (<a href="https://github.com/domoretechnet/allarise-hacs-beta">allarise-hacs-beta</a> for the beta channel)</li>
+            <li><a href="https://github.com/domoretechnet/Allarise-info">Allarise-info</a> — this website (<a href="https://github.com/domoretechnet/Allarise-info-beta">Allarise-info-beta</a> for beta.allarise.app)</li>
+          </ul>
+        </x-import>
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="What license is it under?" hint-size="100%,60px">
+          <p style="margin: 0 0 10px;">The app and the integration are licensed under the <strong>GNU General Public License v3.0 (GPL-3.0)</strong>. You are free to read the code, build it yourself, change it and share your changes, as long as anything you distribute stays under the same license with its source available.</p>
+          <p style="margin: 0;">The App Store build is that same code, signed and shipped by DoMore Tech LLC. Buying Allarise Pro is what keeps development going.</p>
+        </x-import>
+        <x-import component-from-global-scope="Allarise.AccordionItem" question="Can I report a bug or contribute?" hint-size="100%,60px">
+          <p style="margin: 0;">Yes. Open an issue or a pull request on the relevant repository above. For the app, the <a href="https://github.com/domoretechnet/allarise-ios">allarise-ios</a> repository is a mirror of our private working tree, so merged pull requests are pulled back into it and land in a later release.</p>
+        </x-import>
+      </x-import>
+
       <div style="margin-top: 56px;">
         <x-import component-from-global-scope="Allarise.ContactBox" title="Still have a question?" hint-size="100%,150px">
           <p style="margin: 0 0 12px; color: var(--text-secondary);">Reach out and we'll be happy to help.</p>
